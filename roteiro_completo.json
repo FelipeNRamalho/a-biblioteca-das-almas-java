@@ -1,0 +1,5700 @@
+{
+  "metadata": {
+    "id": "biblioteca_das_almas_capitulo_1",
+    "chapter_title": "O Nome que Não Deveria Existir",
+    "version": "1.0",
+    "language": "pt-BR",
+    "entry_scene": "c01_despertar",
+    "scene_count": 28,
+    "cutscene_count": 12,
+    "special_conditions": {
+      "ending_secret_requires": {
+        "all": [
+          {
+            "flag": "memoria_retorno",
+            "equals": true
+          },
+          {
+            "flag": "memoria_escolha",
+            "equals": true
+          },
+          {
+            "flag": "memoria_pacto",
+            "equals": true
+          },
+          {
+            "flag": "fantasma_confia",
+            "equals": true
+          },
+          {
+            "flag": "regra_reescrita_descoberta",
+            "equals": true
+          }
+        ]
+      }
+    },
+    "ending_scenes": [
+      "c26_final_queimar",
+      "c26_final_preservar",
+      "c26_final_reescrever"
+    ]
+  },
+  "scenes": [
+    {
+      "id": "c01_despertar",
+      "number": 1,
+      "title": "A Escadaria",
+      "act": "prologo",
+      "location": "entrada_biblioteca",
+      "optional": false,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "once",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "cutscene",
+          "asset": "natasha_despertando",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "A pedra está fria. O ar carrega o cheiro de chuva antiga e papel úmido.",
+          "next": "n003"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "...",
+          "expression": "cansada",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Onde... estou?",
+          "expression": "assustada",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Natasha apoia a mão no degrau e tenta se levantar. Uma dor incômoda atravessa sua cabeça.",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "O que aconteceu comigo?",
+          "expression": "pensativa",
+          "next": "n007"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Ela procura alguma lembrança. Uma rua. Uma pessoa. O próprio caminho que percorreu. Nada parece permanecer tempo suficiente para ser reconhecido.",
+          "next": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Meu nome é Natasha. Natasha Rostova.",
+          "expression": "seria",
+          "next": "n009"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Eu sei quem sou... então por que não consigo me lembrar de como vim parar aqui?",
+          "expression": "vulneravel",
+          "next": "n010"
+        },
+        {
+          "id": "n010",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Diante dela, uma biblioteca monumental se ergue contra um céu imóvel.",
+          "next": "n011"
+        },
+        {
+          "id": "n011",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Preciso encontrar alguém.",
+          "expression": "determinada",
+          "next": "n012"
+        },
+        {
+          "id": "n012",
+          "type": "end",
+          "effects": [
+            {
+              "type": "set_flag",
+              "key": "prologo_concluido",
+              "value": true
+            }
+          ],
+          "next_scene": "c02_carta"
+        }
+      ]
+    },
+    {
+      "id": "c02_carta",
+      "number": 2,
+      "title": "A Carta para Ninguém",
+      "act": "prologo",
+      "location": "entrada_biblioteca",
+      "optional": true,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "repeat_if_interactable",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Um papel dobrado está apoiado entre dois degraus.",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "choice",
+          "prompt": "Examinar a carta abandonada?",
+          "options": [
+            {
+              "id": "n002_op1",
+              "text": "Examinar e guardar a carta",
+              "next": "n004",
+              "effects": [
+                {
+                  "type": "give_item",
+                  "item": "carta_entrada"
+                },
+                {
+                  "type": "unlock_memory",
+                  "memory": "retorno"
+                },
+                {
+                  "type": "set_flag",
+                  "key": "carta_coletada",
+                  "value": true
+                },
+                {
+                  "type": "set_flag",
+                  "key": "memoria_retorno",
+                  "value": true
+                }
+              ]
+            },
+            {
+              "id": "n002_op2",
+              "text": "Deixar a carta por enquanto",
+              "next": "n016"
+            }
+          ]
+        },
+        {
+          "id": "n003",
+          "type": "join",
+          "next": "n017"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Uma carta?",
+          "expression": "pensativa",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "O papel parece antigo, mas não está molhado. Como se tivesse sido deixado ali há poucos instantes.",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não há destinatário.",
+          "expression": "neutra",
+          "next": "n007"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "carta",
+          "text": "Se voltar a esquecer, não procure apenas pelo seu nome.",
+          "next": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "carta",
+          "text": "Procure pelos nomes que faltam.",
+          "next": "n009"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "carta",
+          "text": "E não deixe que ele decida por você outra vez.",
+          "next": "n010"
+        },
+        {
+          "id": "n010",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Outra vez...?",
+          "expression": "assustada",
+          "next": "n011"
+        },
+        {
+          "id": "n011",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Há algo perturbadoramente familiar na forma das letras.",
+          "next": "n012"
+        },
+        {
+          "id": "n012",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Essa caligrafia...",
+          "expression": "pensativa",
+          "next": "n013"
+        },
+        {
+          "id": "n013",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Por um instante, Natasha se vê escrevendo às pressas. O som de um livro se fechando interrompe a lembrança.",
+          "next": "n014"
+        },
+        {
+          "id": "n014",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Fui eu?",
+          "expression": "surpresa",
+          "next": "n015"
+        },
+        {
+          "id": "n015",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Se fui eu mesma quem escreveu... de quem estava tentando me avisar?",
+          "expression": "pensativa",
+          "next": "n003"
+        },
+        {
+          "id": "n016",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Primeiro preciso descobrir onde estou.",
+          "expression": "seria",
+          "next": "n003"
+        },
+        {
+          "id": "n017",
+          "type": "end",
+          "effects": [],
+          "next_scene": "c03_portas"
+        }
+      ]
+    },
+    {
+      "id": "c03_portas",
+      "number": 3,
+      "title": "As Portas da Biblioteca",
+      "act": "prologo",
+      "location": "entrada_biblioteca",
+      "optional": false,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "once",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Natasha se aproxima das enormes portas de madeira escura. Sobre a fechadura, uma inscrição acompanha o contorno dourado da madeira.",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "line",
+          "speaker": "inscricao",
+          "text": "Toda história merece ser lembrada.",
+          "next": "n003"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Parece acolhedor. De uma maneira bastante estranha.",
+          "expression": "pensativa",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "choice",
+          "prompt": "Como Natasha entra na biblioteca?",
+          "options": [
+            {
+              "id": "n004_op1",
+              "text": "Entrar decididamente",
+              "next": "n006",
+              "effects": [
+                {
+                  "type": "set_value",
+                  "key": "postura_entrada",
+                  "value": "decidida"
+                }
+              ]
+            },
+            {
+              "id": "n004_op2",
+              "text": "Bater antes de entrar",
+              "next": "n007",
+              "effects": [
+                {
+                  "type": "set_value",
+                  "key": "postura_entrada",
+                  "value": "educada"
+                }
+              ]
+            },
+            {
+              "id": "n004_op3",
+              "text": "Examinar a inscrição",
+              "next": "n009",
+              "effects": [
+                {
+                  "type": "set_value",
+                  "key": "postura_entrada",
+                  "value": "investigativa"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "n005",
+          "type": "join",
+          "next": "n010"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não vou descobrir nada ficando aqui fora.",
+          "expression": "determinada",
+          "next": "n005"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Com licença...? Há alguém aí?",
+          "expression": "neutra",
+          "next": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Após alguns instantes de silêncio, as portas se abrem sozinhas.",
+          "next": "n005"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Quem escreveria algo assim na porta de uma biblioteca?",
+          "expression": "pensativa",
+          "next": "n005"
+        },
+        {
+          "id": "n010",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "As dobradiças se movem com uma suavidade inesperada.",
+          "next": "n011"
+        },
+        {
+          "id": "n011",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Estava destrancada...",
+          "expression": "surpresa",
+          "next": "n012"
+        },
+        {
+          "id": "n012",
+          "type": "end",
+          "effects": [
+            {
+              "type": "set_flag",
+              "key": "entrou_biblioteca",
+              "value": true
+            },
+            {
+              "type": "unlock_location",
+              "location": "salao_principal"
+            }
+          ],
+          "next_scene": "c04_livro_mutavel"
+        }
+      ]
+    },
+    {
+      "id": "c04_livro_mutavel",
+      "number": 4,
+      "title": "O Livro que Muda de Palavras",
+      "act": "ato_i",
+      "location": "salao_principal",
+      "optional": false,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "once",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "A biblioteca se estende muito além do que Natasha esperava. As estantes parecem desaparecer nas sombras, e a luz das velas dança sobre os vitrais.",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "É... bonita.",
+          "expression": "neutra",
+          "next": "n003"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Mas onde estão todos?",
+          "expression": "pensativa",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Sobre uma mesa, há um livro aberto.",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Talvez exista algum registro de visitantes.",
+          "expression": "pensativa",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "livro",
+          "text": "Nenhuma história permanece sem um nome.",
+          "next": "n007"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não parece um registro de visitantes.",
+          "expression": "neutra",
+          "next": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "livro",
+          "text": "Nenhum nome permanece sem um registro.",
+          "next": "n009"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Espere.",
+          "expression": "surpresa",
+          "next": "n010"
+        },
+        {
+          "id": "n010",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Isso não estava escrito antes.",
+          "expression": "assustada",
+          "next": "n011"
+        },
+        {
+          "id": "n011",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Natasha passa o dedo pela página. A tinta está seca.",
+          "next": "n012"
+        },
+        {
+          "id": "n012",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Devo estar mais confusa do que pensei...",
+          "expression": "vulneravel",
+          "next": "n013"
+        },
+        {
+          "id": "n013",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Uma nova página vira sozinha.",
+          "next": "n014"
+        },
+        {
+          "id": "n014",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não. Isso eu vi.",
+          "expression": "seria",
+          "next": "n015"
+        },
+        {
+          "id": "n015",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Recomendo não discutir com os livros. Alguns são insuportavelmente teimosos.",
+          "expression": "neutro",
+          "next": "n016"
+        },
+        {
+          "id": "n016",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Quem está aí?",
+          "expression": "assustada",
+          "next": "n017"
+        },
+        {
+          "id": "n017",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "O balcão de atendimento fica adiante, senhorita.",
+          "expression": "neutro",
+          "next": "n018"
+        },
+        {
+          "id": "n018",
+          "type": "end",
+          "effects": [
+            {
+              "type": "set_flag",
+              "key": "livro_mutavel_visto",
+              "value": true
+            },
+            {
+              "type": "unlock_location",
+              "location": "balcao_rodion"
+            }
+          ],
+          "next_scene": "c05_bibliotecario"
+        }
+      ]
+    },
+    {
+      "id": "c05_bibliotecario",
+      "number": 5,
+      "title": "O Bibliotecário",
+      "act": "ato_i",
+      "location": "balcao_rodion",
+      "optional": false,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "once",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "cutscene",
+          "asset": "rodion_lendo_livro",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Rodion está sentado atrás do balcão, lendo um livro antigo. Ele fecha a obra quando Natasha se aproxima.",
+          "next": "n003"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Ah. Finalmente.",
+          "expression": "neutro",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Finalmente?",
+          "expression": "surpresa",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Peço desculpas. Esta biblioteca recebe tão poucas visitas interessantes que acabo criando expectativas.",
+          "expression": "neutro",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Você estava esperando alguém?",
+          "expression": "pensativa",
+          "next": "n007"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Creio que todos estamos, de alguma forma.",
+          "expression": "pensativo",
+          "next": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Isso não responde à minha pergunta.",
+          "expression": "seria",
+          "next": "n009"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Uma observação justa.",
+          "expression": "neutro",
+          "next": "n010"
+        },
+        {
+          "id": "n010",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Preciso de ajuda. Acordei do lado de fora e não faço ideia de como cheguei aqui.",
+          "expression": "vulneravel",
+          "next": "n011"
+        },
+        {
+          "id": "n011",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Compreendo.",
+          "expression": "serio",
+          "next": "n012"
+        },
+        {
+          "id": "n012",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Só isso? Compreendo?",
+          "expression": "irritada",
+          "next": "n013"
+        },
+        {
+          "id": "n013",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Preferiria que eu fingisse surpresa?",
+          "expression": "neutro",
+          "next": "n014"
+        },
+        {
+          "id": "n014",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Preferiria que me explicasse o que está acontecendo.",
+          "expression": "seria",
+          "next": "n015"
+        },
+        {
+          "id": "n015",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Gostaria de poder oferecer uma explicação simples.",
+          "expression": "pensativo",
+          "next": "n016"
+        },
+        {
+          "id": "n016",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Então ofereça uma complicada.",
+          "expression": "determinada",
+          "next": "n017"
+        },
+        {
+          "id": "n017",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Receio que ainda não seja o momento.",
+          "expression": "serio",
+          "next": "n018"
+        },
+        {
+          "id": "n018",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Quem decide isso?",
+          "expression": "seria",
+          "next": "n019"
+        },
+        {
+          "id": "n019",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Meu nome é Rodion Raskólnikov. Sou o responsável por este setor da biblioteca.",
+          "expression": "neutro",
+          "next": "n020"
+        },
+        {
+          "id": "n020",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Natasha.",
+          "expression": "neutra",
+          "next": "n021"
+        },
+        {
+          "id": "n021",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Um prazer revê-la, senhorita Rostova.",
+          "expression": "serio",
+          "next": "n022"
+        },
+        {
+          "id": "n022",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Revê-la?",
+          "expression": "assustada",
+          "next": "n023"
+        },
+        {
+          "id": "n023",
+          "type": "end",
+          "effects": [
+            {
+              "type": "set_flag",
+              "key": "rodion_encontrado",
+              "value": true
+            }
+          ],
+          "next_scene": "c06_nome_omitido"
+        }
+      ]
+    },
+    {
+      "id": "c06_nome_omitido",
+      "number": 6,
+      "title": "Um Nome que Não Foi Dito",
+      "act": "ato_i",
+      "location": "balcao_rodion",
+      "optional": false,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "once",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "choice",
+          "prompt": "Como Natasha confronta Rodion?",
+          "options": [
+            {
+              "id": "n001_op1",
+              "text": "Exigir respostas",
+              "next": "n003",
+              "effects": [
+                {
+                  "type": "set_value",
+                  "key": "rodion_abordagem",
+                  "value": "confrontar"
+                }
+              ]
+            },
+            {
+              "id": "n001_op2",
+              "text": "Conversar com calma",
+              "next": "n007",
+              "effects": [
+                {
+                  "type": "set_value",
+                  "key": "rodion_abordagem",
+                  "value": "diplomatica"
+                }
+              ]
+            },
+            {
+              "id": "n001_op3",
+              "text": "Fingir não perceber",
+              "next": "n011",
+              "effects": [
+                {
+                  "type": "set_value",
+                  "key": "rodion_abordagem",
+                  "value": "observar"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "n002",
+          "type": "join",
+          "next": "n015"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Eu não disse meu sobrenome. E você falou como se já me conhecesse.",
+          "expression": "irritada",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Os registros desta biblioteca são bastante precisos.",
+          "expression": "serio",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Então me mostre o registro que diz quem eu sou.",
+          "expression": "determinada",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Gostaria que fosse tão simples.",
+          "expression": "melancolico",
+          "next": "n002"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Você parece saber algo sobre mim. Gostaria que me contasse.",
+          "expression": "seria",
+          "next": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Conhecer um nome e conhecer uma pessoa são coisas diferentes.",
+          "expression": "reflexivo",
+          "next": "n009"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Mas você conhece mais do que meu nome, não conhece?",
+          "expression": "pensativa",
+          "next": "n010"
+        },
+        {
+          "id": "n010",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Infelizmente, sim.",
+          "expression": "melancolico",
+          "next": "n002"
+        },
+        {
+          "id": "n011",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Entendo. Então talvez possa me ajudar a encontrar uma saída.",
+          "expression": "neutra",
+          "next": "n012"
+        },
+        {
+          "id": "n012",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Uma saída... naturalmente.",
+          "expression": "desconfiado",
+          "next": "n013"
+        },
+        {
+          "id": "n013",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Existe alguma?",
+          "expression": "pensativa",
+          "next": "n014"
+        },
+        {
+          "id": "n014",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Toda biblioteca tem uma entrada. Saídas são uma questão mais delicada.",
+          "expression": "neutro",
+          "next": "n002"
+        },
+        {
+          "id": "n015",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Eu vi um livro cujas palavras mudavam.",
+          "expression": "seria",
+          "next": "n016"
+        },
+        {
+          "id": "n016",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Isso acontece.",
+          "expression": "neutro",
+          "next": "n017"
+        },
+        {
+          "id": "n017",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Você fala como se fosse perfeitamente normal.",
+          "expression": "irritada",
+          "next": "n018"
+        },
+        {
+          "id": "n018",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Aqui, seria mais preocupante se nada mudasse.",
+          "expression": "neutro",
+          "next": "n019"
+        },
+        {
+          "id": "n019",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Que tipo de biblioteca é esta?",
+          "expression": "pensativa",
+          "next": "n020"
+        },
+        {
+          "id": "n020",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Uma biblioteca de registros.",
+          "expression": "serio",
+          "next": "n021"
+        },
+        {
+          "id": "n021",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Registros de quê?",
+          "expression": "pensativa",
+          "next": "n022"
+        },
+        {
+          "id": "n022",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "De histórias.",
+          "expression": "neutro",
+          "next": "n023"
+        },
+        {
+          "id": "n023",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não parece um lugar muito preocupado em explicar as coisas.",
+          "expression": "sarcastica",
+          "next": "n024"
+        },
+        {
+          "id": "n024",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "É uma crítica recorrente.",
+          "expression": "neutro",
+          "next": "n025"
+        },
+        {
+          "id": "n025",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Se procura respostas, talvez encontre alguma coisa nos livros. Apenas tenha cuidado com os corredores esquecidos.",
+          "expression": "serio",
+          "next": "n026"
+        },
+        {
+          "id": "n026",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Por quê?",
+          "expression": "pensativa",
+          "next": "n027"
+        },
+        {
+          "id": "n027",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Há alguém ali que prefere não ser encontrado.",
+          "expression": "melancolico",
+          "next": "n028"
+        },
+        {
+          "id": "n028",
+          "type": "end",
+          "effects": [],
+          "next_scene": "c07_segredos_balcao"
+        }
+      ]
+    },
+    {
+      "id": "c07_segredos_balcao",
+      "number": 7,
+      "title": "Os Segredos Sobre o Balcão",
+      "act": "ato_i",
+      "location": "balcao_rodion",
+      "optional": true,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "repeat_if_interactable",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "choice",
+          "prompt": "O que Natasha investiga no balcão?",
+          "options": [
+            {
+              "id": "n001_op1",
+              "text": "Examinar o livro pessoal de Rodion",
+              "next": "n003",
+              "effects": [
+                {
+                  "type": "set_flag",
+                  "key": "livro_rodion_investigado",
+                  "value": true
+                }
+              ]
+            },
+            {
+              "id": "n001_op2",
+              "text": "Examinar a gaveta trancada",
+              "next": "n014",
+              "effects": [
+                {
+                  "type": "set_flag",
+                  "key": "gaveta_rodion_examinada",
+                  "value": true
+                }
+              ]
+            },
+            {
+              "id": "n001_op3",
+              "text": "Não mexer no balcão",
+              "next": "n020"
+            }
+          ]
+        },
+        {
+          "id": "n002",
+          "type": "join",
+          "next": "n021"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Esse livro parece diferente dos outros.",
+          "expression": "pensativa",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "É meu.",
+          "expression": "neutro",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Você tem um livro inteiro só para si?",
+          "expression": "surpresa",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Todos temos.",
+          "expression": "serio",
+          "next": "n007"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "O que quer dizer?",
+          "expression": "pensativa",
+          "next": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Que talvez eu já tenha falado demais.",
+          "expression": "pensativo",
+          "next": "n009"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Natasha lê uma anotação na margem: Preservar uma história não é o mesmo que permitir que ela continue.",
+          "next": "n010"
+        },
+        {
+          "id": "n010",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Foi você que escreveu isso?",
+          "expression": "seria",
+          "next": "n011"
+        },
+        {
+          "id": "n011",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Foi.",
+          "expression": "melancolico",
+          "next": "n012"
+        },
+        {
+          "id": "n012",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "O que significa?",
+          "expression": "pensativa",
+          "next": "n013"
+        },
+        {
+          "id": "n013",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Uma lembrança que preferiria não ter aprendido.",
+          "expression": "melancolico",
+          "next": "n002"
+        },
+        {
+          "id": "n014",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "O que guarda aqui?",
+          "expression": "pensativa",
+          "next": "n015"
+        },
+        {
+          "id": "n015",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Documentos.",
+          "expression": "neutro",
+          "next": "n016"
+        },
+        {
+          "id": "n016",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Documentos secretos?",
+          "expression": "provocativa",
+          "next": "n017"
+        },
+        {
+          "id": "n017",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Documentos privados. Existe uma diferença.",
+          "expression": "serio",
+          "next": "n018"
+        },
+        {
+          "id": "n018",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Existe mesmo?",
+          "expression": "sarcastica",
+          "next": "n019"
+        },
+        {
+          "id": "n019",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Gostaria de acreditar que sim.",
+          "expression": "melancolico",
+          "next": "n002"
+        },
+        {
+          "id": "n020",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Melhor investigar o restante da biblioteca.",
+          "expression": "neutra",
+          "next": "n002"
+        },
+        {
+          "id": "n021",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Senhorita Rostova.",
+          "expression": "serio",
+          "next": "n022"
+        },
+        {
+          "id": "n022",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Sim?",
+          "expression": "neutra",
+          "next": "n023"
+        },
+        {
+          "id": "n023",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Caso encontre alguém no corredor... não a julgue pela aparência.",
+          "expression": "melancolico",
+          "next": "n024"
+        },
+        {
+          "id": "n024",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Quem?",
+          "expression": "surpresa",
+          "next": "n025"
+        },
+        {
+          "id": "n025",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Alguém que já recebeu julgamentos suficientes.",
+          "expression": "reflexivo",
+          "next": "n026"
+        },
+        {
+          "id": "n026",
+          "type": "end",
+          "effects": [
+            {
+              "type": "unlock_location",
+              "location": "corredor_esquecidos"
+            }
+          ],
+          "next_scene": "c08_corredor"
+        }
+      ]
+    },
+    {
+      "id": "c08_corredor",
+      "number": 8,
+      "title": "O Corredor Abandonado",
+      "act": "ato_ii",
+      "location": "corredor_esquecidos",
+      "optional": false,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "once",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "O calor do salão desaparece à medida que Natasha avança. O ar torna-se frio, e as estantes começam a apresentar rachaduras.",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Como um lugar tão bem conservado pode esconder um corredor assim?",
+          "expression": "pensativa",
+          "next": "n003"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Livros estão espalhados pelo chão. Algumas lombadas parecem ter tido seus títulos arrancados.",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Alguém deveria cuidar desses livros.",
+          "expression": "seria",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "As marcas na madeira parecem feitas por unhas ou por algo que tentou retirar os livros à força.",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não foi o tempo que fez isso.",
+          "expression": "assustada",
+          "next": "n007"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Um som semelhante a um suspiro vem do final do corredor.",
+          "next": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "...Olá?",
+          "expression": "assustada",
+          "next": "n009"
+        },
+        {
+          "id": "n009",
+          "type": "end",
+          "effects": [],
+          "next_scene": "c09_fantasma_aparicao"
+        }
+      ]
+    },
+    {
+      "id": "c09_fantasma_aparicao",
+      "number": 9,
+      "title": "A Mulher Entre as Sombras",
+      "act": "ato_ii",
+      "location": "corredor_esquecidos",
+      "optional": false,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "once",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "cutscene",
+          "asset": "fantasma_primeira_aparicao",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "A Fantasma surge ao fundo, cercada por sombras. Seu corpo parece ferido e seus movimentos são hesitantes.",
+          "next": "n003"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Tem alguém aí?",
+          "expression": "assustada",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "...",
+          "expression": "timida",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Eu consigo ver você.",
+          "expression": "seria",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Eu sei.",
+          "expression": "triste",
+          "next": "n007"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Então por que está se escondendo?",
+          "expression": "pensativa",
+          "next": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Porque, normalmente, é o que as pessoas preferem.",
+          "expression": "triste",
+          "next": "n009"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não precisa se esconder de mim.",
+          "expression": "neutra",
+          "next": "n010"
+        },
+        {
+          "id": "n010",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Você diz isso agora.",
+          "expression": "timida",
+          "next": "n011"
+        },
+        {
+          "id": "n011",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Essas marcas...",
+          "expression": "assustada",
+          "next": "n012"
+        },
+        {
+          "id": "n012",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Desculpe.",
+          "expression": "triste",
+          "next": "n013"
+        },
+        {
+          "id": "n013",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Por que está se desculpando?",
+          "expression": "pensativa",
+          "next": "n014"
+        },
+        {
+          "id": "n014",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Às vezes assusto as pessoas.",
+          "expression": "timida",
+          "next": "n015"
+        },
+        {
+          "id": "n015",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não foi exatamente o que eu quis dizer.",
+          "expression": "vulneravel",
+          "next": "n016"
+        },
+        {
+          "id": "n016",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Mas foi o que pensou?",
+          "expression": "triste",
+          "next": "n017"
+        },
+        {
+          "id": "n017",
+          "type": "end",
+          "effects": [
+            {
+              "type": "set_flag",
+              "key": "fantasma_encontrada",
+              "value": true
+            }
+          ],
+          "next_scene": "c10_primeira_impressao"
+        }
+      ]
+    },
+    {
+      "id": "c10_primeira_impressao",
+      "number": 10,
+      "title": "A Primeira Impressão",
+      "act": "ato_ii",
+      "location": "corredor_esquecidos",
+      "optional": false,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "once",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "choice",
+          "prompt": "Como Natasha reage à Fantasma?",
+          "options": [
+            {
+              "id": "n001_op1",
+              "text": "Perguntar se pode ajudar",
+              "next": "n003",
+              "effects": [
+                {
+                  "type": "set_value",
+                  "key": "fantasma_primeira_reacao",
+                  "value": "empatia"
+                }
+              ]
+            },
+            {
+              "id": "n001_op2",
+              "text": "Perguntar sobre as sombras",
+              "next": "n007",
+              "effects": [
+                {
+                  "type": "set_value",
+                  "key": "fantasma_primeira_reacao",
+                  "value": "curiosidade"
+                }
+              ]
+            },
+            {
+              "id": "n001_op3",
+              "text": "Recuar e se desculpar",
+              "next": "n011",
+              "effects": [
+                {
+                  "type": "set_value",
+                  "key": "fantasma_primeira_reacao",
+                  "value": "medo"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "n002",
+          "type": "join",
+          "next": "n016"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Parece estar doendo. Posso fazer alguma coisa?",
+          "expression": "vulneravel",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Você... quer ajudar?",
+          "expression": "timida",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Se puder.",
+          "expression": "neutra",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Já faz muito tempo que alguém pergunta isso.",
+          "expression": "sorriso",
+          "next": "n002"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "O que aconteceu com seu corpo?",
+          "expression": "pensativa",
+          "next": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "São coisas que não consegui deixar desaparecer.",
+          "expression": "sombras",
+          "next": "n009"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Coisas?",
+          "expression": "surpresa",
+          "next": "n010"
+        },
+        {
+          "id": "n010",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Histórias.",
+          "expression": "triste",
+          "next": "n002"
+        },
+        {
+          "id": "n011",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Desculpe. Não sei se deveria estar aqui.",
+          "expression": "assustada",
+          "next": "n012"
+        },
+        {
+          "id": "n012",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Está tudo bem.",
+          "expression": "triste",
+          "next": "n013"
+        },
+        {
+          "id": "n013",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Eu não quis ser grosseira.",
+          "expression": "vulneravel",
+          "next": "n014"
+        },
+        {
+          "id": "n014",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Eu sei. Não precisa explicar.",
+          "expression": "timida",
+          "next": "n015"
+        },
+        {
+          "id": "n015",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "A Fantasma se recolhe parcialmente à sombra da estante.",
+          "next": "n002"
+        },
+        {
+          "id": "n016",
+          "type": "end",
+          "effects": [],
+          "next_scene": "c11_fotografia"
+        }
+      ]
+    },
+    {
+      "id": "c11_fotografia",
+      "number": 11,
+      "title": "A Fotografia Sem Nome",
+      "act": "ato_ii",
+      "location": "corredor_esquecidos",
+      "optional": true,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "repeat_if_interactable",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Natasha encontra uma fotografia entre livros caídos. O espaço onde deveria existir um nome está coberto por tinta negra.",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "choice",
+          "prompt": "Investigar a fotografia?",
+          "options": [
+            {
+              "id": "n002_op1",
+              "text": "Examinar a imagem e o verso",
+              "next": "n004",
+              "effects": [
+                {
+                  "type": "give_item",
+                  "item": "fotografia_sem_nome"
+                },
+                {
+                  "type": "unlock_memory",
+                  "memory": "escolha"
+                },
+                {
+                  "type": "set_flag",
+                  "key": "fotografia_coletada",
+                  "value": true
+                },
+                {
+                  "type": "set_flag",
+                  "key": "memoria_escolha",
+                  "value": true
+                }
+              ]
+            },
+            {
+              "id": "n002_op2",
+              "text": "Deixar a fotografia",
+              "next": "n015"
+            }
+          ]
+        },
+        {
+          "id": "n003",
+          "type": "join",
+          "next": "n016"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Uma fotografia antiga...",
+          "expression": "pensativa",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Alguém fez questão de apagar quem era.",
+          "expression": "seria",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Ao tocar a fotografia, Natasha ouve uma conversa que não se lembra de ter vivido.",
+          "next": "n007"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "voz_escriba",
+          "text": "Essa história chegou ao seu encerramento.",
+          "next": "n008",
+          "expression": "neutro"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "natasha_memoria",
+          "text": "Não é porque você escreveu o final que ela concordou com isso.",
+          "next": "n009",
+          "expression": "neutra"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "voz_escriba",
+          "text": "Uma história sem conclusão é uma história condenada.",
+          "next": "n010",
+          "expression": "neutro"
+        },
+        {
+          "id": "n010",
+          "type": "line",
+          "speaker": "natasha_memoria",
+          "text": "Então deixe que ela encontre a própria conclusão.",
+          "next": "n011",
+          "expression": "neutra"
+        },
+        {
+          "id": "n011",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "A memória se desfaz.",
+          "next": "n012"
+        },
+        {
+          "id": "n012",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Eu estava discutindo com alguém...",
+          "expression": "assustada",
+          "next": "n013"
+        },
+        {
+          "id": "n013",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "E aquela voz...",
+          "expression": "pensativa",
+          "next": "n014"
+        },
+        {
+          "id": "n014",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Quem era você?",
+          "expression": "triste",
+          "next": "n003"
+        },
+        {
+          "id": "n015",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Talvez seja melhor não mexer nisso agora.",
+          "expression": "neutra",
+          "next": "n003"
+        },
+        {
+          "id": "n016",
+          "type": "end",
+          "effects": [],
+          "next_scene": "c12_medalhao"
+        }
+      ]
+    },
+    {
+      "id": "c12_medalhao",
+      "number": 12,
+      "title": "O Medalhão da Fantasma",
+      "act": "ato_ii",
+      "location": "corredor_esquecidos",
+      "optional": true,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "repeat_if_interactable",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Entre as páginas de um livro caído, Natasha encontra um medalhão antigo.",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "choice",
+          "prompt": "O que Natasha faz com o medalhão?",
+          "options": [
+            {
+              "id": "n002_op1",
+              "text": "Devolver o medalhão à Fantasma",
+              "next": "n004",
+              "effects": [
+                {
+                  "type": "remove_item",
+                  "item": "medalhao_fantasma"
+                },
+                {
+                  "type": "set_flag",
+                  "key": "medalhao_devolvido",
+                  "value": true
+                },
+                {
+                  "type": "set_flag",
+                  "key": "fantasma_confia",
+                  "value": true
+                }
+              ]
+            },
+            {
+              "id": "n002_op2",
+              "text": "Guardar o medalhão para depois",
+              "next": "n016",
+              "effects": [
+                {
+                  "type": "give_item",
+                  "item": "medalhao_fantasma"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "n003",
+          "type": "join",
+          "next": "n017"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Tem alguma coisa aqui.",
+          "expression": "pensativa",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "O metal está frio e ligeiramente danificado. Dentro dele, há um espaço vazio onde provavelmente havia um retrato.",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Encontrei isto perto das estantes. É seu?",
+          "expression": "neutra",
+          "next": "n007"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Eu pensei que tivesse perdido.",
+          "expression": "assustada",
+          "next": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Você o reconhece?",
+          "expression": "pensativa",
+          "next": "n009"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Era a única coisa que eu tinha quando cheguei aqui.",
+          "expression": "triste",
+          "next": "n010"
+        },
+        {
+          "id": "n010",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Quer ficar com ele?",
+          "expression": "neutra",
+          "next": "n011"
+        },
+        {
+          "id": "n011",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Você não vai pedir nada em troca?",
+          "expression": "timida",
+          "next": "n012"
+        },
+        {
+          "id": "n012",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Deveria?",
+          "expression": "surpresa",
+          "next": "n013"
+        },
+        {
+          "id": "n013",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Não... Desculpe.",
+          "expression": "timida",
+          "next": "n014"
+        },
+        {
+          "id": "n014",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Você pede desculpas por tudo.",
+          "expression": "neutra",
+          "next": "n015"
+        },
+        {
+          "id": "n015",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "É um hábito difícil de abandonar.",
+          "expression": "sorriso",
+          "next": "n003"
+        },
+        {
+          "id": "n016",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Parece importante. Talvez eu deva descobrir de quem é.",
+          "expression": "pensativa",
+          "next": "n003"
+        },
+        {
+          "id": "n017",
+          "type": "condition",
+          "test": {
+            "flag": "medalhao_devolvido",
+            "equals": true
+          },
+          "then": "n019",
+          "else": "n018"
+        },
+        {
+          "id": "n018",
+          "type": "join",
+          "next": "n023"
+        },
+        {
+          "id": "n019",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Também queria me desculpar se a assustei antes.",
+          "expression": "vulneravel",
+          "next": "n020"
+        },
+        {
+          "id": "n020",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Você ficou assustada.",
+          "expression": "timida",
+          "next": "n021"
+        },
+        {
+          "id": "n021",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Mas isso não significa que eu devesse fazer você se sentir pior.",
+          "expression": "seria",
+          "next": "n022"
+        },
+        {
+          "id": "n022",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Obrigada.",
+          "expression": "sorriso",
+          "next": "n018"
+        },
+        {
+          "id": "n023",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Algumas pessoas chegam aqui e nunca encontram o caminho de volta.",
+          "expression": "triste",
+          "next": "n024"
+        },
+        {
+          "id": "n024",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Estão mortas?",
+          "expression": "pensativa",
+          "next": "n025"
+        },
+        {
+          "id": "n025",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Não sei se essa palavra é suficiente.",
+          "expression": "sombras",
+          "next": "n026"
+        },
+        {
+          "id": "n026",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "E o que acontece com elas?",
+          "expression": "pensativa",
+          "next": "n027"
+        },
+        {
+          "id": "n027",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Às vezes seus livros são fechados. Às vezes seus nomes desaparecem.",
+          "expression": "triste",
+          "next": "n028"
+        },
+        {
+          "id": "n028",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "O que isso tem a ver com você?",
+          "expression": "seria",
+          "next": "n029"
+        },
+        {
+          "id": "n029",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Eu conseguia ouvir as histórias delas. Mesmo depois que as páginas ficavam vazias.",
+          "expression": "sombras",
+          "next": "n030"
+        },
+        {
+          "id": "n030",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Ela estende uma mão coberta pelas sombras.",
+          "next": "n031"
+        },
+        {
+          "id": "n031",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Tentei guardá-las. As lembranças. Os nomes. Tudo o que ainda podia alcançar.",
+          "expression": "triste",
+          "next": "n032"
+        },
+        {
+          "id": "n032",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Você absorveu o que estava sendo apagado?",
+          "expression": "surpresa",
+          "next": "n033"
+        },
+        {
+          "id": "n033",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Eu não sabia fazer de outro jeito.",
+          "expression": "timida",
+          "next": "n034"
+        },
+        {
+          "id": "n034",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "E ninguém tentou ajudá-la?",
+          "expression": "vulneravel",
+          "next": "n035"
+        },
+        {
+          "id": "n035",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Você tentou.",
+          "expression": "triste",
+          "next": "n036"
+        },
+        {
+          "id": "n036",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Eu?",
+          "expression": "surpresa",
+          "next": "n037"
+        },
+        {
+          "id": "n037",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Não se lembra?",
+          "expression": "timida",
+          "next": "n038"
+        },
+        {
+          "id": "n038",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não.",
+          "expression": "vulneravel",
+          "next": "n039"
+        },
+        {
+          "id": "n039",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Ah...",
+          "expression": "triste",
+          "next": "n040"
+        },
+        {
+          "id": "n040",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Nós já nos conhecemos?",
+          "expression": "pensativa",
+          "next": "n041"
+        },
+        {
+          "id": "n041",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Sim.",
+          "expression": "neutra",
+          "next": "n042"
+        },
+        {
+          "id": "n042",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Então me conte o que aconteceu.",
+          "expression": "determinada",
+          "next": "n043"
+        },
+        {
+          "id": "n043",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Eu gostaria. Mas as lembranças se misturam aqui dentro. Algumas são minhas. Outras pertencem a pessoas que já não consigo encontrar.",
+          "expression": "triste",
+          "next": "n044"
+        },
+        {
+          "id": "n044",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Você lembra de alguma coisa que possa me ajudar?",
+          "expression": "neutra",
+          "next": "n045"
+        },
+        {
+          "id": "n045",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Você procurava um livro. Não um livro qualquer.",
+          "expression": "neutra",
+          "next": "n046"
+        },
+        {
+          "id": "n046",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Qual?",
+          "expression": "surpresa",
+          "next": "n047"
+        },
+        {
+          "id": "n047",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "O seu.",
+          "expression": "sombras",
+          "next": "n048"
+        },
+        {
+          "id": "n048",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "O meu livro?",
+          "expression": "pensativa",
+          "next": "n049"
+        },
+        {
+          "id": "n049",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Você disse que, se conseguisse encontrá-lo, talvez pudesse terminar o que começou.",
+          "expression": "triste",
+          "next": "n050"
+        },
+        {
+          "id": "n050",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Terminar o quê?",
+          "expression": "seria",
+          "next": "n051"
+        },
+        {
+          "id": "n051",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Salvar os nomes que ainda restavam.",
+          "expression": "triste",
+          "next": "n052"
+        },
+        {
+          "id": "n052",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "A Fantasma aponta para o salão, na direção de uma área escondida entre as estantes.",
+          "next": "n053"
+        },
+        {
+          "id": "n053",
+          "type": "end",
+          "effects": [
+            {
+              "type": "set_flag",
+              "key": "fantasma_revelou_passado",
+              "value": true
+            }
+          ],
+          "next_scene": "c13_passagem"
+        }
+      ]
+    },
+    {
+      "id": "c13_passagem",
+      "number": 13,
+      "title": "Uma Passagem Onde Não Deveria Existir",
+      "act": "ato_iii",
+      "location": "salao_principal",
+      "optional": false,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "once",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "De volta ao salão, Natasha percebe que uma das estantes possui marcas de uso no chão. Um livro sem título destoa de todos os outros.",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "A Fantasma disse que eu procurava meu próprio livro...",
+          "expression": "pensativa",
+          "next": "n003"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Rodion também falou sobre registros. Talvez esteja tudo relacionado.",
+          "expression": "seria",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Este não está em ordem alfabética.",
+          "expression": "pensativa",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Natasha puxa a lombada sem título. A estante se move, revelando uma passagem estreita.",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Então você estava aqui o tempo todo.",
+          "expression": "surpresa",
+          "next": "n007"
+        },
+        {
+          "id": "n007",
+          "type": "condition",
+          "test": {
+            "flag": "memoria_retorno",
+            "equals": true
+          },
+          "then": "n009",
+          "else": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "join",
+          "next": "n011"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Procure pelos nomes que faltam...",
+          "expression": "pensativa",
+          "next": "n010"
+        },
+        {
+          "id": "n010",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Talvez a carta não estivesse falando apenas de pessoas.",
+          "expression": "seria",
+          "next": "n008"
+        },
+        {
+          "id": "n011",
+          "type": "end",
+          "effects": [
+            {
+              "type": "set_flag",
+              "key": "passagem_descoberta",
+              "value": true
+            },
+            {
+              "type": "unlock_location",
+              "location": "arquivo_proibido"
+            }
+          ],
+          "next_scene": "c14_escadaria_oculta"
+        }
+      ]
+    },
+    {
+      "id": "c14_escadaria_oculta",
+      "number": 14,
+      "title": "O Caminho até o Arquivo",
+      "act": "ato_iii",
+      "location": "arquivo_proibido",
+      "optional": false,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "once",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Atrás da estante, Natasha encontra uma escadaria estreita. O ar que vem de baixo tem cheiro de tinta, cera e pergaminho antigo.",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Isso definitivamente não faz parte da área de visitantes.",
+          "expression": "seria",
+          "next": "n003"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "inscricao",
+          "text": "O que foi escrito pode ser escondido. O que foi lembrado pode ser encontrado.",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Lembrado...",
+          "expression": "pensativa",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Uma pressão familiar percorre sua cabeça. Nenhuma memória se forma.",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "choice",
+          "prompt": "Descer ao Arquivo Proibido?",
+          "options": [
+            {
+              "id": "n006_op1",
+              "text": "Descer a escadaria",
+              "next": "n008",
+              "effects": [
+                {
+                  "type": "set_flag",
+                  "key": "entrou_arquivo",
+                  "value": true
+                }
+              ]
+            },
+            {
+              "id": "n006_op2",
+              "text": "Tomar coragem e descer",
+              "next": "n009",
+              "effects": [
+                {
+                  "type": "set_flag",
+                  "key": "entrou_arquivo",
+                  "value": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "n007",
+          "type": "join",
+          "next": "n010"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Preciso saber o que há lá embaixo.",
+          "expression": "determinada",
+          "next": "n007"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não importa o que eu encontre. Preciso saber.",
+          "expression": "seria",
+          "next": "n007"
+        },
+        {
+          "id": "n010",
+          "type": "end",
+          "effects": [],
+          "next_scene": "c15_arquivo"
+        }
+      ]
+    },
+    {
+      "id": "c15_arquivo",
+      "number": 15,
+      "title": "O Arquivo Proibido",
+      "act": "ato_iii",
+      "location": "arquivo_proibido",
+      "optional": false,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "once",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "A sala é silenciosa e quase perfeitamente simétrica. Livros ocupam nichos individuais, protegidos por molduras ornamentadas.",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não parecem livros comuns.",
+          "expression": "pensativa",
+          "next": "n003"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Alguns têm nomes gravados nas capas; outros apresentam rasuras e tinta preta.",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "São registros de pessoas...",
+          "expression": "surpresa",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Uma sequência de datas e acontecimentos ocupa as páginas de um dos livros. Não há narrador. Apenas uma vida, fragmentada em anotações.",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Quem escreveu tudo isso?",
+          "expression": "seria",
+          "next": "n007"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "No centro da sala, um pedestal sustenta um volume de capa escura, adornado por detalhes dourados.",
+          "next": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não...",
+          "expression": "assustada",
+          "next": "n009"
+        },
+        {
+          "id": "n009",
+          "type": "end",
+          "effects": [],
+          "next_scene": "c16_livro_natasha"
+        }
+      ]
+    },
+    {
+      "id": "c16_livro_natasha",
+      "number": 16,
+      "title": "Natasha Rostova",
+      "act": "ato_iii",
+      "location": "arquivo_proibido",
+      "optional": false,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "once",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "cutscene",
+          "asset": "natasha_descobrindo_livro",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Esse é... meu nome.",
+          "expression": "assustada",
+          "next": "n003"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Ela estende a mão, mas hesita antes de tocar a capa.",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não pode ser.",
+          "expression": "vulneravel",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "O livro se abre sozinho.",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "livro",
+          "text": "Nome: Natasha Rostova.",
+          "next": "n007"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "livro",
+          "text": "Estado: Existência preservada.",
+          "next": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "livro",
+          "text": "Vínculo: Âncora ativa.",
+          "next": "n009"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "livro",
+          "text": "Memória: Registro parcialmente alterado.",
+          "next": "n010"
+        },
+        {
+          "id": "n010",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Alterado por quem?",
+          "expression": "seria",
+          "next": "n011"
+        },
+        {
+          "id": "n011",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "As páginas avançam. Natasha reconhece alguns acontecimentos, mas grandes trechos estão cobertos de tinta negra.",
+          "next": "n012"
+        },
+        {
+          "id": "n012",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Alguém escreveu minha vida...",
+          "expression": "assustada",
+          "next": "n013"
+        },
+        {
+          "id": "n013",
+          "type": "line",
+          "speaker": "livro",
+          "text": "O portador aceita vincular sua continuidade à preservação dos nomes ameaçados.",
+          "next": "n014"
+        },
+        {
+          "id": "n014",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "O portador...?",
+          "expression": "pensativa",
+          "next": "n015"
+        },
+        {
+          "id": "n015",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Abaixo da cláusula está sua assinatura.",
+          "next": "n016"
+        },
+        {
+          "id": "n016",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Eu assinei isso.",
+          "expression": "vulneravel",
+          "next": "n017"
+        },
+        {
+          "id": "n017",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Uma memória antiga irrompe, como tinta derramada sobre papel.",
+          "next": "n018"
+        },
+        {
+          "id": "n018",
+          "type": "line",
+          "speaker": "rodion_memoria",
+          "text": "Natasha, precisa compreender as consequências.",
+          "next": "n019",
+          "expression": "neutro"
+        },
+        {
+          "id": "n019",
+          "type": "line",
+          "speaker": "natasha_memoria",
+          "text": "Se não fizermos nada, eles vão desaparecer.",
+          "next": "n020",
+          "expression": "neutra"
+        },
+        {
+          "id": "n020",
+          "type": "line",
+          "speaker": "rodion_memoria",
+          "text": "O vínculo impedirá o apagamento. Mas não sei se seremos capazes de desfazê-lo.",
+          "next": "n021",
+          "expression": "neutro"
+        },
+        {
+          "id": "n021",
+          "type": "line",
+          "speaker": "natasha_memoria",
+          "text": "Então encontraremos um jeito.",
+          "next": "n022",
+          "expression": "neutra"
+        },
+        {
+          "id": "n022",
+          "type": "line",
+          "speaker": "rodion_memoria",
+          "text": "Você está confiando sua existência a uma regra que ainda não compreendemos.",
+          "next": "n023",
+          "expression": "neutro"
+        },
+        {
+          "id": "n023",
+          "type": "line",
+          "speaker": "natasha_memoria",
+          "text": "Estou confiando que essas pessoas merecem continuar existindo.",
+          "next": "n024",
+          "expression": "neutra"
+        },
+        {
+          "id": "n024",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Uma pena toca o papel. A tinta forma o nome Natasha Rostova.",
+          "next": "n025"
+        },
+        {
+          "id": "n025",
+          "type": "line",
+          "speaker": "voz_escriba",
+          "text": "Que assim seja registrado.",
+          "next": "n026",
+          "expression": "neutro"
+        },
+        {
+          "id": "n026",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "A lembrança termina.",
+          "next": "n027"
+        },
+        {
+          "id": "n027",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Eu fiz isso...",
+          "expression": "vulneravel",
+          "next": "n028"
+        },
+        {
+          "id": "n028",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Tentei protegê-los.",
+          "expression": "triste",
+          "next": "n029"
+        },
+        {
+          "id": "n029",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Natasha observa o próprio nome na capa.",
+          "next": "n030"
+        },
+        {
+          "id": "n030",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Então por que ainda estão presos?",
+          "expression": "seria",
+          "next": "n031"
+        },
+        {
+          "id": "n031",
+          "type": "end",
+          "effects": [
+            {
+              "type": "set_flag",
+              "key": "livro_natasha_descoberto",
+              "value": true
+            },
+            {
+              "type": "set_flag",
+              "key": "pacto_revelado",
+              "value": true
+            },
+            {
+              "type": "set_flag",
+              "key": "memoria_pacto",
+              "value": true
+            },
+            {
+              "type": "unlock_memory",
+              "memory": "pacto"
+            }
+          ],
+          "next_scene": "c17_registros"
+        }
+      ]
+    },
+    {
+      "id": "c17_registros",
+      "number": 17,
+      "title": "As Histórias Interrompidas",
+      "act": "ato_iii",
+      "location": "arquivo_proibido",
+      "optional": false,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "once",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Ao redor do pedestal, Natasha examina livros que estão ligados ao seu registro por marcas douradas.",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "line",
+          "speaker": "registro",
+          "text": "Preservado sob a Âncora Rostova.",
+          "next": "n003"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Todos esses nomes...",
+          "expression": "surpresa",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Cada livro está ligado ao seu por uma marca de tinta dourada.",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Eu os impedi de desaparecer.",
+          "expression": "pensativa",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "registro",
+          "text": "Saída não autorizada. História sob custódia.",
+          "next": "n007"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Mas não permiti que partissem.",
+          "expression": "triste",
+          "next": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Ela começa a compreender a diferença entre preservar uma existência e conceder liberdade a quem a possui.",
+          "next": "n009"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "O pacto não terminou o sofrimento deles.",
+          "expression": "seria",
+          "next": "n010"
+        },
+        {
+          "id": "n010",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Apenas impediu que acabasse de uma vez.",
+          "expression": "vulneravel",
+          "next": "n011"
+        },
+        {
+          "id": "n011",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Alguns ainda foram apagados...",
+          "expression": "triste",
+          "next": "n012"
+        },
+        {
+          "id": "n012",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Natasha descobre que o pacto salvou apenas os registros protegidos por sua âncora. Outros continuaram vulneráveis ao Escriba.",
+          "next": "n013"
+        },
+        {
+          "id": "n013",
+          "type": "end",
+          "effects": [],
+          "next_scene": "c18_clausula"
+        }
+      ]
+    },
+    {
+      "id": "c18_clausula",
+      "number": 18,
+      "title": "A Cláusula Esquecida",
+      "act": "ato_iii",
+      "location": "arquivo_proibido",
+      "optional": true,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "repeat_if_interactable",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Em um nicho lateral existe um documento antigo sem nome, data ou assinatura.",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "choice",
+          "prompt": "Investigar o documento sem título?",
+          "options": [
+            {
+              "id": "n002_op1",
+              "text": "Ler as cláusulas antigas",
+              "next": "n004",
+              "effects": [
+                {
+                  "type": "set_flag",
+                  "key": "regra_reescrita_descoberta",
+                  "value": true
+                },
+                {
+                  "type": "give_item",
+                  "item": "copia_clausula"
+                }
+              ]
+            },
+            {
+              "id": "n002_op2",
+              "text": "Ignorar e seguir",
+              "next": "n014"
+            }
+          ]
+        },
+        {
+          "id": "n003",
+          "type": "join",
+          "next": "n015"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Outro livro sem título.",
+          "expression": "pensativa",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "documento",
+          "text": "Primeira cláusula: a memória de uma existência pode ser preservada em registro.",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "documento",
+          "text": "Segunda cláusula: nenhum guardião poderá reivindicar a autoria de uma alma.",
+          "next": "n007"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "documento",
+          "text": "Terceira cláusula: quando memória, vontade e testemunho forem reunidos, o vínculo poderá ser devolvido àquele a quem a história pertence.",
+          "next": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Nenhum guardião poderá reivindicar a autoria...",
+          "expression": "pensativa",
+          "next": "n009"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Isso contradiz tudo o que acontece aqui.",
+          "expression": "seria",
+          "next": "n010"
+        },
+        {
+          "id": "n010",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "A tinta da última cláusula parece ter sido parcialmente raspada.",
+          "next": "n011"
+        },
+        {
+          "id": "n011",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "O Escriba não criou todas essas regras.",
+          "expression": "determinada",
+          "next": "n012"
+        },
+        {
+          "id": "n012",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Ele escolheu quais delas seriam obedecidas.",
+          "expression": "seria",
+          "next": "n013"
+        },
+        {
+          "id": "n013",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Memória... vontade... testemunho.",
+          "expression": "pensativa",
+          "next": "n003"
+        },
+        {
+          "id": "n014",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Por enquanto, preciso conversar com Rodion.",
+          "expression": "seria",
+          "next": "n003"
+        },
+        {
+          "id": "n015",
+          "type": "condition",
+          "test": {
+            "all": [
+              {
+                "flag": "regra_reescrita_descoberta",
+                "equals": true
+              },
+              {
+                "flag": "fantasma_confia",
+                "equals": true
+              }
+            ]
+          },
+          "then": "n017",
+          "else": "n016"
+        },
+        {
+          "id": "n016",
+          "type": "join",
+          "next": "n020"
+        },
+        {
+          "id": "n017",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Ela guardou as histórias que ele tentou apagar.",
+          "expression": "pensativa",
+          "next": "n018"
+        },
+        {
+          "id": "n018",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "E eu me lembro de ter aceitado o pacto.",
+          "expression": "seria",
+          "next": "n019"
+        },
+        {
+          "id": "n019",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Talvez exista outra maneira.",
+          "expression": "determinada",
+          "next": "n016"
+        },
+        {
+          "id": "n020",
+          "type": "end",
+          "effects": [],
+          "next_scene": "c19_confissao_rodion"
+        }
+      ]
+    },
+    {
+      "id": "c19_confissao_rodion",
+      "number": 19,
+      "title": "A Confissão de Rodion",
+      "act": "ato_iii",
+      "location": "balcao_rodion",
+      "optional": false,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "once",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "cutscene",
+          "asset": "rodion_revelacao",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Rodion percebe imediatamente que Natasha encontrou seu registro.",
+          "next": "n003"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Você encontrou.",
+          "expression": "melancolico",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Meu livro.",
+          "expression": "seria",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Sim.",
+          "expression": "serio",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Você sabia onde estava.",
+          "expression": "irritada",
+          "next": "n007"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Sabia.",
+          "expression": "melancolico",
+          "next": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "E sabia que eu já tinha vindo aqui.",
+          "expression": "seria",
+          "next": "n009"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Natasha...",
+          "expression": "melancolico",
+          "next": "n010"
+        },
+        {
+          "id": "n010",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não. Agora você vai me ouvir.",
+          "expression": "determinada",
+          "next": "n011"
+        },
+        {
+          "id": "n011",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Eu fiz um pacto. Vinculei meu nome a todas aquelas almas.",
+          "expression": "seria",
+          "next": "n012"
+        },
+        {
+          "id": "n012",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Você tentou salvá-las.",
+          "expression": "melancolico",
+          "next": "n013"
+        },
+        {
+          "id": "n013",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "E você me ajudou.",
+          "expression": "pensativa",
+          "next": "n014"
+        },
+        {
+          "id": "n014",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Ajudei.",
+          "expression": "serio",
+          "next": "n015"
+        },
+        {
+          "id": "n015",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Então por que estou aqui sem lembrar de nada?",
+          "expression": "irritada",
+          "next": "n016"
+        },
+        {
+          "id": "n016",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Porque nossa tentativa fracassou.",
+          "expression": "melancolico",
+          "next": "n017"
+        },
+        {
+          "id": "n017",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Descobrimos tarde demais que o Escriba poderia usar o vínculo para manter aquelas almas sob custódia.",
+          "expression": "serio",
+          "next": "n018"
+        },
+        {
+          "id": "n018",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "E o que aconteceu depois?",
+          "expression": "pensativa",
+          "next": "n019"
+        },
+        {
+          "id": "n019",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Você decidiu procurar uma maneira de desfazer o controle sem destruir os registros.",
+          "expression": "reflexivo",
+          "next": "n020"
+        },
+        {
+          "id": "n020",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Conseguimos?",
+          "expression": "vulneravel",
+          "next": "n021"
+        },
+        {
+          "id": "n021",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Não. Ele encontrou você antes.",
+          "expression": "melancolico",
+          "next": "n022"
+        },
+        {
+          "id": "n022",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "O Escriba.",
+          "expression": "seria",
+          "next": "n023"
+        },
+        {
+          "id": "n023",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Alterou suas memórias. E a afastou do Arquivo.",
+          "expression": "serio",
+          "next": "n024"
+        },
+        {
+          "id": "n024",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Por que não me apagou também?",
+          "expression": "pensativa",
+          "next": "n025"
+        },
+        {
+          "id": "n025",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Porque sua existência sustenta o pacto. Se a destruísse, perderia o controle sobre os registros protegidos.",
+          "expression": "serio",
+          "next": "n026"
+        },
+        {
+          "id": "n026",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "E você?",
+          "expression": "seria",
+          "next": "n027"
+        },
+        {
+          "id": "n027",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Eu permaneci aqui.",
+          "expression": "melancolico",
+          "next": "n028"
+        },
+        {
+          "id": "n028",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Sem fazer nada?",
+          "expression": "irritada",
+          "next": "n029"
+        },
+        {
+          "id": "n029",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Tentei impedir o que aconteceu. Não fui capaz.",
+          "expression": "melancolico",
+          "next": "n030"
+        },
+        {
+          "id": "n030",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Então decidiu esconder tudo de mim.",
+          "expression": "seria",
+          "next": "n031"
+        },
+        {
+          "id": "n031",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Pensei que, sem aquelas lembranças, você não precisaria enfrentar o mesmo destino novamente.",
+          "expression": "reflexivo",
+          "next": "n032"
+        },
+        {
+          "id": "n032",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Você decidiu isso por mim.",
+          "expression": "seria",
+          "next": "n033"
+        },
+        {
+          "id": "n033",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Sim.",
+          "expression": "melancolico",
+          "next": "n034"
+        },
+        {
+          "id": "n034",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não tinha esse direito.",
+          "expression": "seria",
+          "next": "n035"
+        },
+        {
+          "id": "n035",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Não.",
+          "expression": "melancolico",
+          "next": "n036"
+        },
+        {
+          "id": "n036",
+          "type": "choice",
+          "prompt": "Como Natasha responde à confissão?",
+          "options": [
+            {
+              "id": "n036_op1",
+              "text": "Confrontá-lo",
+              "next": "n038",
+              "effects": [
+                {
+                  "type": "set_value",
+                  "key": "rodion_confissao_resposta",
+                  "value": "confronto"
+                }
+              ]
+            },
+            {
+              "id": "n036_op2",
+              "text": "Reconhecer sem perdoar",
+              "next": "n040",
+              "effects": [
+                {
+                  "type": "set_value",
+                  "key": "rodion_confissao_resposta",
+                  "value": "limites"
+                }
+              ]
+            },
+            {
+              "id": "n036_op3",
+              "text": "Oferecer uma chance",
+              "next": "n042",
+              "effects": [
+                {
+                  "type": "set_value",
+                  "key": "rodion_confissao_resposta",
+                  "value": "reconciliacao"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "n037",
+          "type": "join",
+          "next": "n044"
+        },
+        {
+          "id": "n038",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Você teve medo de me perder e preferiu me deixar sem saber quem eu era.",
+          "expression": "irritada",
+          "next": "n039"
+        },
+        {
+          "id": "n039",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Sim. E terei de conviver com isso, independentemente do que decidir agora.",
+          "expression": "melancolico",
+          "next": "n037"
+        },
+        {
+          "id": "n040",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Sei que tentou me proteger. Isso não torna o que fez correto.",
+          "expression": "seria",
+          "next": "n041"
+        },
+        {
+          "id": "n041",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Não espero que torne. Apenas precisava parar de fingir que o silêncio era uma virtude.",
+          "expression": "reflexivo",
+          "next": "n037"
+        },
+        {
+          "id": "n042",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não podemos mudar o que aconteceu. Mas você ainda pode me ajudar.",
+          "expression": "determinada",
+          "next": "n043"
+        },
+        {
+          "id": "n043",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Se me permitir, desta vez não esconderei aquilo que sei.",
+          "expression": "reflexivo",
+          "next": "n037"
+        },
+        {
+          "id": "n044",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "O que acontece se eu destruir meu livro?",
+          "expression": "seria",
+          "next": "n045"
+        },
+        {
+          "id": "n045",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "O vínculo se desfaz. As almas são libertadas.",
+          "expression": "serio",
+          "next": "n046"
+        },
+        {
+          "id": "n046",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "E eu?",
+          "expression": "vulneravel",
+          "next": "n047"
+        },
+        {
+          "id": "n047",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Não permanecerá.",
+          "expression": "melancolico",
+          "next": "n048"
+        },
+        {
+          "id": "n048",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "E se eu não fizer nada?",
+          "expression": "pensativa",
+          "next": "n049"
+        },
+        {
+          "id": "n049",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Você continuará existindo. Mas o pacto continuará ativo.",
+          "expression": "serio",
+          "next": "n050"
+        },
+        {
+          "id": "n050",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Essas são minhas únicas escolhas?",
+          "expression": "seria",
+          "next": "n051"
+        },
+        {
+          "id": "n051",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "São as duas que conheço com certeza.",
+          "expression": "reflexivo",
+          "next": "n052"
+        },
+        {
+          "id": "n052",
+          "type": "condition",
+          "test": {
+            "flag": "regra_reescrita_descoberta",
+            "equals": true
+          },
+          "then": "n054",
+          "else": "n053"
+        },
+        {
+          "id": "n053",
+          "type": "join",
+          "next": "n060"
+        },
+        {
+          "id": "n054",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Encontrei um documento que fala sobre devolver a autoria aos registros.",
+          "expression": "pensativa",
+          "next": "n055"
+        },
+        {
+          "id": "n055",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Você encontrou a cláusula original?",
+          "expression": "pensativo",
+          "next": "n056"
+        },
+        {
+          "id": "n056",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Então você sabe o que é.",
+          "expression": "seria",
+          "next": "n057"
+        },
+        {
+          "id": "n057",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Conheço referências a ela. Nunca encontrei o texto completo.",
+          "expression": "reflexivo",
+          "next": "n058"
+        },
+        {
+          "id": "n058",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Por que não me contou?",
+          "expression": "irritada",
+          "next": "n059"
+        },
+        {
+          "id": "n059",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Porque não sabia se ainda existia. Mas já escondi certezas demais para agora esconder uma possibilidade.",
+          "expression": "melancolico",
+          "next": "n053"
+        },
+        {
+          "id": "n060",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Rodion abre a gaveta trancada e entrega a Natasha suas anotações sobre a primeira tentativa.",
+          "next": "n061"
+        },
+        {
+          "id": "n061",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Não posso escolher por você.",
+          "expression": "serio",
+          "next": "n062"
+        },
+        {
+          "id": "n062",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Mas posso ajudá-la a chegar até ele.",
+          "expression": "reflexivo",
+          "next": "n063"
+        },
+        {
+          "id": "n063",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Até o Escriba?",
+          "expression": "pensativa",
+          "next": "n064"
+        },
+        {
+          "id": "n064",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Ele mantém seu registro central na Câmara dos Registros.",
+          "expression": "serio",
+          "next": "n065"
+        },
+        {
+          "id": "n065",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Onde fica?",
+          "expression": "seria",
+          "next": "n066"
+        },
+        {
+          "id": "n066",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Atrás da última passagem do Arquivo.",
+          "expression": "neutro",
+          "next": "n067"
+        },
+        {
+          "id": "n067",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "E por que está me dizendo isso agora?",
+          "expression": "pensativa",
+          "next": "n068"
+        },
+        {
+          "id": "n068",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Porque você tem direito de saber.",
+          "expression": "reflexivo",
+          "next": "n069"
+        },
+        {
+          "id": "n069",
+          "type": "end",
+          "effects": [
+            {
+              "type": "set_flag",
+              "key": "rodion_confessou",
+              "value": true
+            },
+            {
+              "type": "give_item",
+              "item": "anotacoes_rodion"
+            },
+            {
+              "type": "unlock_location",
+              "location": "camara_registros"
+            }
+          ],
+          "next_scene": "c20_caminho_sem_retorno"
+        }
+      ]
+    },
+    {
+      "id": "c20_caminho_sem_retorno",
+      "number": 20,
+      "title": "O Caminho sem Retorno",
+      "act": "ato_iv",
+      "location": "arquivo_proibido",
+      "optional": false,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "once",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Natasha retorna ao Arquivo. A passagem para a Câmara dos Registros está aberta.",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "O corredor que conduz à câmara parece longo demais para caber sob a biblioteca.",
+          "next": "n003"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Rodion disse que era aqui.",
+          "expression": "seria",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "condition",
+          "test": {
+            "flag": "memoria_retorno",
+            "equals": true
+          },
+          "then": "n006",
+          "else": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "join",
+          "next": "n007"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Eu deixei aquela carta porque sabia que poderia esquecer.",
+          "expression": "pensativa",
+          "next": "n005"
+        },
+        {
+          "id": "n007",
+          "type": "condition",
+          "test": {
+            "flag": "memoria_escolha",
+            "equals": true
+          },
+          "then": "n009",
+          "else": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "join",
+          "next": "n010"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Eu já enfrentei alguém por causa desses registros.",
+          "expression": "seria",
+          "next": "n008"
+        },
+        {
+          "id": "n010",
+          "type": "condition",
+          "test": {
+            "flag": "memoria_pacto",
+            "equals": true
+          },
+          "then": "n012",
+          "else": "n011"
+        },
+        {
+          "id": "n011",
+          "type": "join",
+          "next": "n013"
+        },
+        {
+          "id": "n012",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "E fui eu quem aceitou o pacto.",
+          "expression": "vulneravel",
+          "next": "n011"
+        },
+        {
+          "id": "n013",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Natasha respira fundo.",
+          "next": "n014"
+        },
+        {
+          "id": "n014",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Seja qual for a resposta, preciso ouvi-la de quem provocou tudo isso.",
+          "expression": "determinada",
+          "next": "n015"
+        },
+        {
+          "id": "n015",
+          "type": "choice",
+          "prompt": "Entrar na Câmara dos Registros ou continuar investigando?",
+          "options": [
+            {
+              "id": "entrar_camara",
+              "text": "Entrar na Câmara",
+              "next_scene": "c21_escriba_aparicao",
+              "effects": [
+                {
+                  "type": "set_flag",
+                  "key": "confronto_iniciado",
+                  "value": true
+                }
+              ]
+            },
+            {
+              "id": "revisitar",
+              "text": "Investigar a biblioteca antes do confronto",
+              "action": "open_exploration",
+              "location": "arquivo_proibido",
+              "resume_scene": "c20_caminho_sem_retorno"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c21_escriba_aparicao",
+      "number": 21,
+      "title": "A Primeira Aparição do Escriba",
+      "act": "ato_iv",
+      "location": "camara_registros",
+      "optional": false,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "once",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "cutscene",
+          "asset": "escriba_primeira_aparicao",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Na Câmara, livros flutuam conectados por correntes. Uma figura alta e sem rosto permanece imóvel sob um halo de metal envelhecido.",
+          "next": "n003"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Natasha Rostova.",
+          "expression": "neutro",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Você sabe quem sou.",
+          "expression": "seria",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Seu nome está registrado.",
+          "expression": "neutro",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Então sabe por que vim.",
+          "expression": "determinada",
+          "next": "n007"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Você procura respostas que já recebeu.",
+          "expression": "neutro",
+          "next": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Respostas das quais não me lembro.",
+          "expression": "seria",
+          "next": "n009"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "A memória é um instrumento imperfeito.",
+          "expression": "neutro",
+          "next": "n010"
+        },
+        {
+          "id": "n010",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Especialmente quando alguém decide apagá-la.",
+          "expression": "irritada",
+          "next": "n011"
+        },
+        {
+          "id": "n011",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "O que foi retirado de você representava um risco.",
+          "expression": "condenando",
+          "next": "n012"
+        },
+        {
+          "id": "n012",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Para quem?",
+          "expression": "seria",
+          "next": "n013"
+        },
+        {
+          "id": "n013",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Para a continuidade dos registros.",
+          "expression": "neutro",
+          "next": "n014"
+        },
+        {
+          "id": "n014",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Ou para seu controle sobre eles?",
+          "expression": "determinada",
+          "next": "n015"
+        },
+        {
+          "id": "n015",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Não são coisas tão diferentes quanto imagina.",
+          "expression": "ameacador",
+          "next": "n016"
+        },
+        {
+          "id": "n016",
+          "type": "end",
+          "effects": [
+            {
+              "type": "set_flag",
+              "key": "escriba_encontrado",
+              "value": true
+            }
+          ],
+          "next_scene": "c22_apagamento"
+        }
+      ]
+    },
+    {
+      "id": "c22_apagamento",
+      "number": 22,
+      "title": "O Preço do Esquecimento",
+      "act": "ato_iv",
+      "location": "camara_registros",
+      "optional": false,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "once",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Observe.",
+          "expression": "condenando",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "O Escriba ergue um livro quase completamente negro. Uma forma humana translúcida surge perto do altar, ligada ao registro por fios de tinta.",
+          "next": "n003"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Quem é essa pessoa?",
+          "expression": "assustada",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Uma história que já não pode ser preservada.",
+          "expression": "neutro",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Ela está tentando falar.",
+          "expression": "vulneravel",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "A instabilidade sempre produz resistência.",
+          "expression": "neutro",
+          "next": "n007"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Pare.",
+          "expression": "seria",
+          "next": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Seu registro não possui âncora. Quando o nome se perder, nada aqui poderá sustentá-lo.",
+          "expression": "condenando",
+          "next": "n009"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Então não o apague!",
+          "expression": "irritada",
+          "next": "n010"
+        },
+        {
+          "id": "n010",
+          "type": "cutscene",
+          "asset": "escriba_apagando_alma",
+          "next": "n011"
+        },
+        {
+          "id": "n011",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "O Escriba passa a pena sobre uma linha. O nome desaparece, e a forma humana se desfaz em páginas vazias.",
+          "next": "n012"
+        },
+        {
+          "id": "n012",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Você a destruiu!",
+          "expression": "irritada",
+          "next": "n013"
+        },
+        {
+          "id": "n013",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Encerrei um registro que já estava se desfazendo.",
+          "expression": "neutro",
+          "next": "n014"
+        },
+        {
+          "id": "n014",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Você nem sequer tentou salvá-la.",
+          "expression": "seria",
+          "next": "n015"
+        },
+        {
+          "id": "n015",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Não confundirei preservação com a insistência em manter aquilo que já não possui forma.",
+          "expression": "condenando",
+          "next": "n016"
+        },
+        {
+          "id": "n016",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Ela ainda tinha vontade. Eu ouvi!",
+          "expression": "determinada",
+          "next": "n017"
+        },
+        {
+          "id": "n017",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "A vontade não garante continuidade.",
+          "expression": "neutro",
+          "next": "n018"
+        },
+        {
+          "id": "n018",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "E você acha que isso lhe dá o direito de escolher por ela?",
+          "expression": "irritada",
+          "next": "n019"
+        },
+        {
+          "id": "n019",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Alguém precisa preservar a ordem.",
+          "expression": "condenando",
+          "next": "n020"
+        },
+        {
+          "id": "n020",
+          "type": "end",
+          "effects": [
+            {
+              "type": "set_flag",
+              "key": "apagamento_testemunhado",
+              "value": true
+            }
+          ],
+          "next_scene": "c23_armadilha_pacto"
+        }
+      ]
+    },
+    {
+      "id": "c23_armadilha_pacto",
+      "number": 23,
+      "title": "A Armadilha do Pacto",
+      "act": "ato_iv",
+      "location": "camara_registros",
+      "optional": false,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "once",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "cutscene",
+          "asset": "escriba_confronto",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Você esteve aqui antes.",
+          "expression": "neutro",
+          "next": "n003"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Eu sei.",
+          "expression": "seria",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Naquela ocasião, suplicou para que os nomes fossem preservados.",
+          "expression": "neutro",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Eu queria salvá-los.",
+          "expression": "vulneravel",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "E foram salvos.",
+          "expression": "neutro",
+          "next": "n007"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Estão presos.",
+          "expression": "seria",
+          "next": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Permanecem.",
+          "expression": "neutro",
+          "next": "n009"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Você não entende a diferença.",
+          "expression": "irritada",
+          "next": "n010"
+        },
+        {
+          "id": "n010",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Entendo que a liberdade é frequentemente seguida pelo esquecimento.",
+          "expression": "neutro",
+          "next": "n011"
+        },
+        {
+          "id": "n011",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Isso não significa que possa decidir por todos.",
+          "expression": "determinada",
+          "next": "n012"
+        },
+        {
+          "id": "n012",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Você também decidiu por eles, Natasha Rostova.",
+          "expression": "condenando",
+          "next": "n013"
+        },
+        {
+          "id": "n013",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Vinculou os registros à própria existência. Condenou-os a depender de um único nome.",
+          "expression": "condenando",
+          "next": "n014"
+        },
+        {
+          "id": "n014",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Eu não sabia que faria isso com eles.",
+          "expression": "vulneravel",
+          "next": "n015"
+        },
+        {
+          "id": "n015",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "A ignorância não apaga um compromisso.",
+          "expression": "neutro",
+          "next": "n016"
+        },
+        {
+          "id": "n016",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Nem transforma esse compromisso em algo justo.",
+          "expression": "seria",
+          "next": "n017"
+        },
+        {
+          "id": "n017",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Contudo, seu registro permanece. E as almas continuam existindo.",
+          "expression": "neutro",
+          "next": "n018"
+        },
+        {
+          "id": "n018",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Seu pacto pode ser encerrado. Basta destruir o próprio registro.",
+          "expression": "condenando",
+          "next": "n019"
+        },
+        {
+          "id": "n019",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "E desaparecer com ele.",
+          "expression": "triste",
+          "next": "n020"
+        },
+        {
+          "id": "n020",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Sim.",
+          "expression": "neutro",
+          "next": "n021"
+        },
+        {
+          "id": "n021",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Ou mantê-lo.",
+          "expression": "pensativa",
+          "next": "n022"
+        },
+        {
+          "id": "n022",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "E preservar o que já existe.",
+          "expression": "neutro",
+          "next": "n023"
+        },
+        {
+          "id": "n023",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Você chama isso de escolha?",
+          "expression": "seria",
+          "next": "n024"
+        },
+        {
+          "id": "n024",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Não sou responsável pelo preço de seus compromissos.",
+          "expression": "neutro",
+          "next": "n025"
+        },
+        {
+          "id": "n025",
+          "type": "end",
+          "effects": [],
+          "next_scene": "c24_terceira_possibilidade"
+        }
+      ]
+    },
+    {
+      "id": "c24_terceira_possibilidade",
+      "number": 24,
+      "title": "A Terceira Possibilidade",
+      "act": "ato_iv",
+      "location": "camara_registros",
+      "optional": false,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "once",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "condition",
+          "test": {
+            "all": [
+              {
+                "flag": "memoria_retorno",
+                "equals": true
+              },
+              {
+                "flag": "memoria_escolha",
+                "equals": true
+              },
+              {
+                "flag": "memoria_pacto",
+                "equals": true
+              },
+              {
+                "flag": "fantasma_confia",
+                "equals": true
+              },
+              {
+                "flag": "regra_reescrita_descoberta",
+                "equals": true
+              }
+            ]
+          },
+          "then": "n002",
+          "else": "n028"
+        },
+        {
+          "id": "n002",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Você deixou uma coisa de fora.",
+          "expression": "determinada",
+          "next": "n003"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Não existe outra maneira de encerrar o pacto.",
+          "expression": "ameacador",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não quero encerrar as histórias. Quero encerrar seu controle sobre elas.",
+          "expression": "seria",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "São inseparáveis.",
+          "expression": "condenando",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não segundo as regras originais.",
+          "expression": "determinada",
+          "next": "n007"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Nenhum guardião poderá reivindicar a autoria de uma alma.",
+          "expression": "seria",
+          "next": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Esse princípio foi abandonado.",
+          "expression": "condenando",
+          "next": "n009"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Foi escondido.",
+          "expression": "determinada",
+          "next": "n010"
+        },
+        {
+          "id": "n010",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "As almas não são capazes de preservar a si mesmas.",
+          "expression": "ameacador",
+          "next": "n011"
+        },
+        {
+          "id": "n011",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Elas não precisam que você viva por elas.",
+          "expression": "seria",
+          "next": "n012"
+        },
+        {
+          "id": "n012",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Sem registro, serão esquecidas.",
+          "expression": "condenando",
+          "next": "n013"
+        },
+        {
+          "id": "n013",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Então vamos preservar os registros.",
+          "expression": "determinada",
+          "next": "n014"
+        },
+        {
+          "id": "n014",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Mas devolver as histórias a quem pertencem.",
+          "expression": "seria",
+          "next": "n015"
+        },
+        {
+          "id": "n015",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Não possui testemunho suficiente.",
+          "expression": "ameacador",
+          "next": "n016"
+        },
+        {
+          "id": "n016",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Ela possui.",
+          "expression": "neutra",
+          "next": "n017"
+        },
+        {
+          "id": "n017",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Você veio...",
+          "expression": "surpresa",
+          "next": "n018"
+        },
+        {
+          "id": "n018",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Eu me lembro deles.",
+          "expression": "sombras",
+          "next": "n019"
+        },
+        {
+          "id": "n019",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Mesmo quando os livros ficaram vazios... ainda havia alguém ali.",
+          "expression": "triste",
+          "next": "n020"
+        },
+        {
+          "id": "n020",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Você carrega resíduos de registros comprometidos.",
+          "expression": "condenando",
+          "next": "n021"
+        },
+        {
+          "id": "n021",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Carrego o que você tentou tirar deles.",
+          "expression": "sombras",
+          "next": "n022"
+        },
+        {
+          "id": "n022",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Seus nomes não pertencem a você.",
+          "expression": "neutra",
+          "next": "n023"
+        },
+        {
+          "id": "n023",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "E eu posso reconhecer a escolha que fiz.",
+          "expression": "determinada",
+          "next": "n024"
+        },
+        {
+          "id": "n024",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Não será capaz de recuperar tudo o que perdeu.",
+          "expression": "condenando",
+          "next": "n025"
+        },
+        {
+          "id": "n025",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Talvez não.",
+          "expression": "seria",
+          "next": "n026"
+        },
+        {
+          "id": "n026",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Mas não preciso me lembrar de cada página para saber que a história é minha.",
+          "expression": "determinada",
+          "next": "n027"
+        },
+        {
+          "id": "n027",
+          "type": "event",
+          "effects": [
+            {
+              "type": "set_flag",
+              "key": "final_secreto_revelado",
+              "value": true
+            }
+          ],
+          "next": "n030"
+        },
+        {
+          "id": "n028",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Natasha procura alguma outra saída, mas suas lembranças e os registros continuam incompletos.",
+          "next": "n029"
+        },
+        {
+          "id": "n029",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Ele está me obrigando a escolher entre duas perdas.",
+          "expression": "vulneravel",
+          "next": "n030"
+        },
+        {
+          "id": "n030",
+          "type": "join",
+          "next": "n031"
+        },
+        {
+          "id": "n031",
+          "type": "end",
+          "effects": [],
+          "next_scene": "c25_decisao"
+        }
+      ]
+    },
+    {
+      "id": "c25_decisao",
+      "number": 25,
+      "title": "A Decisão",
+      "act": "ato_iv",
+      "location": "camara_registros",
+      "optional": false,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "once",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "O livro de Natasha permanece suspenso diante do altar. As páginas se movem lentamente.",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Escolha.",
+          "expression": "condenando",
+          "next": "n003"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Pela primeira vez desde que despertou, Natasha compreende o peso de seu próprio nome.",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "choice",
+          "prompt": "Qual será o destino do registro de Natasha?",
+          "options": [
+            {
+              "id": "queimar",
+              "text": "Queimar o próprio livro",
+              "next_scene": "c26_final_queimar",
+              "requires": null
+            },
+            {
+              "id": "preservar",
+              "text": "Preservar o próprio livro",
+              "next_scene": "c26_final_preservar",
+              "requires": null
+            },
+            {
+              "id": "reescrever",
+              "text": "Reescrever o pacto e devolver as histórias a seus donos",
+              "next_scene": "c26_final_reescrever",
+              "requires": {
+                "all": [
+                  {
+                    "flag": "memoria_retorno",
+                    "equals": true
+                  },
+                  {
+                    "flag": "memoria_escolha",
+                    "equals": true
+                  },
+                  {
+                    "flag": "memoria_pacto",
+                    "equals": true
+                  },
+                  {
+                    "flag": "fantasma_confia",
+                    "equals": true
+                  },
+                  {
+                    "flag": "regra_reescrita_descoberta",
+                    "equals": true
+                  }
+                ]
+              }
+            }
+          ],
+          "confirmation": {
+            "title": "Confirmar destino",
+            "message": "Essa decisão encerrará o Capítulo I. Deseja continuar?",
+            "confirm_label": "Confirmar",
+            "cancel_label": "Voltar"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c26_final_queimar",
+      "number": 26,
+      "title": "A Última Página",
+      "act": "epilogo",
+      "location": "camara_registros",
+      "optional": false,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "once",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Eu fiz uma promessa.",
+          "expression": "seria",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "E pretende destruí-la?",
+          "expression": "condenando",
+          "next": "n003"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Prometi que aquelas pessoas continuariam existindo. Não que seriam suas prisioneiras.",
+          "expression": "determinada",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Sua existência desaparecerá com o vínculo.",
+          "expression": "neutro",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Eu sei.",
+          "expression": "seria",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Então sua decisão é irracional.",
+          "expression": "condenando",
+          "next": "n007"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Talvez.",
+          "expression": "pensativa",
+          "next": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Mas não vou usar minha própria vida como desculpa para impedir que todas as outras continuem.",
+          "expression": "determinada",
+          "next": "n009"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Natasha aproxima o livro das chamas que iluminam o altar.",
+          "next": "n010"
+        },
+        {
+          "id": "n010",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Natasha Rostova. Retire sua mão.",
+          "expression": "ameacador",
+          "next": "n011"
+        },
+        {
+          "id": "n011",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não.",
+          "expression": "determinada",
+          "next": "n012"
+        },
+        {
+          "id": "n012",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Última advertência.",
+          "expression": "condenando",
+          "next": "n013"
+        },
+        {
+          "id": "n013",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Você já escreveu minha última página uma vez. Desta vez, sou eu quem vai decidir.",
+          "expression": "determinada",
+          "next": "n014"
+        },
+        {
+          "id": "n014",
+          "type": "cutscene",
+          "asset": "final_queimar",
+          "next": "n015"
+        },
+        {
+          "id": "n015",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "As páginas se desfazem em cinzas douradas. As correntes dos registros se rompem, e as almas vinculadas são libertadas.",
+          "next": "n016"
+        },
+        {
+          "id": "n016",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Elas estão livres...",
+          "expression": "vulneravel",
+          "next": "n017"
+        },
+        {
+          "id": "n017",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Suas mãos se tornam transparentes.",
+          "next": "n018"
+        },
+        {
+          "id": "n018",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Então... valeu a pena.",
+          "expression": "triste",
+          "next": "n019"
+        },
+        {
+          "id": "n019",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Rodion encontra a biblioteca silenciosa. Os registros antes aprisionados estão vazios porque suas almas partiram.",
+          "next": "n020"
+        },
+        {
+          "id": "n020",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Você conseguiu...",
+          "expression": "triste",
+          "next": "n021"
+        },
+        {
+          "id": "n021",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Eu queria que pudesse ter visto.",
+          "expression": "triste",
+          "next": "n022"
+        },
+        {
+          "id": "n022",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "FINAL I — A ÚLTIMA PÁGINA: Algumas histórias terminam para que outras possam continuar.",
+          "next": "n023"
+        },
+        {
+          "id": "n023",
+          "type": "end",
+          "effects": [
+            {
+              "type": "set_value",
+              "key": "final_conquistado",
+              "value": "queimar"
+            },
+            {
+              "type": "set_flag",
+              "key": "capitulo_1_concluido",
+              "value": true
+            },
+            {
+              "type": "set_flag",
+              "key": "almas_libertas",
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c26_final_preservar",
+      "number": 26,
+      "title": "Entre Páginas Fechadas",
+      "act": "epilogo",
+      "location": "camara_registros",
+      "optional": false,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "once",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Sua continuidade pode ser preservada.",
+          "expression": "neutro",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "E as outras almas?",
+          "expression": "triste",
+          "next": "n003"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Permanecerão protegidas.",
+          "expression": "neutro",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Presas.",
+          "expression": "seria",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Se prefere esse termo.",
+          "expression": "neutro",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não quero desaparecer.",
+          "expression": "vulneravel",
+          "next": "n007"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Então compreende.",
+          "expression": "neutro",
+          "next": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não.",
+          "expression": "seria",
+          "next": "n009"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não concordo com você.",
+          "expression": "seria",
+          "next": "n010"
+        },
+        {
+          "id": "n010",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Mas também não quero morrer por uma escolha que fiz sem compreender todas as consequências.",
+          "expression": "vulneravel",
+          "next": "n011"
+        },
+        {
+          "id": "n011",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "A intenção não altera o resultado.",
+          "expression": "condenando",
+          "next": "n012"
+        },
+        {
+          "id": "n012",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Talvez não.",
+          "expression": "pensativa",
+          "next": "n013"
+        },
+        {
+          "id": "n013",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Natasha fecha o livro.",
+          "next": "n014"
+        },
+        {
+          "id": "n014",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Eu só... não consigo.",
+          "expression": "triste",
+          "next": "n015"
+        },
+        {
+          "id": "n015",
+          "type": "cutscene",
+          "asset": "final_preservar",
+          "next": "n016"
+        },
+        {
+          "id": "n016",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "A tinta dourada dos registros permanece imóvel. Nenhuma corrente se rompe.",
+          "next": "n017"
+        },
+        {
+          "id": "n017",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "O vínculo continuará.",
+          "expression": "neutro",
+          "next": "n018"
+        },
+        {
+          "id": "n018",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Eu sei.",
+          "expression": "triste",
+          "next": "n019"
+        },
+        {
+          "id": "n019",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Sua existência está preservada.",
+          "expression": "neutro",
+          "next": "n020"
+        },
+        {
+          "id": "n020",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "É.",
+          "expression": "triste",
+          "next": "n021"
+        },
+        {
+          "id": "n021",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Natasha retorna à entrada. Pode tentar retomar a própria vida, mas agora conhece as histórias que permanecem presas.",
+          "next": "n022"
+        },
+        {
+          "id": "n022",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Desculpem.",
+          "expression": "vulneravel",
+          "next": "n023"
+        },
+        {
+          "id": "n023",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "FINAL II — ENTRE PÁGINAS FECHADAS: Nem toda sobrevivência significa liberdade.",
+          "next": "n024"
+        },
+        {
+          "id": "n024",
+          "type": "end",
+          "effects": [
+            {
+              "type": "set_value",
+              "key": "final_conquistado",
+              "value": "preservar"
+            },
+            {
+              "type": "set_flag",
+              "key": "capitulo_1_concluido",
+              "value": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c26_final_reescrever",
+      "number": 26,
+      "title": "A História que Ainda Não Foi Escrita",
+      "act": "epilogo",
+      "location": "camara_registros",
+      "optional": false,
+      "kind": "story",
+      "entry_node": "n001",
+      "replay_policy": "once",
+      "nodes": [
+        {
+          "id": "n001",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "O registro não pode ser reescrito dessa maneira.",
+          "expression": "ameacador",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Pode.",
+          "expression": "determinada",
+          "next": "n003"
+        },
+        {
+          "id": "n003",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Não possui autoridade.",
+          "expression": "condenando",
+          "next": "n004"
+        },
+        {
+          "id": "n004",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Sobre as histórias deles, não.",
+          "expression": "seria",
+          "next": "n005"
+        },
+        {
+          "id": "n005",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Mas sobre a minha, sim.",
+          "expression": "determinada",
+          "next": "n006"
+        },
+        {
+          "id": "n006",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Natasha abre o livro na página do pacto.",
+          "next": "n007"
+        },
+        {
+          "id": "n007",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Eu aceitei que meu nome preservasse o deles. Agora escolho devolver cada história à alma que a viveu.",
+          "expression": "determinada",
+          "next": "n008"
+        },
+        {
+          "id": "n008",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Sem um guardião, essas histórias desaparecerão.",
+          "expression": "condenando",
+          "next": "n009"
+        },
+        {
+          "id": "n009",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não é você quem decide isso.",
+          "expression": "seria",
+          "next": "n010"
+        },
+        {
+          "id": "n010",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "A ordem será destruída.",
+          "expression": "ameacador",
+          "next": "n011"
+        },
+        {
+          "id": "n011",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Então construiremos alguma coisa que não dependa de aprisionar pessoas.",
+          "expression": "determinada",
+          "next": "n012"
+        },
+        {
+          "id": "n012",
+          "type": "cutscene",
+          "asset": "final_reescrever",
+          "next": "n013"
+        },
+        {
+          "id": "n013",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "As sombras ao redor da Fantasma começam a se desprender. Vozes fragmentadas preenchem a câmara.",
+          "next": "n014"
+        },
+        {
+          "id": "n014",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Eu me lembro...",
+          "expression": "sombras",
+          "next": "n015"
+        },
+        {
+          "id": "n015",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Eu me lembro de todos vocês.",
+          "expression": "neutra",
+          "next": "n016"
+        },
+        {
+          "id": "n016",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Os registros deixam de obedecer à pena do Escriba.",
+          "next": "n017"
+        },
+        {
+          "id": "n017",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Impossível.",
+          "expression": "ameacador",
+          "next": "n018"
+        },
+        {
+          "id": "n018",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não.",
+          "expression": "determinada",
+          "next": "n019"
+        },
+        {
+          "id": "n019",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Apenas não estava escrito por você.",
+          "expression": "seria",
+          "next": "n020"
+        },
+        {
+          "id": "n020",
+          "type": "cutscene",
+          "asset": "escriba_derrota_final",
+          "next": "n021"
+        },
+        {
+          "id": "n021",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "As correntes se desfazem. O halo metálico racha e o rosto sem feições do Escriba se rompe como pergaminho envelhecido.",
+          "next": "n022"
+        },
+        {
+          "id": "n022",
+          "type": "line",
+          "speaker": "escriba",
+          "text": "Sem uma única mão para conduzi-las... as histórias se perderão.",
+          "expression": "derrotado",
+          "next": "n023"
+        },
+        {
+          "id": "n023",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Talvez algumas se percam. Talvez outras encontrem caminhos que ninguém esperava.",
+          "expression": "pensativa",
+          "next": "n024"
+        },
+        {
+          "id": "n024",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "É isso que significa poder escolher.",
+          "expression": "determinada",
+          "next": "n025"
+        },
+        {
+          "id": "n025",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "A última pena do Escriba se desfaz em tinta negra. Sua forma desaparece entre páginas que já não lhe pertencem.",
+          "next": "n026"
+        },
+        {
+          "id": "n026",
+          "type": "line",
+          "speaker": "livro",
+          "text": "A história pertence àquele que a vive.",
+          "next": "n027"
+        },
+        {
+          "id": "n027",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Acabou?",
+          "expression": "timida",
+          "next": "n028"
+        },
+        {
+          "id": "n028",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "O controle dele, sim.",
+          "expression": "seria",
+          "next": "n029"
+        },
+        {
+          "id": "n029",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "E as histórias?",
+          "expression": "neutra",
+          "next": "n030"
+        },
+        {
+          "id": "n030",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Agora pertencem a elas mesmas.",
+          "expression": "determinada",
+          "next": "n031"
+        },
+        {
+          "id": "n031",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "As marcas escuras nas mãos da Fantasma diminuem, mas algumas ainda permanecem.",
+          "next": "n032"
+        },
+        {
+          "id": "n032",
+          "type": "line",
+          "speaker": "fantasma",
+          "text": "Ainda me lembro de algumas.",
+          "expression": "triste",
+          "next": "n033"
+        },
+        {
+          "id": "n033",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Pode continuar lembrando.",
+          "expression": "neutra",
+          "next": "n034"
+        },
+        {
+          "id": "n034",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Mas não precisa carregá-las sozinha.",
+          "expression": "vulneravel",
+          "next": "n035"
+        },
+        {
+          "id": "n035",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Na entrada da biblioteca, Rodion encontra Natasha diante das portas abertas.",
+          "next": "n036"
+        },
+        {
+          "id": "n036",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Você conseguiu.",
+          "expression": "reflexivo",
+          "next": "n037"
+        },
+        {
+          "id": "n037",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Nós conseguimos.",
+          "expression": "neutra",
+          "next": "n038"
+        },
+        {
+          "id": "n038",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Recuperou todas as lembranças?",
+          "expression": "pensativo",
+          "next": "n039"
+        },
+        {
+          "id": "n039",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Não.",
+          "expression": "seria",
+          "next": "n040"
+        },
+        {
+          "id": "n040",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Lamento.",
+          "expression": "melancolico",
+          "next": "n041"
+        },
+        {
+          "id": "n041",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Eu também.",
+          "expression": "triste",
+          "next": "n042"
+        },
+        {
+          "id": "n042",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Mas talvez algumas coisas continuem perdidas.",
+          "expression": "pensativa",
+          "next": "n043"
+        },
+        {
+          "id": "n043",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "E isso não a incomoda?",
+          "expression": "pensativo",
+          "next": "n044"
+        },
+        {
+          "id": "n044",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Incomoda.",
+          "expression": "seria",
+          "next": "n045"
+        },
+        {
+          "id": "n045",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Só não quero passar o resto da minha existência tentando recuperar páginas antigas enquanto alguém decide escrever as próximas por mim.",
+          "expression": "determinada",
+          "next": "n046"
+        },
+        {
+          "id": "n046",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Parece uma decisão sensata.",
+          "expression": "neutro",
+          "next": "n047"
+        },
+        {
+          "id": "n047",
+          "type": "line",
+          "speaker": "natasha",
+          "text": "Vindo de você, não sei se isso é um elogio.",
+          "expression": "sarcastica",
+          "next": "n048"
+        },
+        {
+          "id": "n048",
+          "type": "line",
+          "speaker": "rodion",
+          "text": "Desta vez, pode considerar.",
+          "expression": "neutro",
+          "next": "n049"
+        },
+        {
+          "id": "n049",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "O céu continua nublado, mas a luz que atravessa as nuvens é diferente. Natasha não sabe tudo sobre quem foi nem exatamente quem será.",
+          "next": "n050"
+        },
+        {
+          "id": "n050",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "Pela primeira vez, nenhuma página lhe diz para onde deve ir.",
+          "next": "n051"
+        },
+        {
+          "id": "n051",
+          "type": "line",
+          "speaker": "narrador",
+          "text": "FINAL III — A HISTÓRIA QUE AINDA NÃO FOI ESCRITA: O futuro não precisa estar escrito para que uma vida tenha significado.",
+          "next": "n052"
+        },
+        {
+          "id": "n052",
+          "type": "end",
+          "effects": [
+            {
+              "type": "set_value",
+              "key": "final_conquistado",
+              "value": "reescrever"
+            },
+            {
+              "type": "set_flag",
+              "key": "capitulo_1_concluido",
+              "value": true
+            },
+            {
+              "type": "set_flag",
+              "key": "escriba_derrotado",
+              "value": true
+            },
+            {
+              "type": "set_flag",
+              "key": "almas_libertas",
+              "value": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -6,8 +6,9 @@ Protótipo jogável de **menu inicial funcional**, baseado no visual gótico-vit
 
 - [Tarefas, dependências e critérios de conclusão](docs/planejamento-capitulo-01.md)
 - [Sugestões de rumos para a história](docs/rumos-da-historia.md)
+- [Avaliação do roteiro completo e complementos necessários](docs/avaliacao-roteiro-completo.md)
 
-Esses documentos planejam a expansão do protótipo. As tarefas estão pendentes e as alternativas narrativas aguardam escolha.
+Esses documentos planejam a expansão do protótipo. As tarefas estão pendentes; o roteiro completo fornecido desenvolve o rumo B, e sua avaliação registra os complementos necessários para a implementação.
 
 ## Executar (sem Maven)
 
