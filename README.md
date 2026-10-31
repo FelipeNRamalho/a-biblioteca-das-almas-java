@@ -161,6 +161,7 @@ O menu foi projetado originalmente em **1280 × 720 (16:9)** e adapta a interfac
 | Cutscene inicial de Natasha e prólogo demonstrativo | **Implementado** |
 | Demonstração de exploração no Salão Principal | **Implementado** |
 | Preferências e salvamento básico em `.properties` | **Implementado** |
+| `GameState`: inventário, memórias, flags, escolhas e cursor narrativo | **Implementado em memória; reiniciado por Novo Jogo** |
 | Personagens, expressões, cenários e cutscenes | **Artes produzidas em pacotes separados** |
 | Roteiro do Capítulo I em arquivos JSON | **Preparado e validado separadamente** |
 | Carregamento de JSON e execução de diálogos pelo jogo | **Pendente** |
@@ -170,6 +171,8 @@ O menu foi projetado originalmente em **1280 × 720 (16:9)** e adapta a interfac
 | Testes integrados do capítulo completo | **Pendente** |
 
 **Limitação visual conhecida:** a cutscene do despertar existe, mas a **imagem isolada do cenário da Entrada da Biblioteca** ainda precisa ser integrada. Por isso, após o prólogo, o protótipo atual abre uma **demonstração no Salão Principal**, e não o fluxo definitivo da narrativa.
+
+`GameState` fornece a base de progresso para o futuro interpretador; suas coleções são protegidas e a reescrita exige as cinco condições oficiais. Essa base ainda não está conectada ao roteiro, às telas de inventário/diário ou ao salvamento completo. Veja os comandos e resultados de `GameStateTest` e `MenuSmokeTest` em [Testes do capítulo](docs/testes-do-capitulo.md).
 
 ## Organização do projeto
 
@@ -194,6 +197,7 @@ A_Biblioteca_das_Almas_Menu/
     │   │   │   ├── GameController.java
     │   │   │   ├── GameMode.java
     │   │   │   ├── GameSettings.java
+    │   │   │   ├── GameState.java
     │   │   │   └── SaveManager.java
     │   │   └── ui/
     │   │       ├── GamePanel.java
@@ -208,6 +212,7 @@ A_Biblioteca_das_Almas_Menu/
     │       └── story/             # A integrar: roteiro JSON separado
     └── test/java/
         └── br/com/bibliotecadasalmas/
+            ├── GameStateTest.java
             └── MenuSmokeTest.java
 ```
 
@@ -242,7 +247,7 @@ O projeto utiliza os quatro pilares da Programação Orientada a Objetos (POO) c
 
 | Pilar | Aplicação no código |
 | --- | --- |
-| **Encapsulamento** | `GameController`, `GameSettings`, `SaveManager` e `AssetManager` concentram seus estados e responsabilidades, expondo operações específicas. |
+| **Encapsulamento** | `GameState` protege progresso e coleções, sincroniza memórias e flags e oferece alterações controladas. `GameController`, `GameSettings`, `SaveManager` e `AssetManager` concentram suas demais responsabilidades. |
 | **Abstração** | `ClickTarget` define um contrato para os elementos interativos da interface. |
 | **Herança** | `GothicButton` e `TextOption` reutilizam comportamentos da superclasse `AbstractControl`. |
 | **Polimorfismo** | Controles distintos respondem ao mesmo contrato de desenho e interação, cada um com comportamento próprio. |
@@ -254,6 +259,7 @@ O projeto utiliza os quatro pilares da Programação Orientada a Objetos (POO) c
 - **`Game`** — inicialização da aplicação e da janela.
 - **`GamePanel`** — desenho das telas com `Graphics2D` e tratamento das interações gráficas.
 - **`GameController`** — fluxo do menu, prólogo e demonstração de exploração.
+- **`GameState`** — progresso narrativo em memória, com inventário sem duplicatas, memórias, escolhas, locais desbloqueados e consulta dos requisitos da reescrita.
 - **`AssetManager`** — carregamento e cache de imagens do classpath.
 - **`SaveManager`** — leitura e gravação do progresso básico e das preferências.
 - **`GothicButton` / `TextOption`** — elementos de interface reutilizáveis.
@@ -268,6 +274,8 @@ Linux/macOS: ~/.biblioteca-das-almas/
 ```
 
 Esse salvamento **ainda não contempla as variáveis do roteiro JSON**, como inventário, memórias e finais. A expansão do `SaveManager` faz parte das próximas etapas.
+
+O método `Continuar` permanece restrito ao progresso básico do protótipo; ele ainda não restaura `GameState`. A posição inicial do novo estado é uma referência para a integração futura, sem substituir o prólogo demonstrativo atual.
 
 ## Direção artística
 

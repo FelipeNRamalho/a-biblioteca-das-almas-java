@@ -4,6 +4,7 @@ package br.com.bibliotecadasalmas.core;
 public final class GameController {
     private final SaveManager saves;
     private final GameSettings settings;
+    private final GameState state = new GameState();
     private GameMode mode = GameMode.MENU;
     private int introPage;
     private boolean inspectingBook;
@@ -18,11 +19,13 @@ public final class GameController {
 
     public GameMode mode() { return mode; }
     public GameSettings settings() { return settings; }
+    public GameState state() { return state; }
     public boolean hasSave() { return saves.hasSave(); }
     public int introPage() { return introPage; }
     public boolean inspectingBook() { return inspectingBook; }
 
     public void newGame() {
+        state.reset();
         introPage = 0;
         inspectingBook = false;
         mode = GameMode.INTRO;

@@ -18,6 +18,7 @@ O pacote principal é `br.com.bibliotecadasalmas`.
 | --- | --- |
 | [Game](../src/main/java/br/com/bibliotecadasalmas/Game.java) | Inicializa a janela e o controlador, configura tela cheia e oferece geração de preview. A janela é iniciada pela thread de eventos do Swing. |
 | [GameController](../src/main/java/br/com/bibliotecadasalmas/core/GameController.java) | Coordena modos do protótipo, página do prólogo, inspeção de livro, início e continuação de partida e preferências. |
+| [GameState](../src/main/java/br/com/bibliotecadasalmas/core/GameState.java) | Mantém progresso narrativo em memória: cursor imutável de cena/nó, local, inventário, memórias, flags, valores, escolhas e interações concluídas. Novo Jogo reinicia a mesma instância. |
 | [GameMode](../src/main/java/br/com/bibliotecadasalmas/core/GameMode.java) | Enumera os modos de tela atuais; não representa sozinho os seis ambientes ou as cenas do roteiro. |
 | [GameSettings](../src/main/java/br/com/bibliotecadasalmas/core/GameSettings.java) | Mantém preferências de efeitos, velocidade do texto e tela cheia, com métodos controlados. |
 | [SaveManager](../src/main/java/br/com/bibliotecadasalmas/core/SaveManager.java) | Lê e grava preferências e progresso básico em `.properties`. Aceita um diretório no construtor, permitindo isolamento nos testes. |
@@ -36,6 +37,7 @@ flowchart TD
     Game --> GamePanel
     GamePanel --> GameController
     GameController --> GameSettings
+    GameController --> GameState
     GameController --> SaveManager
     GamePanel --> AssetManager
     GamePanel --> ClickTarget
@@ -53,6 +55,8 @@ O controlador não depende de `Graphics2D`. Entretanto, a separação da histór
 `GameSettings` mantém seus atributos privados e oferece operações como `toggleEffects`, `cycleTextSpeed` e `setFullscreen`. O carregamento limita a velocidade ao intervalo válido. O restante da aplicação usa esses métodos em vez de alterar campos diretamente.
 
 `GameController` protege modo, página e estado de inspeção e controla suas mudanças. `SaveManager` concentra os detalhes dos arquivos de progresso. Esses exemplos mostram encapsulamento de estado e responsabilidade; apenas usar `private`, sem controlar alterações, seria uma demonstração incompleta.
+
+`GameState` acrescenta regras concretas: itens não se duplicam, memórias e flags correspondentes permanecem sincronizadas, e uma navegação só é permitida após desbloquear o local. As consultas devolvem cópias imutáveis das coleções. O carregador futuro validará IDs contra os catálogos; hoje a classe valida a forma dos IDs e reconhece as três memórias oficiais.
 
 ### Abstração
 
@@ -97,7 +101,7 @@ A tabela abaixo apresenta responsabilidades propostas. Exceto pelas classes iden
 
 | Área | Responsabilidade planejada |
 | --- | --- |
-| `core/GameState` | Guardar cenário, cursor narrativo, flags, escolhas, inventário, memórias, locais liberados e interações concluídas. |
+| `core/GameState` existente | Ampliar a base em memória quando o interpretador precisar de fase da interface e contexto de exploração suspenso. A classe ainda não lê JSON nem persiste dados. |
 | `narrative/` | Carregar e validar dados; avaliar condições; executar nós e efeitos; fornecer falas e escolhas à interface. Os nomes internos das classes podem ser definidos durante a implementação. |
 | `characters/GameCharacter` | Classe abstrata de personagem, com identidade e apresentação compartilhadas e operações pertinentes ao domínio. |
 | `characters/Natasha`, `Rodion`, `Fantasma`, `Escriba` | Especializar a base, mantendo as regras e apresentações próprias sem copiar a lógica comum. Não transferir o roteiro inteiro para essas classes. |
@@ -146,9 +150,13 @@ Eventos e alterações de apresentação devem respeitar a thread de eventos do 
 
 O save atual contém modo e página do prólogo. O save completo deverá incluir cursor, mundo, escolhas, inventário, memórias e contexto de exploração suspenso. Definir versão e compatibilidade antes de substituir o formato atual.
 
+`GameController.state()` expõe a instância encapsulada, e `newGame()` chama seu `reset()` sem alterar preferências. A UI demonstrativa e `continueGame()` ainda não leem ou restauram o progresso narrativo. O construtor de `GameState` aceita um ponto inicial fornecido pelo chamador; o construtor padrão usa Entrada e `c01_despertar/n001` até a integração dos dados iniciais.
+
 Salvar deve capturar conjuntamente os efeitos já aplicados e a posição de retomada. Ao continuar, restaurar esse estado sem conceder novamente itens ou executar eventos anteriores. Preferências permanecem separadas da progressão reiniciada por Novo Jogo.
 
 O construtor de `SaveManager` que recebe `Path` já permite usar uma pasta temporária. `MenuSmokeTest` utiliza essa possibilidade e gera imagens do protótipo. Os novos testes devem preservar esse isolamento.
+
+`GameStateTest`, também executado por `main`, verifica as regras do estado, suas coleções protegidas, o reinício por Novo Jogo e as 32 combinações das cinco condições secretas. Isso não substitui a validação da regra lida do JSON ou de uma partida completa.
 
 O plano de execução e os resultados devem ser registrados em [testes-do-capitulo.md](testes-do-capitulo.md). Este documento não comprova que os testes foram executados.
 
@@ -156,13 +164,13 @@ O plano de execução e os resultados devem ser registrados em [testes-do-capitu
 
 A demonstração atual pode usar estes passos:
 
-1. Mostrar os campos privados e métodos controlados de `GameSettings` e `GameController` para explicar encapsulamento.
+1. Mostrar os campos privados de `GameState`, suas coleções imutáveis para consulta e a sincronização de memória/flag para explicar encapsulamento; complementar com `GameSettings` e `GameController`.
 2. Abrir `ClickTarget` para explicar o contrato de interação e desenho.
 3. Mostrar `AbstractControl` e suas subclasses para explicar herança e reutilização.
 4. Mostrar a coleção de `ClickTarget` e as duas implementações de `draw` para explicar polimorfismo.
 5. Exibir o menu e a inspeção do livro para relacionar as classes à interface do protótipo.
 
-Depois da integração, acrescentar evidências de `GameState`, da hierarquia dos quatro personagens e de implementações diferentes de `Interactable`. Demonstrar uma investigação que atualiza memória e inventário e uma porta que navega usando o mesmo contrato.
+Depois da integração, acrescentar a hierarquia dos quatro personagens e implementações diferentes de `Interactable`. Demonstrar uma investigação que usa `GameState` para atualizar memória e inventário e uma porta que navega usando o mesmo contrato.
 
 Atualizar os exemplos conforme o código evoluir. Uma classe planejada, um diagrama ou uma assinatura sem comportamento não substitui a demonstração de uma funcionalidade implementada.
 

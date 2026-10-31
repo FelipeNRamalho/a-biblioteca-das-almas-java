@@ -2,7 +2,7 @@
 
 Referência: 30/10/2026. Este documento contém procedimentos reproduzíveis, critérios de aceitação e um registro de execução. A história oficial está em [rumos-da-historia.md](rumos-da-historia.md); os comportamentos técnicos esperados estão no [contrato narrativo](contrato-narrativo-json.md).
 
-**O teste do protótipo está disponível; os testes do capítulo completo dependem da integração.** Um caso pendente não deve ser registrado como aprovado só porque o roteiro ou a imagem correspondente existe.
+**Os testes do protótipo e da base `GameState` estão disponíveis; os testes do capítulo completo dependem da integração.** Um caso pendente não deve ser registrado como aprovado só porque o roteiro ou a imagem correspondente existe.
 
 ## 1. Estados dos casos e evidências
 
@@ -81,6 +81,23 @@ O teste cria seu próprio diretório temporário de progresso e recebe apenas a 
 
 A saída esperada contém `OK: todas as verificações do menu passaram.` O teste não cobre o interpretador JSON, os seis ambientes integrados, as memórias, o save narrativo ou os finais.
 
+### G01 — Regras do estado em memória
+
+Fonte: [GameStateTest.java](../src/test/java/br/com/bibliotecadasalmas/GameStateTest.java). Depois da compilação conjunta descrita acima, executar:
+
+```powershell
+java -cp 'target/validacao-documentacao/classes' br.com.bibliotecadasalmas.GameStateTest
+if ($LASTEXITCODE -ne 0) { throw 'GameStateTest falhou.' }
+```
+
+Se a compilação usada foi `mvn test-compile`, substituir o classpath por `target/classes;target/test-classes`. Como `MenuSmokeTest`, este teste usa um método `main` e não é executado automaticamente pelo Maven atual.
+
+O teste verifica oito grupos: estado inicial e independência das partidas; inventário sem duplicatas e snapshots protegidos; sincronização das três memórias com suas flags nos dois sentidos; escolhas identificadas por cena/nó e interações concluídas; navegação condicionada ao desbloqueio; 32 combinações das condições da reescrita; entradas inválidas sem alterações parciais; reinício por `GameController.newGame()` sem perder preferências.
+
+As consultas a coleções são imutáveis e não acompanham alterações posteriores. Definir explicitamente uma flag de memória como falsa remove também sua memória; o roteiro atual não usa isso para punir escolhas de personalidade. A política narrativa de preservação das descobertas continua sendo responsabilidade da integração.
+
+Saída esperada: `OK: GameState passou em 8 grupos de verificações, incluindo 32 combinações do final secreto.` A verificação é da base Java; não executa o roteiro nem libera um final jogável.
+
 ## 4. Verificações manuais do protótipo
 
 Estado atual dos casos abaixo: **pendente**.
@@ -96,6 +113,8 @@ Esses casos complementam P01. O teste sem janela não aciona nem comprova a alte
 ## 5. Dados e sistema narrativo
 
 Estado atual dos casos abaixo: **pendente**. Dependem do carregador, do estado narrativo e das ferramentas de teste da integração. As verificações simplificadas já descritas na avaliação não substituem esta bateria.
+
+G01 já valida as operações individuais do estado e a regra Java das cinco condições. N02 continua pendente como execução de efeitos do JSON e de lotes atômicos; N03 continua pendente quanto à leitura e comparação das três declarações no roteiro.
 
 | Caso | Preparação e passos | Resultado esperado |
 | --- | --- | --- |
@@ -199,4 +218,19 @@ A primeira tentativa de compilação em duas etapas não resolveu as classes pri
 
 Para novas execuções, acrescentar um registro com versão e evidências, mantendo os resultados anteriores identificados. O histórico não deve ser sobrescrito como se todos os casos tivessem sido executados novamente.
 
-Commit sugerido: `docs: adiciona procedimentos e registro de testes do capitulo`.
+## 11. Registro de execução — Base GameState
+
+| Campo | Registro |
+| --- | --- |
+| Data | 30/10/2026 |
+| Código de referência | Base `a01adb6` com `GameState`, `GameStateTest` e integração local de `GameController.newGame()`. |
+| Ambiente | Windows, PowerShell e JDK 21.0.13; sem Maven disponível. |
+| Compilação | Fontes principais e testes compilados em conjunto com `javac --release 21 -encoding UTF-8`, para `target/validacao-gamestate/classes/`. |
+| G01 | **Aprovado**: oito grupos de verificações e todas as 32 combinações das condições da reescrita. |
+| P01 | **Aprovado após a alteração do controlador**: fluxo do protótipo e geração de nove PNGs em `target/validacao-gamestate/previews/`. |
+| Persistência usada | Diretórios temporários dos testes, sem usar o save pessoal. O novo `GameState` ainda não é persistido. |
+| Limites | Sem execução do roteiro JSON, lotes de efeitos, revisitas ou partidas completas; sem revisão visual das imagens ou teste manual de tela cheia. |
+
+Comandos para reproduzir esse registro: usar a compilação conjunta da seção 3 com destino `target/validacao-gamestate/classes`; executar G01 com esse classpath e P01 com `target/validacao-gamestate/classes;src/main/resources`, indicando `target/validacao-gamestate/previews` para as imagens.
+
+Commit sugerido para esta etapa: `feat: adiciona estado encapsulado da partida`.

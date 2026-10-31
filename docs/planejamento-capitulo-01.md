@@ -72,11 +72,11 @@ Reutilizar as artes e o UI Kit gótico, com a paleta de carvão, vinho, ameixa, 
 | --- | --- | --- |
 | Menu e apresentação | `GameController` e `GamePanel` implementam menu, configurações, créditos, prólogo de três páginas e demonstração de exploração no Salão. | Conectar o fluxo definitivo, preservando controles e preferências. |
 | Salvamento | `SaveManager` registra modo e página do prólogo em `.properties`. | Incluir estado narrativo, cenário, itens, memórias, escolhas e retomada. |
-| Arquitetura | Existem controlador, modos, painel, gerenciador de imagens e controles reutilizáveis de UI. | Acrescentar estado da partida, sistema narrativo, personagens e mundo sem concentrar responsabilidades no painel. |
+| Arquitetura | Existem controlador, modos, painel, gerenciador de imagens, controles de UI e `GameState` em memória, reiniciado por Novo Jogo. | Conectar o estado ao interpretador e acrescentar personagens e mundo sem concentrar responsabilidades no painel. |
 | Roteiro | O consolidado `roteiro_completo.json` contém o capítulo; o Java atual ainda não o interpreta. | Implementar carregamento, validação, execução de nós e efeitos. |
 | Recursos incorporados | `src/main/resources/assets/` contém o Salão, o despertar e parte do UI Kit. | Localizar e integrar as demais artes produzidas, com mapeamento para o classpath. |
 | Pacote complementar e artes | O contexto oficial informa a produção dos seis cenários, retratos, expressões, cutscenes e JSONs complementares em pacotes separados. | Conferir caminhos, dimensões, transparência e correspondência visual antes de copiar ou recriar arquivos. |
-| Teste existente | `MenuSmokeTest` é executável por `main` e já utiliza uma pasta temporária para saves. | Documentar sua execução e ampliar a validação conforme a integração; não presumir que `mvn test` já o execute. |
+| Testes existentes | `MenuSmokeTest` e `GameStateTest` são executáveis por `main`, com saves isolados. O segundo cobre as regras do estado e as 32 combinações secretas. | Ampliar a validação conforme a integração; não presumir que `mvn test` execute esses métodos automaticamente. |
 
 A avaliação registra verificações de estrutura e uma simulação simplificada do fluxo JSON, com acesso aos três epílogos. Isso não comprova partidas completas no Java. A revisão deste planejamento foi documental, com leitura de código e dados; não executou a interface ou os testes Java.
 
@@ -84,7 +84,7 @@ A avaliação registra verificações de estrutura e uma simulação simplificad
 
 **P0** = necessário para a entrega; **P1** = acabamento relevante; **P2** = extra opcional. Os identificadores T01–T24 foram preservados para acompanhamento, mas a ordem abaixo foi ajustada à prioridade do sistema narrativo.
 
-T01 e T02 estão concluídas quanto à definição, registrada na seção 2. As caixas restantes indicam trabalho ainda pendente de implementação ou verificação. Uma tarefa deve ser encerrada com evidência do seu critério de conclusão; um arquivo produzido ou uma classe criada, isoladamente, não comprova a funcionalidade.
+T01 e T02 estão concluídas quanto à definição, registrada na seção 2. T06 está concluída como base de estado em memória, com evidências em `GameStateTest` e regressão em `MenuSmokeTest`. As caixas restantes indicam trabalho pendente de implementação ou verificação; a base pronta não implica leitura do roteiro ou salvamento narrativo.
 
 ### Etapa 1 — Consolidar referências e preparar a integração
 
@@ -92,11 +92,11 @@ T01 e T02 estão concluídas quanto à definição, registrada na seção 2. As 
 - [x] **T02 · P0 · Registrar regras e finais oficiais.** Definição concluída: vínculo do livro com as almas, consequências dos três finais e cinco requisitos da reescrita, conforme a seção 2 e o roteiro JSON. A execução dessas regras permanece nas tarefas técnicas.
 - [ ] **T03 · P0 · Mapear o roteiro para a exploração.** Depende de T01 e T02. Associar as cenas existentes aos seis ambientes, objetos, personagens e portas; definir desbloqueios e pontos de retorno. Concluída com um mapa de interações que permite revisitar pistas antes do confronto sem reiniciar a sequência principal.
 - [ ] **T04 · P0 · Conferir e mapear os recursos produzidos.** Localizar os pacotes de artes e JSONs complementares. Catalogar caminhos, finalidade, resolução, transparência e estado: produzido, disponível localmente, integrado ou pendente de localização. Concluída com um manifesto verificável dos seis fundos, retratos, expressões, cutscenes e UI, preservando os originais.
-- [ ] **T05 · P0 · Registrar a execução de referência do protótipo.** Documentar compilação, execução explícita de `MenuSmokeTest` e geração do JAR; guardar referência visual do menu. O isolamento dos saves já existe e deve ser preservado. Concluída com comandos reproduzíveis e resultados registrados, antes de alterar o fluxo principal.
+- [ ] **T05 · P0 · Registrar a execução de referência do protótipo.** Compilação, execução explícita de `MenuSmokeTest` e imagens de referência já registradas em [testes-do-capitulo.md](testes-do-capitulo.md), com saves isolados. A referência de regressão permite avançar na base técnica; permanece pendente conferir e registrar a geração do JAR atualizado para encerrar a tarefa.
 
 ### Etapa 2 — Implementar o sistema narrativo
 
-- [ ] **T06 · P0 · Separar o estado da partida.** Depende de T05. Introduzir `GameState` com cenário, cena/nó atual, inventário, memórias, flags, escolhas e interações concluídas. Evoluir `GameController` e `GameMode`. Concluída quando Novo Jogo reiniciar o progresso e alterações passarem por métodos controlados, mantendo `unlock_memory` e flags `memoria_*` coerentes.
+- [x] **T06 · P0 · Separar o estado da partida.** Base implementada em `GameState`, com cenário, cursor de cena/nó, inventário, memórias, flags, valores, escolhas e interações concluídas. `GameController` mantém a instância e a reinicia por Novo Jogo; `GameMode` continua representando as telas do protótipo. `GameStateTest` verifica encapsulamento, coerência de memórias, reinício e requisitos secretos; `MenuSmokeTest` passou após a integração. Leitura JSON, UI narrativa e persistência permanecem em suas tarefas próprias.
 - [ ] **T09 · P0 · Implementar o carregador e validar o contrato JSON.** Depende de T06 e das definições T01–T02. Preservar o formato e os IDs existentes; escolher o leitor e justificar eventual dependência. Reconhecer `line`, `choice`, `condition`, `event`, `join`, `cutscene` e `end`, requisitos `all`, flags e transições. Concluída quando o roteiro carregar a partir dos recursos e referências ausentes, tipos desconhecidos e dados inválidos gerarem erros claros antes da execução afetada.
 - [ ] **T08 · P0 · Preparar personagens e mapeamento visual.** Depende de T04 e T06. Criar uma classe abstrata de personagem e subclasses Natasha, Rodion, Fantasma e Escriba; mapear retratos e expressões e ampliar `AssetManager` conforme necessário. Contemplar `natasha_memoria`, `rodion_memoria` e `voz_escriba` como identificadores de apresentação. Concluída quando os quatro personagens puderem ser apresentados com as artes corretas, respeitando o rosto sem feições do Escriba.
 - [ ] **T10 · P0 · Implementar execução de diálogos e escolhas.** Depende de T06 e T09; a validação de retratos e expressões depende de T08. Exibir nome, fala, expressão e alternativas; interpretar condições e efeitos `set_flag`, `set_value`, `give_item`, `remove_item`, `unlock_memory` e `unlock_location`. Concluída quando revelar texto e avançar forem ações previsíveis, escolhas atualizarem o estado, nós automáticos forem processados corretamente e a interface bloquear cliques no cenário atrás dela. A lógica pode avançar enquanto os recursos visuais são integrados.
@@ -177,7 +177,7 @@ A validação deve combinar verificações da lógica, dos dados e da interface.
 
 | Pilar | Base existente | Evidência esperada no capítulo |
 | --- | --- | --- |
-| **Encapsulamento** | Estado e operações em `GameController`, `GameSettings` e `SaveManager`. | `GameState` protege coleções e controla mudanças de inventário, memórias e progresso. |
+| **Encapsulamento** | `GameState` já protege coleções e controla progresso, junto a `GameController`, `GameSettings` e `SaveManager`. | Interações e efeitos narrativos utilizam os métodos controlados da base de estado. |
 | **Herança** | `GothicButton` e `TextOption` derivam de `AbstractControl`. | Natasha, Rodion, Fantasma e Escriba reutilizam uma classe abstrata de personagem, com especializações pertinentes. |
 | **Abstração** | `ClickTarget` oferece um contrato de interação dos controles. | `Interactable` e os contratos narrativos separam o acionamento dos detalhes de cada implementação. |
 | **Polimorfismo** | Controles diferentes implementam o mesmo contrato de desenho e clique. | A mesma operação de interação faz uma porta navegar, um documento revelar uma pista e um personagem iniciar diálogo. |
@@ -201,8 +201,8 @@ Reestimar após o Marco 1, conforme a disponibilidade das artes e o esforço rea
 
 ## 9. Próxima ação técnica
 
-Registrar a execução de referência do protótipo (T05) e iniciar `GameState` e o carregador narrativo (T06 e T09). Usar o despertar e a carta como primeiro trecho de integração, preservando os IDs do JSON. O mapa de interações e a conferência de recursos (T03 e T04) podem avançar sem exigir uma nova decisão sobre a história.
+Iniciar o carregador narrativo (T09) usando a base `GameState` já testada. Usar o despertar e a carta como primeiro trecho de integração, preservando os IDs do JSON. O mapa de interações e a conferência de recursos (T03 e T04) podem avançar em paralelo à preparação dos dados; a conferência do JAR em T05 ainda deve ser concluída.
 
-Esta revisão atualizou apenas o planejamento. Código, roteiro JSON e recursos gráficos não foram alterados, e nenhuma funcionalidade pendente foi marcada como implementada.
+Atualização de implementação em 30/10/2026: T06 registra a base Java efetivamente criada e testada. O roteiro e as artes foram preservados; as demais funções continuam identificadas conforme sua situação real.
 
 Commit sugerido: `docs: alinha planejamento do capitulo a historia oficial`.

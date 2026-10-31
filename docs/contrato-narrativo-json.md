@@ -4,6 +4,8 @@ Referência: 30/10/2026. Fonte conferida: [roteiro_completo.json](../roteiro_com
 
 Este documento descreve o formato existente e define o comportamento esperado do futuro interpretador Java. **O carregador e as regras de execução ainda não estão implementados.** As seções de execução são um contrato proposto para a integração, sem alteração do roteiro ou dos finais aprovados.
 
+A base `GameState` já implementa operações em memória para flags, valores, itens, memórias, escolhas, locais, cursor e interações concluídas, além da consulta das cinco condições da reescrita. Isso não executa os efeitos do JSON: validação de catálogos, lotes atômicos, política de revisitas e persistência continuam pendentes no interpretador e nos demais sistemas.
+
 A história oficial está em [rumos-da-historia.md](rumos-da-historia.md); as tarefas estão no [planejamento](planejamento-capitulo-01.md). Este contrato trata de dados e comportamento, sem substituir essas referências.
 
 ## 1. Fonte dos dados e identificadores

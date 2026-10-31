@@ -76,9 +76,10 @@ A leitura do código atual confirma a separação entre o protótipo e o conteú
 | Menu e prólogo | `GameController` controla menu, configurações, créditos, prólogo de três páginas e passagem para a demonstração de exploração. | Preservar esses fluxos e conectar Novo Jogo ao roteiro definitivo. |
 | Exploração | `GamePanel` apresenta uma demonstração no Salão Principal, com inspeção de livro. | Implementar os seis ambientes, hotspots, desbloqueios e retornos. |
 | Roteiro | `roteiro_completo.json` está na raiz; não foi localizado um carregador narrativo no Java atual. | Interpretar os nós e conectar condições, efeitos, escolhas e apresentação. |
+| Estado narrativo | `GameState` implementa progresso em memória e é reiniciado por `GameController.newGame()`. | Conectar essa base ao carregador, à interface narrativa e ao salvamento completo. |
 | Salvamento | `SaveManager` grava modo e página do prólogo em `.properties`, além das preferências. | Persistir cenário, ponto narrativo, inventário, memórias, escolhas e estados. |
 | Recursos visuais | `src/main/resources/assets/` contém o Salão, o despertar e parte do UI Kit. | Incorporar e mapear os demais fundos, personagens, expressões e cutscenes já produzidos. |
-| Testes | `MenuSmokeTest` verifica o protótipo por um método `main`. | Validar o capítulo e suas rotas; o teste atual não comprova a execução da história completa. |
+| Testes | `MenuSmokeTest` verifica o protótipo; `GameStateTest` cobre as regras do estado e as 32 combinações secretas. Ambos usam `main`. | Validar a leitura das regras do JSON e o capítulo integrado; esses testes não comprovam uma partida completa. |
 
 O contexto oficial informa que as artes e o pacote narrativo complementar já foram produzidos separadamente. A ausência de um recurso no classpath atual indica uma pendência de localização ou integração, sem justificar sua recriação automática.
 
@@ -152,12 +153,12 @@ A implementação pode crescer a partir das classes atuais, mantendo conteúdo n
 
 | Pilar | Evidência atual | Expansão planejada para o capítulo |
 | --- | --- | --- |
-| **Encapsulamento** | `GameController`, `SaveManager` e `GameSettings` concentram estado e operações. | `GameState` com campos privados e métodos controlados para progresso, inventário e memórias. |
+| **Encapsulamento** | `GameState` já protege progresso e coleções e sincroniza memórias/flags, junto às responsabilidades de `GameController`, `SaveManager` e `GameSettings`. | Integrar a base de estado à execução do roteiro, à UI e à persistência. |
 | **Herança** | `GothicButton` e `TextOption` derivam de `AbstractControl`. | Classe abstrata de personagem com subclasses Natasha, Rodion, Fantasma e Escriba, com responsabilidades claras. |
 | **Abstração** | `ClickTarget` define o contrato dos controles clicáveis. | Contrato `Interactable` para objetos do mundo e separação entre dados narrativos, execução e renderização. |
 | **Polimorfismo** | Os controles respondem ao mesmo contrato de desenho e interação. | Livros, portas, personagens e objetos respondem a uma interação comum: investigar, navegar ou conversar. |
 
-Essas expansões ainda não estão implementadas. Na apresentação acadêmica, os exemplos devem apontar para classes e comportamentos efetivos, distinguindo-os das intenções de arquitetura.
+Além da base `GameState`, as expansões narrativas indicadas continuam pendentes. Na apresentação acadêmica, os exemplos devem apontar para classes e comportamentos efetivos, distinguindo-os das intenções de arquitetura.
 
 O `GameController` pode coordenar o fluxo, enquanto o sistema narrativo interpreta os dados e o `GamePanel` renderiza o estado. Ampliar `SaveManager` para restaurar o ponto narrativo e os efeitos já aplicados, definindo também como tratar os saves antigos do protótipo.
 
@@ -187,6 +188,6 @@ Os cenários abaixo são verificações a executar após a integração. Não re
 | Cancelar a decisão final | Permanecer na escolha, sem executar efeitos ou iniciar um epílogo. |
 | Executar o JAR fora da pasta de fontes | Carregar os recursos integrados, manter hotspots alinhados ao redimensionar e apresentar textos legíveis. |
 
-Esta revisão alterou apenas a avaliação. O roteiro JSON, o código Java e as artes foram preservados. Não houve execução da interface ou dos testes Java nesta etapa; as verificações realizadas foram de arquivos, código e fluxo narrativo simplificado.
+A análise narrativa inicial foi documental, com verificações de arquivos, código e fluxo simplificado. A atualização de implementação registra agora `GameState` e os testes G01/P01 executados, conforme [testes-do-capitulo.md](testes-do-capitulo.md). O roteiro JSON e as artes foram preservados; o capítulo completo ainda não foi executado no Java.
 
 Commit sugerido: `docs: contextualiza avaliacao do roteiro com a historia oficial`.
