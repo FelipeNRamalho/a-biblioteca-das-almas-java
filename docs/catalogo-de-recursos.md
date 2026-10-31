@@ -1,6 +1,6 @@
 # Catálogo de recursos — A Biblioteca das Almas
 
-Conferência: 30/10/2026. Fontes: `src/main/resources/`, referências do código Java e [roteiro_completo.json](../roteiro_completo.json).
+Conferência: 30/10/2026. Fontes: `src/main/resources/`, referências do código Java e [roteiro_completo.json](../src/main/resources/story/roteiro_completo.json).
 
 O contexto oficial informa que cenários, personagens, expressões, cutscenes e UI foram produzidos em pacotes separados. Este catálogo distingue essa produção da disponibilidade no repositório e do uso no jogo. **Um arquivo localizado não comprova integração narrativa ou aprovação visual.**
 
@@ -112,6 +112,7 @@ Os finais preservar e reescrever também narram a chegada à Entrada. Além das 
 
 | Referência | Conteúdo conhecido | Pendência |
 | --- | --- | --- |
+| `story/roteiro_completo.json` | Consolidado incorporado ao classpath e validado por `StoryLoader`, sem mudança de conteúdo | Conectar os nós carregados ao executor e à interface. |
 | Itens | `carta_entrada`, `fotografia_sem_nome`, `medalhao_fantasma`, `copia_clausula`, `anotacoes_rodion` | Conferir nomes, descrições, textos consultáveis e eventuais ícones nos pacotes. Não presumir que todo item tenha um PNG próprio. |
 | Memórias | `retorno`, `escolha`, `pacto` | Integrar os textos do diário e os estados de descoberta. |
 | `estado_inicial.json` | Arquivo informado no pacote narrativo | Localizar e conferir valores iniciais antes da integração. |
@@ -119,7 +120,7 @@ Os finais preservar e reescrever também narram a chegada à Entrada. Além das 
 | `interacoes_mundo.json` | Arquivo informado para exploração | Localizar e conferir hotspots, coordenadas, condições e retomada. |
 | `index.json` e cenas individuais | Organização informada no pacote narrativo | Localizar e conferir consistência com o consolidado da raiz. |
 
-Esses arquivos complementares não foram localizados na árvore de recursos atual. Sua situação é de localização e integração pendentes, sem presumir que precisem ser reescritos.
+Exceto pelo consolidado já incorporado, os arquivos complementares não foram localizados na árvore de recursos atual. Sua situação é de localização e integração pendentes, sem presumir que precisem ser reescritos.
 
 Não foram encontrados arquivos de áudio nos formatos `.wav`, `.mp3` ou `.ogg` na árvore examinada fora de saídas de compilação. Música, efeitos e controles de volume dependem da disponibilidade e integração desses recursos.
 
@@ -136,7 +137,8 @@ src/main/resources/
 │   ├── cutscenes/             # Por função narrativa ou cena
 │   └── ui/                   # UI Kit já parcialmente incorporado
 └── story/
-    └── assets.json           # Integração do manifesto existente
+    ├── roteiro_completo.json # Fonte única já incorporada
+    └── assets.json           # Integração planejada do manifesto existente
 ```
 
 O formato de `assets.json` ainda precisa ser conferido. Independentemente da estrutura adotada, o mapeamento deve permitir identificar ID lógico, categoria, caminho no classpath, personagem/expressão quando aplicável e referência narrativa. Dimensões podem ser calculadas a partir dos arquivos; evitar mantê-las manualmente em vários catálogos.

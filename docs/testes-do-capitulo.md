@@ -2,7 +2,7 @@
 
 Referência: 30/10/2026. Este documento contém procedimentos reproduzíveis, critérios de aceitação e um registro de execução. A história oficial está em [rumos-da-historia.md](rumos-da-historia.md); os comportamentos técnicos esperados estão no [contrato narrativo](contrato-narrativo-json.md).
 
-**Os testes do protótipo e da base `GameState` estão disponíveis; os testes do capítulo completo dependem da integração.** Um caso pendente não deve ser registrado como aprovado só porque o roteiro ou a imagem correspondente existe.
+**Os testes do carregador, do protótipo e da base `GameState` estão disponíveis; os testes do capítulo completo dependem da integração.** Um caso pendente não deve ser registrado como aprovado só porque o roteiro ou a imagem correspondente existe.
 
 ## 1. Estados dos casos e evidências
 
@@ -26,77 +26,88 @@ Preferir testes da lógica para requisitos, efeitos e persistência; usar testes
 
 O teste existente renderiza sem abrir janela. Tela cheia, foco real do teclado e interação visual completa exigem validação manual em ambiente gráfico.
 
-## 3. Procedimento atual — Teste do protótipo
+## 3. Procedimentos disponíveis — Carregador, estado e protótipo
 
-Caso **P01**. Fonte: [MenuSmokeTest.java](../src/test/java/br/com/bibliotecadasalmas/MenuSmokeTest.java).
+Os três testes são executados por métodos `main`, com verificações próprias. `mvn test` isoladamente não comprova sua execução; o build compila os testes, mas eles devem ser chamados explicitamente.
 
-O teste executa um método `main`, com verificações próprias. O `pom.xml` atual não configura esse método como teste automático do Maven; `mvn test` isoladamente não comprova sua execução.
+### Compilação e execução com Maven
 
-### Opção com Maven disponível
-
-No PowerShell, a partir da raiz:
+Conferir que `mvn -version` indica JDK 21, inclusive o `JAVA_HOME` usado pelo Maven. No PowerShell, a partir da raiz:
 
 ```powershell
-mvn test-compile
-if ($LASTEXITCODE -ne 0) { throw 'Falha na compilação.' }
+mvn package
+if ($LASTEXITCODE -ne 0) { throw 'Falha no build.' }
 
-$saidaTeste = 'target/validacao-documentacao/previews'
-java '-Djava.awt.headless=true' -cp 'target/classes;target/test-classes;target/test-resources;src/main/resources' br.com.bibliotecadasalmas.MenuSmokeTest $saidaTeste
+$classpathTeste = 'target/test-classes;target/biblioteca-das-almas-menu-1.0.0.jar'
+java -cp $classpathTeste br.com.bibliotecadasalmas.StoryLoaderTest
+if ($LASTEXITCODE -ne 0) { throw 'StoryLoaderTest falhou.' }
+java -cp $classpathTeste br.com.bibliotecadasalmas.GameStateTest
+if ($LASTEXITCODE -ne 0) { throw 'GameStateTest falhou.' }
+java '-Djava.awt.headless=true' -cp $classpathTeste br.com.bibliotecadasalmas.MenuSmokeTest target/validacao-story/previews
 if ($LASTEXITCODE -ne 0) { throw 'MenuSmokeTest falhou.' }
 ```
 
-Esse procedimento com Maven não foi executado nesta revisão, pois `mvn` não estava disponível no ambiente. O classpath acima corresponde ao projeto atual, sem dependências externas; atualizá-lo se a integração do leitor JSON acrescentar uma dependência necessária à execução.
+O Maven Shade inclui Gson e os recursos no JAR executável; não é necessário acrescentar `src/main/resources` ou um JAR externo ao classpath desse procedimento. O arquivo em `dist/` continua sendo a distribuição anterior do protótipo.
 
-### Alternativa com JDK 21, sem Maven
-
-No PowerShell, compilar as fontes principais e o teste na mesma chamada:
+Para uma validação rápida do conteúdo do JAR, sem janela nem acesso a saves:
 
 ```powershell
-$saidaClasses = 'target/validacao-documentacao/classes'
-$saidaTeste = 'target/validacao-documentacao/previews'
+java -jar target/biblioteca-das-almas-menu-1.0.0.jar --validate-story
+if ($LASTEXITCODE -ne 0) { throw 'Roteiro inválido ou ausente do pacote.' }
+```
+
+### Alternativa com javac e JAR do Gson
+
+Disponibilizar previamente o JAR do Gson **2.13.2** e ajustar `$gsonJar` ao caminho real. Nesta validação, a dependência usada pelo procedimento manual foi colocada em `target/validacao-story/lib/`; esse diretório é temporário e não acompanha um clone novo.
+
+```powershell
+$gsonJar = 'target/validacao-story/lib/gson-2.13.2.jar'
+if (-not (Test-Path -LiteralPath $gsonJar)) { throw 'Indique o caminho do JAR do Gson 2.13.2.' }
+$saidaClasses = 'target/validacao-story/classes'
+$saidaTeste = 'target/validacao-story/previews'
 New-Item -ItemType Directory -Path $saidaClasses,$saidaTeste -Force | Out-Null
 
 $fontesJava = @(Get-ChildItem -Path src/main/java,src/test/java -Recurse -Filter '*.java' |
     ForEach-Object { $_.FullName })
-javac --release 21 -encoding UTF-8 -d $saidaClasses $fontesJava
+javac --release 21 -encoding UTF-8 -cp $gsonJar -d $saidaClasses $fontesJava
 if ($LASTEXITCODE -ne 0) { throw 'Falha na compilação.' }
 
-java '-Djava.awt.headless=true' -cp 'target/validacao-documentacao/classes;src/main/resources' br.com.bibliotecadasalmas.MenuSmokeTest $saidaTeste
+$classpathTeste = "$saidaClasses;$gsonJar;src/main/resources"
+java -cp $classpathTeste br.com.bibliotecadasalmas.StoryLoaderTest
+if ($LASTEXITCODE -ne 0) { throw 'StoryLoaderTest falhou.' }
+java -cp $classpathTeste br.com.bibliotecadasalmas.GameStateTest
+if ($LASTEXITCODE -ne 0) { throw 'GameStateTest falhou.' }
+java '-Djava.awt.headless=true' -cp $classpathTeste br.com.bibliotecadasalmas.MenuSmokeTest $saidaTeste
 if ($LASTEXITCODE -ne 0) { throw 'MenuSmokeTest falhou.' }
 ```
 
-A compilação conjunta e a execução com esse destino e classpath foram verificadas nesta revisão. Na execução realizada, a lista de fontes foi obtida com `rg --files`; o comando acima usa a enumeração nativa do PowerShell para não exigir essa ferramenta.
+A compilação conjunta e a execução manual foram verificadas. Na execução realizada, a enumeração das fontes usou `rg --files`; o exemplo usa PowerShell para não exigir essa ferramenta. O JAR não é copiado para o repositório versionado.
 
-O teste cria seu próprio diretório temporário de progresso e recebe apenas a pasta das imagens como argumento. Não define ou altera o diretório pessoal do usuário.
+### L01 — Carregamento e validação do roteiro real
 
-### Cobertura de P01
+Fonte: [StoryLoaderTest.java](../src/test/java/br/com/bibliotecadasalmas/StoryLoaderTest.java).
 
-- Novo Jogo abre o prólogo e cria progresso no diretório isolado.
-- Revelar e avançar as três páginas leva à demonstração de exploração.
-- A opção de examinar o livro abre a inspeção e um clique a fecha.
-- Continuar restaura o progresso básico na exploração.
-- Configurações abre, alterna efeitos e retorna ao menu.
-- Créditos abre corretamente.
-- As telas são renderizadas e gravadas em nove PNGs.
+Verifica a leitura das 28 entradas e 620 nós, os sete tipos de nó, os seis ambientes, preservação de texto UTF-8, leitura com BOM, fontes de entrada, conteúdo imutável e criação independente de `GameState`. Avalia as condições dos metadados, da revelação e da decisão final nas 32 combinações e compara com `GameState.canRewritePact()`.
 
-A saída esperada contém `OK: todas as verificações do menu passaram.` O teste não cobre o interpretador JSON, os seis ambientes integrados, as memórias, o save narrativo ou os finais.
+As 44 amostras inválidas desta versão cobrem sintaxe, chaves e IDs duplicados, campos desconhecidos, tipos indevidos, destinos inexistentes, opções sem saída ou com duas saídas, referências a memórias/locais/flags, regras secretas divergentes e ciclos automáticos locais ou entre cenas. As fixtures são cópias em memória ou arquivos temporários; o roteiro oficial não é alterado.
+
+L01 não valida os PNGs ou o manifesto externo, não executa efeitos e não simula uma partida completa. A aceitação de referências é limitada às definições disponíveis no consolidado, conforme o contrato narrativo.
 
 ### G01 — Regras do estado em memória
 
-Fonte: [GameStateTest.java](../src/test/java/br/com/bibliotecadasalmas/GameStateTest.java). Depois da compilação conjunta descrita acima, executar:
+Fonte: [GameStateTest.java](../src/test/java/br/com/bibliotecadasalmas/GameStateTest.java).
 
-```powershell
-java -cp 'target/validacao-documentacao/classes' br.com.bibliotecadasalmas.GameStateTest
-if ($LASTEXITCODE -ne 0) { throw 'GameStateTest falhou.' }
-```
+Verifica oito grupos: estado inicial e independência das partidas; inventário sem duplicatas e snapshots protegidos; sincronização das três memórias com suas flags nos dois sentidos; escolhas por cena/nó e interações concluídas; navegação condicionada ao desbloqueio; 32 combinações da reescrita; entradas inválidas sem alterações parciais; reinício por Novo Jogo sem perder preferências.
 
-Se a compilação usada foi `mvn test-compile`, substituir o classpath por `target/classes;target/test-classes`. Como `MenuSmokeTest`, este teste usa um método `main` e não é executado automaticamente pelo Maven atual.
+Definir explicitamente uma flag de memória como falsa remove também sua memória; o roteiro atual não usa essa operação para punir personalidade. A política de preservação das descobertas na execução continua pendente de integração.
 
-O teste verifica oito grupos: estado inicial e independência das partidas; inventário sem duplicatas e snapshots protegidos; sincronização das três memórias com suas flags nos dois sentidos; escolhas identificadas por cena/nó e interações concluídas; navegação condicionada ao desbloqueio; 32 combinações das condições da reescrita; entradas inválidas sem alterações parciais; reinício por `GameController.newGame()` sem perder preferências.
+### P01 — Regressão do protótipo
 
-As consultas a coleções são imutáveis e não acompanham alterações posteriores. Definir explicitamente uma flag de memória como falsa remove também sua memória; o roteiro atual não usa isso para punir escolhas de personalidade. A política narrativa de preservação das descobertas continua sendo responsabilidade da integração.
+Fonte: [MenuSmokeTest.java](../src/test/java/br/com/bibliotecadasalmas/MenuSmokeTest.java).
 
-Saída esperada: `OK: GameState passou em 8 grupos de verificações, incluindo 32 combinações do final secreto.` A verificação é da base Java; não executa o roteiro nem libera um final jogável.
+Verifica Novo Jogo, as três páginas do prólogo, inspeção do livro, Continuar com progresso básico, configurações e créditos. Gera nove imagens das telas. O teste cria uma pasta temporária de saves; seu argumento indica apenas a pasta das imagens.
+
+A saída esperada contém `OK: todas as verificações do menu passaram.` Isso não comprova diálogos JSON na interface, save narrativo ou finais jogáveis. Tela cheia e foco real do teclado exigem os casos manuais abaixo.
 
 ## 4. Verificações manuais do protótipo
 
@@ -112,9 +123,9 @@ Esses casos complementam P01. O teste sem janela não aciona nem comprova a alte
 
 ## 5. Dados e sistema narrativo
 
-Estado atual dos casos abaixo: **pendente**. Dependem do carregador, do estado narrativo e das ferramentas de teste da integração. As verificações simplificadas já descritas na avaliação não substituem esta bateria.
+**D01 e N03 aprovados em L01 (`StoryLoaderTest`).** D02, N01 e N02 permanecem pendentes das integrações indicadas. As verificações do carregador não substituem a execução dos diálogos, efeitos ou recursos visuais.
 
-G01 já valida as operações individuais do estado e a regra Java das cinco condições. N02 continua pendente como execução de efeitos do JSON e de lotes atômicos; N03 continua pendente quanto à leitura e comparação das três declarações no roteiro.
+G01 valida as operações individuais do estado. L01 acrescenta leitura e comparação das três declarações secretas do JSON, com as mesmas 32 combinações. N02 continua pendente como execução de efeitos e de lotes atômicos.
 
 | Caso | Preparação e passos | Resultado esperado |
 | --- | --- | --- |
@@ -233,4 +244,23 @@ Para novas execuções, acrescentar um registro com versão e evidências, mante
 
 Comandos para reproduzir esse registro: usar a compilação conjunta da seção 3 com destino `target/validacao-gamestate/classes`; executar G01 com esse classpath e P01 com `target/validacao-gamestate/classes;src/main/resources`, indicando `target/validacao-gamestate/previews` para as imagens.
 
-Commit sugerido para esta etapa: `feat: adiciona estado encapsulado da partida`.
+## 12. Registro de execução — Carregador JSON
+
+| Campo | Registro |
+| --- | --- |
+| Data e base | 30/10/2026, base `86e47f3` com a implementação local do carregador. |
+| Ambiente | Windows, PowerShell, JDK 21.0.13 e Maven 3.9.14 localizado no cache de wrapper, fora do PATH. |
+| Build | `mvn package` executado com esse Maven, JDK 21 e repositório de dependências em `target/maven-repository/`; **BUILD SUCCESS**. |
+| L01 / D01 / N03 | **Aprovados**: leitura das 28 entradas/620 nós, conteúdo imutável, 44 amostras inválidas e 32 combinações comparando as três declarações do JSON com `GameState`. |
+| G01 | **Aprovado**, sem alterações nas regras do estado. |
+| P01 | **Aprovado**, com nove imagens em `target/validacao-story/previews/`; repetido usando o JAR Maven, com imagens em `target/validacao-story/previews-jar/`. |
+| Pacote | O JAR `target/biblioteca-das-almas-menu-1.0.0.jar` inclui Gson e o roteiro. Os três testes passaram com `target/test-classes` e esse JAR, sem `src/main/resources` no classpath. |
+| Fora da árvore de fontes | Uma cópia do JAR em pasta temporária executou `java -jar biblioteca.jar --validate-story`, confirmando 28 cenas e 620 nós sem janela ou acesso aos saves. |
+| Roteiro | Movido da raiz para `src/main/resources/story/roteiro_completo.json`; SHA-256 anterior e posterior idênticos. Nenhuma fala, escolha ou condição foi modificada. |
+| Limites | Sem executor de nós/efeitos, sem diálogos JSON na UI, sem verificação dos manifestos/PNGs externos e sem partidas completas. V04 continua pendente para o capítulo integrado. |
+
+O build inicial encontrou outro `JAVA_HOME`; a validação foi concluída selecionando JDK 21 apenas no processo de build. O JDK também exigiu execução fora do sandbox para resolver o JAR no classpath. Nenhuma configuração global foi alterada.
+
+SHA-256 preservado do consolidado: `95A23FE0CCF0AE8A4A8B6F52CAAAAF01B5D15276DF94AC75920BB1306ADE0DFA`.
+
+Commit sugerido para esta etapa: `feat: implementa carregador json do roteiro narrativo`.

@@ -2,6 +2,8 @@ package br.com.bibliotecadasalmas;
 
 import br.com.bibliotecadasalmas.core.GameController;
 import br.com.bibliotecadasalmas.ui.GamePanel;
+import br.com.bibliotecadasalmas.narrative.Story;
+import br.com.bibliotecadasalmas.narrative.StoryLoader;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -15,6 +17,12 @@ public final class Game {
     private Game() {}
 
     public static void main(String[] args) {
+        if (args.length > 0 && "--validate-story".equals(args[0])) {
+            Story story = new StoryLoader().loadDefault();
+            long nodes = story.scenes().values().stream().mapToLong(scene -> scene.nodes().size()).sum();
+            System.out.println("OK: roteiro carregado e validado: " + story.scenes().size() + " cenas, " + nodes + " nós.");
+            return;
+        }
         if (args.length>0 && "--preview".equals(args[0])) {
             preview(args.length>1 ? Path.of(args[1]) : Path.of("preview_menu.png"));
             return;

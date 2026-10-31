@@ -4,13 +4,13 @@
 
 Planejamento original: 29/10/2026. Revisão contextualizada: 30/10/2026.
 
-Este plano orienta a integração do roteiro e das artes já produzidos ao projeto Java existente. Usa o contexto oficial do jogo, o [roteiro_completo.json](../roteiro_completo.json) e a [avaliação do roteiro](avaliacao-roteiro-completo.md). Contém spoilers.
+Este plano orienta a integração do roteiro e das artes já produzidos ao projeto Java existente. Usa o contexto oficial do jogo, o [roteiro_completo.json](../src/main/resources/story/roteiro_completo.json) e a [avaliação do roteiro](avaliacao-roteiro-completo.md). Contém spoilers.
 
 ## 1. Objetivo e prioridade atual
 
 Entregar o Capítulo I completo: seis ambientes exploráveis por cliques, quatro personagens, diálogos com expressões e escolhas, inventário, diário de memórias, cutscenes, salvamento e três finais. A implementação deve demonstrar encapsulamento, herança, polimorfismo e abstração com exemplos reais no código.
 
-A prioridade é implementar o **carregador do roteiro JSON e o sistema de diálogos**, com avaliação de condições, execução de efeitos e atualização do progresso. Em seguida, conectar esses sistemas à exploração e ampliar a integração por atos, preservando o que já funciona.
+O carregador JSON e a avaliação de condições já estão implementados. A prioridade agora é o **executor de diálogos e escolhas**, com aplicação de efeitos e atualização do progresso. Em seguida, conectar esses sistemas à exploração e ampliar a integração por atos, preservando o que já funciona.
 
 A base permanece Java 21, Swing, Graphics2D e Maven, com conteúdo narrativo em JSON e recursos gráficos em PNG. O jogo utiliza cenários ilustrados estáticos e exploração por mouse. Movimentação livre, sprites de caminhada, combate, novas engines e novos capítulos ficam fora desta entrega.
 
@@ -29,7 +29,7 @@ A pergunta que conduz o capítulo é: **quem tem o direito de decidir como uma h
 
 ### Estrutura do capítulo
 
-São **26 cenas oficiais**, representadas por **28 entradas no JSON consolidado**: cenas 01–25 e três versões da cena 26. A referência atual está na raiz do repositório; localizar o pacote complementar antes de criar cópias ou dividir arquivos.
+São **26 cenas oficiais**, representadas por **28 entradas no JSON consolidado**: cenas 01–25 e três versões da cena 26. A referência única está em `src/main/resources/story/roteiro_completo.json`, movida da raiz sem alteração de conteúdo; localizar o pacote complementar antes de dividir arquivos.
 
 | Parte | Cenas | Ambientes e acontecimentos principais |
 | --- | --- | --- |
@@ -73,18 +73,18 @@ Reutilizar as artes e o UI Kit gótico, com a paleta de carvão, vinho, ameixa, 
 | Menu e apresentação | `GameController` e `GamePanel` implementam menu, configurações, créditos, prólogo de três páginas e demonstração de exploração no Salão. | Conectar o fluxo definitivo, preservando controles e preferências. |
 | Salvamento | `SaveManager` registra modo e página do prólogo em `.properties`. | Incluir estado narrativo, cenário, itens, memórias, escolhas e retomada. |
 | Arquitetura | Existem controlador, modos, painel, gerenciador de imagens, controles de UI e `GameState` em memória, reiniciado por Novo Jogo. | Conectar o estado ao interpretador e acrescentar personagens e mundo sem concentrar responsabilidades no painel. |
-| Roteiro | O consolidado `roteiro_completo.json` contém o capítulo; o Java atual ainda não o interpreta. | Implementar carregamento, validação, execução de nós e efeitos. |
+| Roteiro | `StoryLoader` carrega o consolidado pelo classpath, com modelos tipados, avaliação de condições e validação estrutural. | Implementar execução de nós e efeitos e conectá-la à interface. |
 | Recursos incorporados | `src/main/resources/assets/` contém o Salão, o despertar e parte do UI Kit. | Localizar e integrar as demais artes produzidas, com mapeamento para o classpath. |
 | Pacote complementar e artes | O contexto oficial informa a produção dos seis cenários, retratos, expressões, cutscenes e JSONs complementares em pacotes separados. | Conferir caminhos, dimensões, transparência e correspondência visual antes de copiar ou recriar arquivos. |
-| Testes existentes | `MenuSmokeTest` e `GameStateTest` são executáveis por `main`, com saves isolados. O segundo cobre as regras do estado e as 32 combinações secretas. | Ampliar a validação conforme a integração; não presumir que `mvn test` execute esses métodos automaticamente. |
+| Testes existentes | `StoryLoaderTest`, `GameStateTest` e `MenuSmokeTest` são executáveis por `main` e passaram, inclusive usando o JAR Maven. | Ampliar a validação da execução narrativa; `mvn test` não substitui as chamadas explícitas desses métodos. |
 
-A avaliação registra verificações de estrutura e uma simulação simplificada do fluxo JSON, com acesso aos três epílogos. Isso não comprova partidas completas no Java. A revisão deste planejamento foi documental, com leitura de código e dados; não executou a interface ou os testes Java.
+A avaliação inicial registra uma simulação simplificada do fluxo JSON. A implementação atual acrescenta leitura e validação pelo Java, três testes explícitos e verificação do JAR fora da árvore de fontes, registrados em [testes-do-capitulo.md](testes-do-capitulo.md). Isso ainda não comprova partidas completas.
 
 ## 4. Tarefas, dependências e critérios de conclusão
 
 **P0** = necessário para a entrega; **P1** = acabamento relevante; **P2** = extra opcional. Os identificadores T01–T24 foram preservados para acompanhamento, mas a ordem abaixo foi ajustada à prioridade do sistema narrativo.
 
-T01 e T02 estão concluídas quanto à definição, registrada na seção 2. T06 está concluída como base de estado em memória, com evidências em `GameStateTest` e regressão em `MenuSmokeTest`. As caixas restantes indicam trabalho pendente de implementação ou verificação; a base pronta não implica leitura do roteiro ou salvamento narrativo.
+T01 e T02 estão concluídas quanto à definição. T05, T06 e T09 têm evidências de build, testes e carregamento registradas no guia de testes. As caixas restantes indicam trabalho pendente; carregar e validar os dados não executa a história nem implementa o salvamento narrativo.
 
 ### Etapa 1 — Consolidar referências e preparar a integração
 
@@ -92,12 +92,12 @@ T01 e T02 estão concluídas quanto à definição, registrada na seção 2. T06
 - [x] **T02 · P0 · Registrar regras e finais oficiais.** Definição concluída: vínculo do livro com as almas, consequências dos três finais e cinco requisitos da reescrita, conforme a seção 2 e o roteiro JSON. A execução dessas regras permanece nas tarefas técnicas.
 - [ ] **T03 · P0 · Mapear o roteiro para a exploração.** Depende de T01 e T02. Associar as cenas existentes aos seis ambientes, objetos, personagens e portas; definir desbloqueios e pontos de retorno. Concluída com um mapa de interações que permite revisitar pistas antes do confronto sem reiniciar a sequência principal.
 - [ ] **T04 · P0 · Conferir e mapear os recursos produzidos.** Localizar os pacotes de artes e JSONs complementares. Catalogar caminhos, finalidade, resolução, transparência e estado: produzido, disponível localmente, integrado ou pendente de localização. Concluída com um manifesto verificável dos seis fundos, retratos, expressões, cutscenes e UI, preservando os originais.
-- [ ] **T05 · P0 · Registrar a execução de referência do protótipo.** Compilação, execução explícita de `MenuSmokeTest` e imagens de referência já registradas em [testes-do-capitulo.md](testes-do-capitulo.md), com saves isolados. A referência de regressão permite avançar na base técnica; permanece pendente conferir e registrar a geração do JAR atualizado para encerrar a tarefa.
+- [x] **T05 · P0 · Registrar a execução de referência do protótipo.** Build Maven com JDK 21 concluído, `MenuSmokeTest` aprovado e imagens de referência geradas com saves isolados. O JAR atualizado inclui dependências e recursos; `--validate-story` passou em cópia fora da pasta do projeto. As verificações visuais e do capítulo integrado permanecem em T22.
 
 ### Etapa 2 — Implementar o sistema narrativo
 
 - [x] **T06 · P0 · Separar o estado da partida.** Base implementada em `GameState`, com cenário, cursor de cena/nó, inventário, memórias, flags, valores, escolhas e interações concluídas. `GameController` mantém a instância e a reinicia por Novo Jogo; `GameMode` continua representando as telas do protótipo. `GameStateTest` verifica encapsulamento, coerência de memórias, reinício e requisitos secretos; `MenuSmokeTest` passou após a integração. Leitura JSON, UI narrativa e persistência permanecem em suas tarefas próprias.
-- [ ] **T09 · P0 · Implementar o carregador e validar o contrato JSON.** Depende de T06 e das definições T01–T02. Preservar o formato e os IDs existentes; escolher o leitor e justificar eventual dependência. Reconhecer `line`, `choice`, `condition`, `event`, `join`, `cutscene` e `end`, requisitos `all`, flags e transições. Concluída quando o roteiro carregar a partir dos recursos e referências ausentes, tipos desconhecidos e dados inválidos gerarem erros claros antes da execução afetada.
+- [x] **T09 · P0 · Implementar o carregador e validar o contrato JSON.** `StoryLoader` usa Gson 2.13.2 para carregar os sete tipos de nó, condições e efeitos em modelos imutáveis. Valida duplicatas, tipos, campos, destinos, referências disponíveis, ciclos automáticos e as três declarações secretas. `StoryLoaderTest` aprovou o roteiro real, 32 combinações secretas e 44 amostras inválidas. O manifesto de artes e os dados iniciais completos continuam em suas integrações próprias; o carregador não executa os nós.
 - [ ] **T08 · P0 · Preparar personagens e mapeamento visual.** Depende de T04 e T06. Criar uma classe abstrata de personagem e subclasses Natasha, Rodion, Fantasma e Escriba; mapear retratos e expressões e ampliar `AssetManager` conforme necessário. Contemplar `natasha_memoria`, `rodion_memoria` e `voz_escriba` como identificadores de apresentação. Concluída quando os quatro personagens puderem ser apresentados com as artes corretas, respeitando o rosto sem feições do Escriba.
 - [ ] **T10 · P0 · Implementar execução de diálogos e escolhas.** Depende de T06 e T09; a validação de retratos e expressões depende de T08. Exibir nome, fala, expressão e alternativas; interpretar condições e efeitos `set_flag`, `set_value`, `give_item`, `remove_item`, `unlock_memory` e `unlock_location`. Concluída quando revelar texto e avançar forem ações previsíveis, escolhas atualizarem o estado, nós automáticos forem processados corretamente e a interface bloquear cliques no cenário atrás dela. A lógica pode avançar enquanto os recursos visuais são integrados.
 
@@ -201,8 +201,8 @@ Reestimar após o Marco 1, conforme a disponibilidade das artes e o esforço rea
 
 ## 9. Próxima ação técnica
 
-Iniciar o carregador narrativo (T09) usando a base `GameState` já testada. Usar o despertar e a carta como primeiro trecho de integração, preservando os IDs do JSON. O mapa de interações e a conferência de recursos (T03 e T04) podem avançar em paralelo à preparação dos dados; a conferência do JAR em T05 ainda deve ser concluída.
+Iniciar a execução de diálogos e escolhas (T10), consumindo `Story` e atualizando `GameState`. Usar o despertar e a carta como primeiro trecho de integração, preservando os IDs do JSON. O mapa de interações, a conferência de recursos e os retratos (T03, T04 e T08) continuam necessários para a apresentação completa.
 
-Atualização de implementação em 30/10/2026: T06 registra a base Java efetivamente criada e testada. O roteiro e as artes foram preservados; as demais funções continuam identificadas conforme sua situação real.
+Atualização de implementação em 30/10/2026: T05, T06 e T09 registram a base Java, o carregador e o empacotamento efetivamente verificados. O conteúdo do roteiro e as artes foram preservados.
 
 Commit sugerido: `docs: alinha planejamento do capitulo a historia oficial`.

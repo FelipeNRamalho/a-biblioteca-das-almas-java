@@ -6,7 +6,7 @@ Revisão contextualizada: 30/10/2026.
 
 Este documento consolida a direção narrativa aprovada e preserva o histórico das propostas que a antecederam. O nome `rumos-da-historia.md` foi mantido para conservar as referências existentes. Contém spoilers de todo o capítulo.
 
-A história e os finais estão definidos. As alternativas históricas da seção 9 não são escolhas pendentes nem rotas adicionais. O desenvolvimento deve seguir o contexto oficial, o [roteiro completo em JSON](../roteiro_completo.json), a [avaliação do roteiro](avaliacao-roteiro-completo.md) e o [planejamento de integração](planejamento-capitulo-01.md).
+A história e os finais estão definidos. As alternativas históricas da seção 9 não são escolhas pendentes nem rotas adicionais. O desenvolvimento deve seguir o contexto oficial, o [roteiro completo em JSON](../src/main/resources/story/roteiro_completo.json), a [avaliação do roteiro](avaliacao-roteiro-completo.md) e o [planejamento de integração](planejamento-capitulo-01.md).
 
 ## 1. Conceito e tema central
 

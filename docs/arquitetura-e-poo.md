@@ -24,6 +24,9 @@ O pacote principal é `br.com.bibliotecadasalmas`.
 | [SaveManager](../src/main/java/br/com/bibliotecadasalmas/core/SaveManager.java) | Lê e grava preferências e progresso básico em `.properties`. Aceita um diretório no construtor, permitindo isolamento nos testes. |
 | [GamePanel](../src/main/java/br/com/bibliotecadasalmas/ui/GamePanel.java) | Renderiza telas, compõe a UI, transforma coordenadas e trata entradas de mouse e teclado. Ainda contém o texto fixo do prólogo demonstrativo. |
 | [AssetManager](../src/main/java/br/com/bibliotecadasalmas/assets/AssetManager.java) | Carrega imagens sob `/assets/` pelo classpath e mantém cache por caminho. |
+| [StoryLoader](../src/main/java/br/com/bibliotecadasalmas/narrative/StoryLoader.java) | Lê UTF-8 do classpath, de arquivo ou de `Reader`, usando Gson em modo estrito e modelos tipados. Não executa o fluxo carregado. |
+| [StoryValidator](../src/main/java/br/com/bibliotecadasalmas/narrative/StoryValidator.java) | Valida IDs, destinos, parâmetros referenciados, contagens, ciclos automáticos e as três declarações da regra secreta. |
+| [Story](../src/main/java/br/com/bibliotecadasalmas/narrative/Story.java) e modelos de `narrative/` | Records e contratos selados imutáveis para cenas, nós, escolhas, destinos, condições e efeitos. `StoryCondition.matches` consulta `GameState` sem alterá-lo. |
 | [ClickTarget](../src/main/java/br/com/bibliotecadasalmas/ui/ClickTarget.java) | Define `contains`, `enabled`, `click` e `draw` para controles da interface. |
 | [AbstractControl](../src/main/java/br/com/bibliotecadasalmas/ui/AbstractControl.java) | Implementa parte de `ClickTarget`, compartilhando geometria, rótulo e comando. A classe é abstrata. |
 | [GothicButton](../src/main/java/br/com/bibliotecadasalmas/ui/GothicButton.java) | Desenha botões usando imagens do UI Kit e estados de habilitação, hover e seleção. |
@@ -46,7 +49,7 @@ flowchart TD
     GothicButton --> AssetManager
 ```
 
-O controlador não depende de `Graphics2D`. Entretanto, a separação da história ainda está incompleta: `GamePanel` contém falas do prólogo, e não há um interpretador do roteiro JSON. A demonstração atual não deve ser apresentada como arquitetura final do capítulo.
+O controlador não depende de `Graphics2D`. `Game --validate-story` já usa o carregador para conferir o consolidado sem janela. A separação da história ainda está incompleta: `GamePanel` contém falas do prólogo demonstrativo e não executa os nós carregados. A demonstração atual não deve ser apresentada como capítulo integrado.
 
 ## 3. Os quatro pilares no código atual
 
@@ -102,7 +105,7 @@ A tabela abaixo apresenta responsabilidades propostas. Exceto pelas classes iden
 | Área | Responsabilidade planejada |
 | --- | --- |
 | `core/GameState` existente | Ampliar a base em memória quando o interpretador precisar de fase da interface e contexto de exploração suspenso. A classe ainda não lê JSON nem persiste dados. |
-| `narrative/` | Carregar e validar dados; avaliar condições; executar nós e efeitos; fornecer falas e escolhas à interface. Os nomes internos das classes podem ser definidos durante a implementação. |
+| `narrative/` existente | Carregamento, validação e consulta de condições já disponíveis. Acrescentar executor de nós/efeitos e sua comunicação com a interface, respeitando a aplicação atômica de efeitos. |
 | `characters/GameCharacter` | Classe abstrata de personagem, com identidade e apresentação compartilhadas e operações pertinentes ao domínio. |
 | `characters/Natasha`, `Rodion`, `Fantasma`, `Escriba` | Especializar a base, mantendo as regras e apresentações próprias sem copiar a lógica comum. Não transferir o roteiro inteiro para essas classes. |
 | `world/Interactable` | Contrato de interação com objetos do mundo. |
@@ -134,7 +137,9 @@ Uma porta, um documento e um personagem devem responder à mesma operação de i
 - A elegibilidade da reescrita deve usar exatamente as cinco condições oficiais. Não criar requisitos ocultos nas subclasses dos personagens.
 - Recarregar uma imagem ou redesenhar a tela não pode reaplicar efeitos narrativos.
 
-A representação dos nós pode usar classes, records ou outra estrutura simples e tipada. Não é obrigatório construir uma hierarquia extensa só para demonstrar POO. A leitura JSON deve usar uma solução justificada, sem bibliotecas de jogo alheias ao escopo.
+A representação dos nós usa records que implementam `NarrativeNode`, com um tipo para cada comportamento. `StoryCondition.Flag` e `All` implementam `matches` de formas diferentes: comparação de flag ou conjunção de condições. Isso acrescenta uma demonstração de abstração e polimorfismo sem colocar o conteúdo das falas nas classes. Os efeitos são dados tipados; ainda não possuem execução.
+
+Gson 2.13.2 é a única dependência direta acrescentada para leitura JSON. O Maven Shade inclui as dependências no artefato executável, preservando `Game` como classe principal. O roteiro consolidado é um recurso do classpath; não há cópia operacional na raiz.
 
 As regras detalhadas de escolhas, revisitas e aplicação de efeitos estão no [contrato narrativo](contrato-narrativo-json.md).
 

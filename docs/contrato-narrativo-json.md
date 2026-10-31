@@ -1,8 +1,8 @@
 # Contrato narrativo JSON — Capítulo I
 
-Referência: 30/10/2026. Fonte conferida: [roteiro_completo.json](../roteiro_completo.json), versão `1.0`.
+Referência: 30/10/2026. Fonte conferida: [roteiro_completo.json](../src/main/resources/story/roteiro_completo.json), versão `1.0`.
 
-Este documento descreve o formato existente e define o comportamento esperado do futuro interpretador Java. **O carregador e as regras de execução ainda não estão implementados.** As seções de execução são um contrato proposto para a integração, sem alteração do roteiro ou dos finais aprovados.
+Este documento descreve o formato existente e o comportamento esperado do interpretador Java. **O carregador, os modelos tipados e a avaliação de condições estão implementados; a execução de nós e efeitos ainda está pendente.** As seções de execução continuam orientando a integração, sem alterar o roteiro ou os finais aprovados.
 
 A base `GameState` já implementa operações em memória para flags, valores, itens, memórias, escolhas, locais, cursor e interações concluídas, além da consulta das cinco condições da reescrita. Isso não executa os efeitos do JSON: validação de catálogos, lotes atômicos, política de revisitas e persistência continuam pendentes no interpretador e nos demais sistemas.
 
@@ -12,7 +12,7 @@ A história oficial está em [rumos-da-historia.md](rumos-da-historia.md); as ta
 
 O consolidado atual tem dois campos na raiz: `metadata` e `scenes`. Contém 28 entradas de cena, que representam 26 cenas oficiais: cenas 01–25 e três versões da cena 26.
 
-O arquivo está na raiz do repositório. O destino previsto para carregamento pelo classpath é `src/main/resources/story/`, após conferir o pacote complementar já produzido. Se forem adotados índice e cenas individuais, definir uma única representação como entrada do jogo e validar sua consistência com o consolidado.
+O arquivo foi movido da raiz para `src/main/resources/story/roteiro_completo.json`, sem alteração de conteúdo. Ele é a fonte única carregada por `/story/roteiro_completo.json`. Índice, cenas individuais e manifestos complementares ainda precisam ser conferidos; se forem adotados, definir uma única representação como entrada do jogo e validar sua consistência com o consolidado.
 
 - IDs de cena são únicos no roteiro, por exemplo `c02_carta`.
 - IDs de nó são únicos dentro da cena, por exemplo `n002`. A identidade completa é `c02_carta/n002`.
@@ -197,6 +197,12 @@ Definir se a gravação acontece no meio de uma fala ou em pontos seguros. Em qu
 
 ## 9. Validação e diagnóstico
 
+`StoryLoader` usa Gson 2.13.2 em modo estrito, sem conversão automática de strings em booleanos ou inteiros. `StrictJson` rejeita chaves duplicadas antes de montar a árvore; `StoryValidator` confere referências e rejeita ciclos formados somente por nós automáticos, inclusive entre cenas. Campos e operadores desconhecidos são recusados. Erros semânticos identificam fonte, cena, nó/opção e campo; erros sintáticos incluem o caminho JSON.
+
+Sem `estado_inicial.json` e os catálogos complementares, as flags conhecidas são inferidas de `set_flag` e `unlock_memory`, os itens de `give_item` e os locais de `scene.location`. As três memórias e os falantes são os definidos para o capítulo. Isso detecta referências sem definição, mas não substitui os futuros catálogos: um ID digitado errado tanto na definição quanto no uso pode permanecer consistente. Arquivos de imagem, expressões e hotspots não são conferidos nesta etapa.
+
+A validação específica do Capítulo I compara a regra dos metadados, `c24_terceira_possibilidade/n001` e `c25_decisao/n004`, aceitando mudanças de ordem na conjunção e exigindo as cinco condições oficiais. O carregador não exige que os PNGs estejam disponíveis para validar os dados narrativos.
+
 Antes de disponibilizar o capítulo, verificar:
 
 - Sintaxe JSON, chaves duplicadas, campos obrigatórios e tipos de valores.
@@ -210,5 +216,17 @@ Antes de disponibilizar o capítulo, verificar:
 O erro deve indicar arquivo, cena, nó/opção e campo afetado. Não tratar conteúdo desconhecido como avanço bem-sucedido nem esconder uma falha de recurso essencial com uma imagem de outro personagem.
 
 As verificações estruturais não substituem os procedimentos de [testes do capítulo](testes-do-capitulo.md). O [catálogo de recursos](catalogo-de-recursos.md) registra a disponibilidade visual; a [arquitetura e POO](arquitetura-e-poo.md) define a separação de responsabilidades.
+
+### API disponível
+
+```java
+Story story = new StoryLoader().loadDefault();
+Story.Scene entry = story.entryScene();
+NarrativeNode first = entry.node(entry.entryNode());
+GameState state = story.newGameState();
+boolean canRewrite = story.metadata().secretEndingRequires().matches(state);
+```
+
+Os tipos estão em `br.com.bibliotecadasalmas.narrative`, exceto `GameState`, em `core`. Também há `load(Path)` e `load(Reader, String)`; neste último, o chamador fecha o `Reader`. Cenas, nós, opções, listas de efeitos e condições são imutáveis. Consultar esses dados ou avaliar condições não avança o cursor, aplica efeitos ou grava progresso.
 
 Commit sugerido: `docs: adiciona contrato do sistema narrativo json`.

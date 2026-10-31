@@ -28,7 +28,7 @@ O jogo não utiliza movimentação livre ou combate: a navegação acontece por 
 
 O primeiro capítulo acompanha Natasha em uma investigação pela biblioteca. Cada ambiente revela uma parte da relação entre as memórias, os registros e a liberdade das almas.
 
-O capítulo foi planejado com **26 cenas narrativas**, incluindo uma cena final com três variações, representadas em **28 arquivos JSON de cena**. A previsão inicial de duração é de **25 a 40 minutos**, sujeita a ajustes após testes.
+O capítulo foi planejado com **26 cenas narrativas**, incluindo uma cena final com três variações, representadas por **28 entradas no roteiro JSON consolidado**. A previsão inicial de duração é de **25 a 40 minutos**, sujeita a ajustes após testes.
 
 ### Personagens
 
@@ -86,7 +86,7 @@ O terceiro final exige: memória da carta, memória da fotografia, memória do p
 | **JSON** | Formato do roteiro, escolhas e metadados narrativos preparados para integração. |
 | **PNG (com transparência)** | Personagens, expressões, cutscenes e componentes visuais. |
 
-A versão atual do menu utiliza **apenas bibliotecas disponíveis no Java**, sem motor gráfico externo.
+A interface utiliza Swing e Graphics2D, sem motor gráfico externo. O carregador usa **Gson 2.13.2** para leitura estrita de JSON; a dependência é declarada no Maven e incluída no JAR gerado por `mvn package`.
 
 ## Como executar
 
@@ -139,6 +139,14 @@ mvn clean package
 
 O JAR gerado pelo Maven ficará em `target/`. O arquivo executável distribuído com o protótipo está em `dist/`.
 
+Para carregar e validar o roteiro sem abrir uma janela ou alterar saves:
+
+```powershell
+java -jar target/biblioteca-das-almas-menu-1.0.0.jar --validate-story
+```
+
+A saída esperada confirma **28 cenas e 620 nós**. O carregador também pode ser usado por Java com `new StoryLoader().loadDefault()`, `load(Path)` ou `load(Reader, fonte)`. Esse carregamento ainda não conecta os diálogos à interface. Os testes explícitos estão em [Testes do capítulo](docs/testes-do-capitulo.md).
+
 ## Controles do protótipo
 
 | Controle | Ação |
@@ -163,8 +171,9 @@ O menu foi projetado originalmente em **1280 × 720 (16:9)** e adapta a interfac
 | Preferências e salvamento básico em `.properties` | **Implementado** |
 | `GameState`: inventário, memórias, flags, escolhas e cursor narrativo | **Implementado em memória; reiniciado por Novo Jogo** |
 | Personagens, expressões, cenários e cutscenes | **Artes produzidas em pacotes separados** |
-| Roteiro do Capítulo I em arquivos JSON | **Preparado e validado separadamente** |
-| Carregamento de JSON e execução de diálogos pelo jogo | **Pendente** |
+| Roteiro consolidado em `src/main/resources/story/roteiro_completo.json` | **Incorporado ao classpath, com conteúdo preservado** |
+| Carregamento JSON, modelos tipados e validação de referências | **Implementado; validável com `--validate-story`** |
+| Execução de diálogos e efeitos na interface do jogo | **Pendente** |
 | Exploração definitiva dos seis ambientes e hotspots | **Pendente** |
 | Inventário, memórias, relacionamentos e escolhas persistentes | **Pendente** |
 | Lógica jogável dos três finais | **Pendente** |
@@ -172,7 +181,7 @@ O menu foi projetado originalmente em **1280 × 720 (16:9)** e adapta a interfac
 
 **Limitação visual conhecida:** a cutscene do despertar existe, mas a **imagem isolada do cenário da Entrada da Biblioteca** ainda precisa ser integrada. Por isso, após o prólogo, o protótipo atual abre uma **demonstração no Salão Principal**, e não o fluxo definitivo da narrativa.
 
-`GameState` fornece a base de progresso para o futuro interpretador; suas coleções são protegidas e a reescrita exige as cinco condições oficiais. Essa base ainda não está conectada ao roteiro, às telas de inventário/diário ou ao salvamento completo. Veja os comandos e resultados de `GameStateTest` e `MenuSmokeTest` em [Testes do capítulo](docs/testes-do-capitulo.md).
+`GameState` fornece a base de progresso para o futuro executor; suas coleções são protegidas e a reescrita exige as cinco condições oficiais. O carregador pode criar um estado pelo ponto inicial do roteiro e avaliar condições sem executar efeitos. Telas de inventário/diário, execução narrativa e salvamento completo continuam pendentes. Veja os resultados de `StoryLoaderTest`, `GameStateTest` e `MenuSmokeTest` em [Testes do capítulo](docs/testes-do-capitulo.md).
 
 ## Organização do projeto
 
@@ -199,6 +208,16 @@ A_Biblioteca_das_Almas_Menu/
     │   │   │   ├── GameSettings.java
     │   │   │   ├── GameState.java
     │   │   │   └── SaveManager.java
+    │   │   ├── narrative/
+    │   │   │   ├── StoryLoader.java
+    │   │   │   ├── Story.java
+    │   │   │   ├── NarrativeNode.java
+    │   │   │   ├── ChoiceOption.java
+    │   │   │   ├── StoryCondition.java
+    │   │   │   ├── NarrativeEffect.java
+    │   │   │   ├── StoryValidator.java
+    │   │   │   ├── StrictJson.java
+    │   │   │   └── StoryLoadException.java
     │   │   └── ui/
     │   │       ├── GamePanel.java
     │   │       ├── ClickTarget.java
@@ -209,16 +228,18 @@ A_Biblioteca_das_Almas_Menu/
     │       ├── assets/
     │       │   ├── menu/
     │       │   └── ui/
-    │       └── story/             # A integrar: roteiro JSON separado
+    │       └── story/
+    │           └── roteiro_completo.json
     └── test/java/
         └── br/com/bibliotecadasalmas/
             ├── GameStateTest.java
-            └── MenuSmokeTest.java
+            ├── MenuSmokeTest.java
+            └── StoryLoaderTest.java
 ```
 
 ### Pacote narrativo JSON
 
-O pacote de roteiro foi criado à parte e pode ser incorporado posteriormente em `src/main/resources/story/`:
+O [roteiro consolidado](src/main/resources/story/roteiro_completo.json) foi movido da raiz para `src/main/resources/story/`, sem alterar seu conteúdo e sem manter cópias divergentes. Ele é a entrada atual do carregador. Os arquivos complementares do pacote produzido separadamente ainda precisam ser localizados e integrados; a estrutura prevista é:
 
 ```text
 story/
@@ -239,7 +260,7 @@ story/
 
 `index.json` define a sequência das cenas; `estado_inicial.json`, o estado inicial; `assets.json`, as referências de imagens; e cada arquivo em `cenas/` contém nós de diálogo, escolhas e eventos. Os hotspots ainda precisam de coordenadas definitivas, e um gerenciador Java deverá interpretar esses dados.
 
-> **Importante:** copiar os arquivos JSON para `resources/` **não ativa automaticamente o roteiro**. É necessário implementar sua leitura e ligar os eventos ao controlador, à interface e ao salvamento.
+> **Importante:** o consolidado já é lido e validado, mas carregar os dados **não executa a história**. O executor de eventos, a interface de diálogos e o salvamento narrativo continuam como próximas etapas. O manifesto de artes e os hotspots também não são validados sem sua integração.
 
 ## Arquitetura e orientação a objetos
 
@@ -260,6 +281,7 @@ O projeto utiliza os quatro pilares da Programação Orientada a Objetos (POO) c
 - **`GamePanel`** — desenho das telas com `Graphics2D` e tratamento das interações gráficas.
 - **`GameController`** — fluxo do menu, prólogo e demonstração de exploração.
 - **`GameState`** — progresso narrativo em memória, com inventário sem duplicatas, memórias, escolhas, locais desbloqueados e consulta dos requisitos da reescrita.
+- **`StoryLoader` / `StoryValidator`** — leitura estrita do consolidado, construção de modelos imutáveis e validação de referências, ciclos automáticos e condições secretas.
 - **`AssetManager`** — carregamento e cache de imagens do classpath.
 - **`SaveManager`** — leitura e gravação do progresso básico e das preferências.
 - **`GothicButton` / `TextOption`** — elementos de interface reutilizáveis.

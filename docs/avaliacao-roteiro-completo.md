@@ -4,7 +4,7 @@
 
 Avaliação original: 29/10/2026. Revisão contextualizada: 30/10/2026.
 
-Fonte narrativa analisada: [roteiro_completo.json](../roteiro_completo.json), versão declarada `1.0`.
+Fonte narrativa analisada: [roteiro_completo.json](../src/main/resources/story/roteiro_completo.json), versão declarada `1.0`.
 
 Este documento avalia a coerência do roteiro com o contexto oficial do projeto e identifica o trabalho necessário para integrá-lo à aplicação Java existente. Contém spoilers dos três finais.
 
@@ -43,7 +43,7 @@ O final secreto já preserva a consequência emocional aprovada: Natasha **não 
 
 ## 3. Estrutura e verificações do JSON
 
-A contagem correta é **26 cenas narrativas oficiais, representadas por 28 entradas no JSON consolidado**: as cenas 01 a 25 e três versões da cena 26. Isso não significa que a história ganhou duas cenas adicionais. O arquivo consolidado foi localizado na raiz do repositório; a divisão em arquivos individuais de cena ainda não foi conferida nesta revisão.
+A contagem correta é **26 cenas narrativas oficiais, representadas por 28 entradas no JSON consolidado**: as cenas 01 a 25 e três versões da cena 26. Isso não significa que a história ganhou duas cenas adicionais. O consolidado, inicialmente na raiz, foi incorporado a `src/main/resources/story/roteiro_completo.json` sem alterar seu conteúdo. A divisão em arquivos individuais ainda não foi conferida.
 
 | Parte do capítulo | Cenas | Função narrativa |
 | --- | --- | --- |
@@ -75,11 +75,11 @@ A leitura do código atual confirma a separação entre o protótipo e o conteú
 | --- | --- | --- |
 | Menu e prólogo | `GameController` controla menu, configurações, créditos, prólogo de três páginas e passagem para a demonstração de exploração. | Preservar esses fluxos e conectar Novo Jogo ao roteiro definitivo. |
 | Exploração | `GamePanel` apresenta uma demonstração no Salão Principal, com inspeção de livro. | Implementar os seis ambientes, hotspots, desbloqueios e retornos. |
-| Roteiro | `roteiro_completo.json` está na raiz; não foi localizado um carregador narrativo no Java atual. | Interpretar os nós e conectar condições, efeitos, escolhas e apresentação. |
+| Roteiro | `StoryLoader` já carrega as 28 entradas de `resources/story/roteiro_completo.json`, valida o grafo e fornece condições avaliáveis. | Executar nós e efeitos e conectar escolhas e apresentação. |
 | Estado narrativo | `GameState` implementa progresso em memória e é reiniciado por `GameController.newGame()`. | Conectar essa base ao carregador, à interface narrativa e ao salvamento completo. |
 | Salvamento | `SaveManager` grava modo e página do prólogo em `.properties`, além das preferências. | Persistir cenário, ponto narrativo, inventário, memórias, escolhas e estados. |
 | Recursos visuais | `src/main/resources/assets/` contém o Salão, o despertar e parte do UI Kit. | Incorporar e mapear os demais fundos, personagens, expressões e cutscenes já produzidos. |
-| Testes | `MenuSmokeTest` verifica o protótipo; `GameStateTest` cobre as regras do estado e as 32 combinações secretas. Ambos usam `main`. | Validar a leitura das regras do JSON e o capítulo integrado; esses testes não comprovam uma partida completa. |
+| Testes | `StoryLoaderTest` verifica o roteiro, 44 amostras inválidas e as 32 combinações secretas; `GameStateTest` e `MenuSmokeTest` também passaram. | Validar execução narrativa e partidas completas; dados carregados não equivalem a capítulo jogável. |
 
 O contexto oficial informa que as artes e o pacote narrativo complementar já foram produzidos separadamente. A ausência de um recurso no classpath atual indica uma pendência de localização ou integração, sem justificar sua recriação automática.
 
@@ -120,7 +120,7 @@ Memórias também aparecem como efeitos `unlock_memory` e flags `memoria_*`. O e
 
 ### Contrato do interpretador narrativo
 
-O carregador precisa preservar os identificadores existentes e executar os tipos presentes no arquivo: `line`, `choice`, `condition`, `event`, `join`, `cutscene` e `end`. Seu contrato deve definir:
+O carregador já preserva os identificadores e representa os sete tipos presentes: `line`, `choice`, `condition`, `event`, `join`, `cutscene` e `end`. O executor ainda precisa consumir esses modelos. Seu contrato deve definir:
 
 - Avaliação de `requires`, `all` e testes de flags, com valores iniciais explícitos.
 - Aplicação dos efeitos `set_flag`, `set_value`, `give_item`, `remove_item`, `unlock_memory` e `unlock_location` no momento correto.
@@ -188,6 +188,6 @@ Os cenários abaixo são verificações a executar após a integração. Não re
 | Cancelar a decisão final | Permanecer na escolha, sem executar efeitos ou iniciar um epílogo. |
 | Executar o JAR fora da pasta de fontes | Carregar os recursos integrados, manter hotspots alinhados ao redimensionar e apresentar textos legíveis. |
 
-A análise narrativa inicial foi documental, com verificações de arquivos, código e fluxo simplificado. A atualização de implementação registra agora `GameState` e os testes G01/P01 executados, conforme [testes-do-capitulo.md](testes-do-capitulo.md). O roteiro JSON e as artes foram preservados; o capítulo completo ainda não foi executado no Java.
+A análise narrativa inicial foi documental. A atualização registra `GameState`, o carregador, L01/G01/P01 e o build Maven, conforme [testes-do-capitulo.md](testes-do-capitulo.md). O conteúdo do roteiro e as artes foram preservados; o capítulo completo ainda não foi executado no Java.
 
 Commit sugerido: `docs: contextualiza avaliacao do roteiro com a historia oficial`.
