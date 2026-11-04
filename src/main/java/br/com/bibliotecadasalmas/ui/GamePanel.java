@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.LongSupplier;
 
 /**
  * View do menu em Java 2D. Toda a arte é composta em tempo de execução:
@@ -32,6 +33,7 @@ public final class GamePanel extends JPanel {
 
     private final AssetManager assets = new AssetManager();
     private final GameController controller;
+    private final StoryView storyView;
     private final Runnable exit;
     private final Runnable toggleFullscreen;
     private final List<ClickTarget> controls = new ArrayList<>();
@@ -43,7 +45,12 @@ public final class GamePanel extends JPanel {
     private GameMode previousMode;
 
     public GamePanel(GameController controller, Runnable exit, Runnable toggleFullscreen, boolean timerOn) {
+        this(controller, exit, toggleFullscreen, timerOn, System::nanoTime);
+    }
+
+    public GamePanel(GameController controller, Runnable exit, Runnable toggleFullscreen, boolean timerOn, LongSupplier clock) {
         this.controller = controller;
+        this.storyView = new StoryView(controller, assets, clock);
         this.exit = exit;
         this.toggleFullscreen = toggleFullscreen;
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -101,6 +108,7 @@ public final class GamePanel extends JPanel {
             case CREDITOS -> drawCredits(g);
             case INTRO -> drawIntro(g);
             case EXPLORACAO -> drawDemo(g);
+            case STORY -> storyView.draw(g);
         }
         for (int i = 0; i < controls.size(); i++) {
             controls.get(i).draw(g, i == hover, i == keyboardSelection);
@@ -146,6 +154,10 @@ public final class GamePanel extends JPanel {
         g.setFont(new Font("SansSerif", Font.PLAIN, 11));
         g.setColor(new Color(183, 166, 159, 145));
         g.drawString("JAVA 2D  ·  CAPÍTULO I", 1051, 689);
+        if (!controller.notice().isBlank()) {
+            drawWrapped(g, controller.notice(), 125, 680, 880, 18,
+                    new Font("Serif", Font.PLAIN, 14), new Color(245, 208, 184));
+        }
     }
 
     private void drawSettings(Graphics2D g) {
@@ -343,13 +355,17 @@ public final class GamePanel extends JPanel {
 
     private Point toGame(int sx, int sy) {
         double scale = Math.min(getWidth() / (double) WIDTH, getHeight() / (double) HEIGHT);
-        double offsetX = (getWidth()-WIDTH*scale)/2;
-        double offsetY = (getHeight()-HEIGHT*scale)/2;
-        return new Point((int)((sx-offsetX)/scale), (int)((sy-offsetY)/scale));
+        double offsetX = Math.round((getWidth()-WIDTH*scale)/2);
+        double offsetY = Math.round((getHeight()-HEIGHT*scale)/2);
+        return new Point((int)Math.floor((sx-offsetX)/scale), (int)Math.floor((sy-offsetY)/scale));
     }
 
     private void updateHover(int x, int y) {
         Point p = toGame(x,y);
+        if (controller.mode() == GameMode.STORY) {
+            setCursor(Cursor.getPredefinedCursor(storyView.hover(p.x, p.y) ? Cursor.HAND_CURSOR : Cursor.DEFAULT_CURSOR));
+            return;
+        }
         int found = -1;
         for (int i=0;i<controls.size();i++) if (controls.get(i).enabled() && controls.get(i).contains(p.x,p.y)) {
             found=i; break;
@@ -361,6 +377,10 @@ public final class GamePanel extends JPanel {
 
     private void handleClick(int x, int y) {
         requestFocusInWindow();
+        if (controller.mode() == GameMode.STORY) {
+            Point p = toGame(x, y);
+            storyView.click(p.x, p.y); repaint(); return;
+        }
         if (controller.mode()==GameMode.INTRO) { advanceIntro(); repaint(); return; }
         if (controller.mode()==GameMode.EXPLORACAO && controller.inspectingBook()) {
             controller.toggleBook(); repaint(); return;
@@ -373,6 +393,7 @@ public final class GamePanel extends JPanel {
     }
 
     private void handleKey(int code) {
+        if (controller.mode() == GameMode.STORY) { storyView.key(code); repaint(); return; }
         if (code == KeyEvent.VK_ESCAPE) {
             if (controller.mode()==GameMode.EXPLORACAO && controller.inspectingBook()) controller.toggleBook();
             else controller.returnToMenu();
