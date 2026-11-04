@@ -151,6 +151,30 @@ public final class GameState {
     public Set<String> unlockedLocations() { return snapshot(unlockedLocations); }
     public Set<String> completedInteractions() { return snapshot(completedInteractions); }
 
+    /** Cópia independente para validar um lote de efeitos antes de publicá-lo. */
+    public GameState copy() {
+        GameState copy = new GameState(initialLocationId, initialPosition.sceneId(), initialPosition.nodeId());
+        copy.replaceWith(this);
+        return copy;
+    }
+
+    /** Publica um estado validado pelos mesmos métodos controlados, preservando a instância. */
+    public void replaceWith(GameState source) {
+        if (!initialLocationId.equals(source.initialLocationId) || !initialPosition.equals(source.initialPosition)) {
+            throw new IllegalArgumentException("Estados têm pontos iniciais diferentes");
+        }
+        if (source == this) return;
+        flags.clear(); flags.putAll(source.flags);
+        values.clear(); values.putAll(source.values);
+        choices.clear(); choices.putAll(source.choices);
+        inventory.clear(); inventory.addAll(source.inventory);
+        memories.clear(); memories.addAll(source.memories);
+        unlockedLocations.clear(); unlockedLocations.addAll(source.unlockedLocations);
+        completedInteractions.clear(); completedInteractions.addAll(source.completedInteractions);
+        locationId = source.locationId;
+        position = source.position;
+    }
+
     /** Reinicia o progresso sem substituir o objeto consultado pela interface. */
     public void reset() {
         flags.clear();
