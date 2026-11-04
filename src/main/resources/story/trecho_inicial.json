@@ -1,0 +1,38 @@
+{
+  "sceneExits": {"c01_despertar":"explore", "c02_carta":"explore", "c03_portas":"follow", "c04_livro_mutavel":"explore"},
+  "locations": {
+    "entrada_biblioteca": {
+      "title":"Entrada da Biblioteca", "background":"cenarios/entrada_biblioteca.png", "entryScene":null,
+      "hotspots":[
+        {"id":"carta", "label":"Examinar a carta", "kind":"investigation", "target":"c02_carta", "hideWhenFlag":"carta_coletada", "x":927,"y":551,"width":130,"height":75},
+        {"id":"portas", "label":"Portas da biblioteca", "kind":"passage", "target":"salao_principal", "gateScene":"c03_portas", "x":472,"y":190,"width":330,"height":350}
+      ]
+    },
+    "salao_principal": {
+      "title":"Salão Principal", "background":"menu/salao_principal.png", "entryScene":"c04_livro_mutavel",
+      "hotspots":[
+        {"id":"livro", "label":"Examinar o livro", "kind":"investigation", "target":"c04_livro_mutavel", "hideWhenFlag":"livro_mutavel_visto", "x":835,"y":470,"width":200,"height":105},
+        {"id":"entrada", "label":"Voltar à escadaria", "kind":"passage", "target":"entrada_biblioteca", "x":345,"y":330,"width":175,"height":210}
+      ]
+    }
+  },
+  "cutscenes": {"natasha_despertando":"menu/natasha_despertar.png"},
+  "speakers": {
+    "narrador":{"name":"Narração","portraits":{}},
+    "carta":{"name":"A carta","portraits":{}},
+    "inscricao":{"name":"Inscrição","portraits":{}},
+    "livro":{"name":"O livro","portraits":{}},
+    "rodion":{"name":"Uma voz","portraits":{}},
+    "natasha":{"name":"Natasha Rostova","portraits":{
+      "assustada":"personagens/natasha/assustada.png", "cansada":"personagens/natasha/cansada.png",
+      "pensativa":"personagens/natasha/pensativa.png", "seria":"personagens/natasha/seria.png",
+      "vulneravel":"personagens/natasha/vulneravel.png", "determinada":"personagens/natasha/determinada.png",
+      "neutra":"personagens/natasha/neutra.png", "surpresa":"personagens/natasha/surpresa.png"
+    }}
+  },
+  "pauses":[{"scene":"c04_livro_mutavel","node":"n005","marker":"opening/salon_arrival"}],
+  "documents":[
+    {"id":"carta_entrada","title":"Carta da escadaria","kind":"item","scene":"c02_carta","nodes":["n007","n008","n009"]},
+    {"id":"retorno","title":"Memória 1 — O Retorno","kind":"memory","scene":"c02_carta","nodes":["n013","n014"]}
+  ]
+}
