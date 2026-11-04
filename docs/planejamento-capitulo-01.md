@@ -10,7 +10,7 @@ Este plano orienta a integração do roteiro e das artes já produzidos ao proje
 
 Entregar o Capítulo I completo: seis ambientes exploráveis por cliques, quatro personagens, diálogos com expressões e escolhas, inventário, diário de memórias, cutscenes, salvamento e três finais. A implementação deve demonstrar encapsulamento, herança, polimorfismo e abstração com exemplos reais no código.
 
-O carregador JSON e a avaliação de condições já estão implementados. A prioridade agora é o **executor de diálogos e escolhas**, com aplicação de efeitos e atualização do progresso. Em seguida, conectar esses sistemas à exploração e ampliar a integração por atos, preservando o que já funciona.
+O carregador, o executor e a abertura das cenas 01–04 já estão conectados. A prioridade agora é **ampliar a integração para o Balcão de Rodion e os atos seguintes**, preservando o retorno à investigação, a aplicação dos efeitos e o salvamento já verificados na abertura.
 
 A base permanece Java 21, Swing, Graphics2D e Maven, com conteúdo narrativo em JSON e recursos gráficos em PNG. O jogo utiliza cenários ilustrados estáticos e exploração por mouse. Movimentação livre, sprites de caminhada, combate, novas engines e novos capítulos ficam fora desta entrega.
 
@@ -70,21 +70,21 @@ Reutilizar as artes e o UI Kit gótico, com a paleta de carvão, vinho, ameixa, 
 
 | Área | Situação atual | Trabalho restante |
 | --- | --- | --- |
-| Menu e apresentação | `GameController` e `GamePanel` implementam menu, configurações, créditos, prólogo de três páginas e demonstração de exploração no Salão. | Conectar o fluxo definitivo, preservando controles e preferências. |
-| Salvamento | `SaveManager` registra modo e página do prólogo em `.properties`. | Incluir estado narrativo, cenário, itens, memórias, escolhas e retomada. |
+| Menu e apresentação | Novo Jogo executa as cenas 01–04 por JSON, com retratos, escolhas, Entrada e Salão por cliques. Menu, configurações, créditos e fluxo legado foram preservados. | Integrar os atos posteriores. |
+| Salvamento | `historia.json` já restaura o trecho, com escolhas, memórias e efeitos aplicados. `.properties` antigos continuam compatíveis. | Ampliar os contextos de exploração e validar o capítulo inteiro. |
 | Arquitetura | Existem controlador, modos, painel, gerenciador de imagens, controles de UI e `GameState` em memória, reiniciado por Novo Jogo. | Conectar o estado ao interpretador e acrescentar personagens e mundo sem concentrar responsabilidades no painel. |
-| Roteiro | `StoryLoader` carrega o consolidado pelo classpath, com modelos tipados, avaliação de condições e validação estrutural. | Implementar execução de nós e efeitos e conectá-la à interface. |
-| Recursos incorporados | `src/main/resources/assets/` contém o Salão, o despertar e parte do UI Kit. | Localizar e integrar as demais artes produzidas, com mapeamento para o classpath. |
+| Roteiro | `StoryLoader` carrega o consolidado e `NarrativeSession` executa seus nós; `OpeningContent` limita a interface às cenas 01–04. | Ampliar a configuração e as apresentações dos próximos ambientes. |
+| Recursos incorporados | Entrada, Salão, despertar, oito expressões de Natasha e parte do UI Kit. Os pacotes de cenários e retratos foram localizados. | Conferir e incorporar os recursos dos atos seguintes. |
 | Pacote complementar e artes | O contexto oficial informa a produção dos seis cenários, retratos, expressões, cutscenes e JSONs complementares em pacotes separados. | Conferir caminhos, dimensões, transparência e correspondência visual antes de copiar ou recriar arquivos. |
-| Testes existentes | `StoryLoaderTest`, `GameStateTest` e `MenuSmokeTest` são executáveis por `main` e passaram, inclusive usando o JAR Maven. | Ampliar a validação da execução narrativa; `mvn test` não substitui as chamadas explícitas desses métodos. |
+| Testes existentes | `StoryLoaderTest`, `GameStateTest`, `OpeningGameplayTest` e `MenuSmokeTest` passaram, inclusive usando o JAR fora da árvore de fontes. | Ampliar a validação aos atos seguintes; `mvn test` não substitui as chamadas explícitas dos métodos `main`. |
 
-A avaliação inicial registra uma simulação simplificada do fluxo JSON. A implementação atual acrescenta leitura e validação pelo Java, três testes explícitos e verificação do JAR fora da árvore de fontes, registrados em [testes-do-capitulo.md](testes-do-capitulo.md). Isso ainda não comprova partidas completas.
+A avaliação inicial registra uma simulação simplificada do fluxo JSON. A implementação atual acrescenta a abertura jogável e quatro testes explícitos no JAR, registrados em [testes-do-capitulo.md](testes-do-capitulo.md). Isso ainda não comprova partidas do capítulo inteiro.
 
 ## 4. Tarefas, dependências e critérios de conclusão
 
 **P0** = necessário para a entrega; **P1** = acabamento relevante; **P2** = extra opcional. Os identificadores T01–T24 foram preservados para acompanhamento, mas a ordem abaixo foi ajustada à prioridade do sistema narrativo.
 
-T01 e T02 estão concluídas quanto à definição. T05, T06 e T09 têm evidências de build, testes e carregamento registradas no guia de testes. As caixas restantes indicam trabalho pendente; carregar e validar os dados não executa a história nem implementa o salvamento narrativo.
+T01 e T02 estão concluídas quanto à definição. T05, T06 e T09 têm evidências de base técnica; T10 e T12 acrescentam o executor e a abertura jogável. As demais caixas acompanham a expansão ao capítulo inteiro; implementações parciais estão identificadas abaixo.
 
 ### Etapa 1 — Consolidar referências e preparar a integração
 
@@ -99,18 +99,22 @@ T01 e T02 estão concluídas quanto à definição. T05, T06 e T09 têm evidênc
 - [x] **T06 · P0 · Separar o estado da partida.** Base implementada em `GameState`, com cenário, cursor de cena/nó, inventário, memórias, flags, valores, escolhas e interações concluídas. `GameController` mantém a instância e a reinicia por Novo Jogo; `GameMode` continua representando as telas do protótipo. `GameStateTest` verifica encapsulamento, coerência de memórias, reinício e requisitos secretos; `MenuSmokeTest` passou após a integração. Leitura JSON, UI narrativa e persistência permanecem em suas tarefas próprias.
 - [x] **T09 · P0 · Implementar o carregador e validar o contrato JSON.** `StoryLoader` usa Gson 2.13.2 para carregar os sete tipos de nó, condições e efeitos em modelos imutáveis. Valida duplicatas, tipos, campos, destinos, referências disponíveis, ciclos automáticos e as três declarações secretas. `StoryLoaderTest` aprovou o roteiro real, 32 combinações secretas e 44 amostras inválidas. O manifesto de artes e os dados iniciais completos continuam em suas integrações próprias; o carregador não executa os nós.
 - [ ] **T08 · P0 · Preparar personagens e mapeamento visual.** Depende de T04 e T06. Criar uma classe abstrata de personagem e subclasses Natasha, Rodion, Fantasma e Escriba; mapear retratos e expressões e ampliar `AssetManager` conforme necessário. Contemplar `natasha_memoria`, `rodion_memoria` e `voz_escriba` como identificadores de apresentação. Concluída quando os quatro personagens puderem ser apresentados com as artes corretas, respeitando o rosto sem feições do Escriba.
-- [ ] **T10 · P0 · Implementar execução de diálogos e escolhas.** Depende de T06 e T09; a validação de retratos e expressões depende de T08. Exibir nome, fala, expressão e alternativas; interpretar condições e efeitos `set_flag`, `set_value`, `give_item`, `remove_item`, `unlock_memory` e `unlock_location`. Concluída quando revelar texto e avançar forem ações previsíveis, escolhas atualizarem o estado, nós automáticos forem processados corretamente e a interface bloquear cliques no cenário atrás dela. A lógica pode avançar enquanto os recursos visuais são integrados.
+- [x] **T10 · P0 · Implementar execução de diálogos e escolhas.** `NarrativeSession` executa os sete tipos de nó e os seis efeitos com publicação por lote. `StoryView` apresenta falas progressivas, retratos, escolhas e confirmação, bloqueando hotspots durante modais. A abertura foi validada por cliques; condições, evento, junção, cancelamento e rollback também foram exercitados na lógica. Artes e integração dos atos restantes continuam nas tarefas próprias.
 
-**Marco técnico:** executar uma sequência do JSON com fala, escolha, condição e efeito sobre `GameState`. O carregador e a lógica de execução podem ser desenvolvidos antes de concluir o mapa completo de hotspots.
+**Marco técnico entregue:** sequência JSON com fala, escolha e efeitos sobre `GameState`, além de testes de condição, evento, confirmação e efeitos inválidos. O mapa completo dos seis ambientes permanece uma tarefa distinta.
 
 ### Etapa 3 — Entregar a primeira sequência jogável
 
 - [ ] **T07 · P0 · Implementar cenários e interações por clique.** Depende de T03 e T06; conectar diálogos conforme T10. Criar contratos para cenário, hotspot e `Interactable`, distinguindo ambiente de cena narrativa. Concluída quando portas navegarem, objetos acionarem investigações e personagens abrirem conversas pela mesma operação de interação, com coordenadas alinhadas ao redimensionamento e respeito aos desbloqueios.
+
+  Base implementada para Entrada e Salão: `Interactable.Investigation` e `Passage`, hotspots configurados em JSON e teste com redimensionamento. A tarefa continua aberta para os seis ambientes e interlocutores.
 - [ ] **T11 · P0 · Implementar inventário e diário de memórias.** Depende de T06 e T09, em integração com T10. Usar nomes, descrições e textos dos dados complementares, com releitura limitada às descobertas feitas. Concluída quando carta, fotografia e documentos puderem ser consultados e repetir uma coleta não duplicar itens ou memórias.
-- [ ] **T12 · P0 · Integrar Entrada → Salão.** Depende de T04, T07, T08, T10 e T11. Conectar menu → despertar → carta → portas → Salão com as cenas 01–04 já escritas. Concluída quando for possível investigar ou adiar a carta, registrar a Memória 1 somente ao investigá-la e retornar para recuperá-la, sem duplicar a introdução ou executar o prólogo duas vezes.
+
+  Carta e Memória 1 já são consultáveis, usando referências aos textos do consolidado. Faltam os catálogos e apresentações dos demais objetos, documentos e memórias.
+- [x] **T12 · P0 · Integrar Entrada → Salão.** Cenas 01–04 jogáveis, com a Entrada oficial, oito expressões de Natasha, carta adiável, Memória 1, três escolhas de porta e livro acionado por clique. O retorno permite recuperar a carta sem repetir prólogo ou postura. O save retoma diálogos, escolhas e pausas. `OpeningGameplayTest` verificou seis combinações e a passagem direta pela porta; `MenuSmokeTest` percorreu a interface.
 - [ ] **T19 · P0 · Integrar a UI essencial.** Depende de T04, T10 e T11; desenvolver junto de T12. Reutilizar caixas, escolhas, indicadores e ornamentos do UI Kit para diálogo, inventário e diário. Concluída quando textos e respostas longas couberem, a navegação e o retorno forem claros e a interface permanecer legível em janela e tela cheia.
 
-**Marco 1:** primeira sequência completa do jogo, com diálogo JSON, expressão, investigação, memória, inventário e navegação. A aprovação visual exige a arte oficial da Entrada; uma imagem provisória deve ser identificada durante o desenvolvimento.
+**Marco 1 entregue:** primeira sequência jogável com diálogo JSON, expressão, investigação, memória, inventário, navegação e Continuação. A arte oficial da Entrada foi incorporada e as telas conferidas por imagens renderizadas. Tela cheia e foco real do teclado ainda pedem conferência manual em ambiente gráfico.
 
 ### Etapa 4 — Integrar os atos e os três finais
 
@@ -125,6 +129,8 @@ T01 e T02 estão concluídas quanto à definição. T05, T06 e T09 têm evidênc
 ### Etapa 5 — Consolidar persistência e apresentação
 
 - [ ] **T18 · P0 · Ampliar e versionar o salvamento.** Depende de T06 e T09; iniciar junto de T10–T12 e concluir com T16. Registrar ambiente, ponto narrativo, flags, escolhas, itens, memórias, interações concluídas e final. Definir retomada durante diálogo ou em ponto seguro, compatibilidade com saves antigos e tratamento de arquivos inválidos. Concluída quando continuar restaurar as consequências sem reaplicar efeitos e falhas de gravação forem comunicadas ao jogador.
+
+  Formato narrativo 1 implementado para a abertura, com gravação por temporário, restauração validada, preservação de saves inválidos e aviso de falha. Compatibilidade com `.properties` mantida. A tarefa permanece aberta para os contextos da cena 20 e os atos restantes.
 - [ ] **T20 · P1 · Refinar apresentação e controles.** Depende de T17 e T19. Ajustar transições, feedback de clique, foco de teclado e velocidade do texto. Integrar música, efeitos e volume conforme a disponibilidade dos arquivos. Concluída quando a apresentação sustentar a atmosfera gótica e as animações ou sons não dificultarem leitura e navegação.
 
 O salvamento é uma responsabilidade transversal: começar sua integração na primeira sequência e validar novamente os estados acrescentados a cada ato. A posição de T18 nesta lista não adia esse trabalho para o fim do capítulo.
@@ -201,7 +207,7 @@ Reestimar após o Marco 1, conforme a disponibilidade das artes e o esforço rea
 
 ## 9. Próxima ação técnica
 
-Iniciar a execução de diálogos e escolhas (T10), consumindo `Story` e atualizando `GameState`. Usar o despertar e a carta como primeiro trecho de integração, preservando os IDs do JSON. O mapa de interações, a conferência de recursos e os retratos (T03, T04 e T08) continuam necessários para a apresentação completa.
+Integrar as cenas 05–07 do Balcão (T13), conferindo o fundo e os retratos de Rodion já localizados nos pacotes. Ampliar a configuração parcial sem liberar cenas cujas artes e interações ainda não estejam prontas. T03, T04 e T08 continuam acompanhando o mapa completo, os recursos e a hierarquia dos quatro personagens.
 
 Atualização de implementação em 30/10/2026: T05, T06 e T09 registram a base Java, o carregador e o empacotamento efetivamente verificados. O conteúdo do roteiro e as artes foram preservados.
 

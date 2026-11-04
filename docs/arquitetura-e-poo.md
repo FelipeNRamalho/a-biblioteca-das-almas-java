@@ -21,12 +21,17 @@ O pacote principal é `br.com.bibliotecadasalmas`.
 | [GameState](../src/main/java/br/com/bibliotecadasalmas/core/GameState.java) | Mantém progresso narrativo em memória: cursor imutável de cena/nó, local, inventário, memórias, flags, valores, escolhas e interações concluídas. Novo Jogo reinicia a mesma instância. |
 | [GameMode](../src/main/java/br/com/bibliotecadasalmas/core/GameMode.java) | Enumera os modos de tela atuais; não representa sozinho os seis ambientes ou as cenas do roteiro. |
 | [GameSettings](../src/main/java/br/com/bibliotecadasalmas/core/GameSettings.java) | Mantém preferências de efeitos, velocidade do texto e tela cheia, com métodos controlados. |
-| [SaveManager](../src/main/java/br/com/bibliotecadasalmas/core/SaveManager.java) | Lê e grava preferências e progresso básico em `.properties`. Aceita um diretório no construtor, permitindo isolamento nos testes. |
+| [SaveManager](../src/main/java/br/com/bibliotecadasalmas/core/SaveManager.java) | Mantém preferências/saves legados em `.properties` e grava `historia.json` por temporário. O diretório é injetável para isolamento dos testes. |
+| [StoryProgress](../src/main/java/br/com/bibliotecadasalmas/core/StoryProgress.java) | DTO versionado do save; reconstrói e valida um candidato de estado sem desserializar diretamente os campos privados de `GameState`. |
 | [GamePanel](../src/main/java/br/com/bibliotecadasalmas/ui/GamePanel.java) | Renderiza telas, compõe a UI, transforma coordenadas e trata entradas de mouse e teclado. Ainda contém o texto fixo do prólogo demonstrativo. |
 | [AssetManager](../src/main/java/br/com/bibliotecadasalmas/assets/AssetManager.java) | Carrega imagens sob `/assets/` pelo classpath e mantém cache por caminho. |
 | [StoryLoader](../src/main/java/br/com/bibliotecadasalmas/narrative/StoryLoader.java) | Lê UTF-8 do classpath, de arquivo ou de `Reader`, usando Gson em modo estrito e modelos tipados. Não executa o fluxo carregado. |
 | [StoryValidator](../src/main/java/br/com/bibliotecadasalmas/narrative/StoryValidator.java) | Valida IDs, destinos, parâmetros referenciados, contagens, ciclos automáticos e as três declarações da regra secreta. |
 | [Story](../src/main/java/br/com/bibliotecadasalmas/narrative/Story.java) e modelos de `narrative/` | Records e contratos selados imutáveis para cenas, nós, escolhas, destinos, condições e efeitos. `StoryCondition.matches` consulta `GameState` sem alterá-lo. |
+| [NarrativeSession](../src/main/java/br/com/bibliotecadasalmas/narrative/NarrativeSession.java) | Executa nós, escolhas, confirmação/cancelamento e lotes de efeitos sobre cópias do estado; cenas concluídas e efeitos recebem marcas. |
+| [OpeningContent](../src/main/java/br/com/bibliotecadasalmas/narrative/OpeningContent.java) | Carrega e confere a configuração parcial de fundos, retratos, hotspots, documentos e pausas das cenas 01–04. |
+| [StoryView](../src/main/java/br/com/bibliotecadasalmas/ui/StoryView.java) | Desenha texto progressivo, expressões, escolhas e telas de consulta. Usa `ClickTarget` e um relógio injetável para testar a revelação de texto sem esperas. |
+| [Interactable](../src/main/java/br/com/bibliotecadasalmas/world/Interactable.java) | Contrato já implementado por `Investigation` e `Passage`, acionado pelos hotspots. |
 | [ClickTarget](../src/main/java/br/com/bibliotecadasalmas/ui/ClickTarget.java) | Define `contains`, `enabled`, `click` e `draw` para controles da interface. |
 | [AbstractControl](../src/main/java/br/com/bibliotecadasalmas/ui/AbstractControl.java) | Implementa parte de `ClickTarget`, compartilhando geometria, rótulo e comando. A classe é abstrata. |
 | [GothicButton](../src/main/java/br/com/bibliotecadasalmas/ui/GothicButton.java) | Desenha botões usando imagens do UI Kit e estados de habilitação, hover e seleção. |
@@ -42,6 +47,11 @@ flowchart TD
     GameController --> GameSettings
     GameController --> GameState
     GameController --> SaveManager
+    GameController --> NarrativeSession
+    GameController --> OpeningContent
+    NarrativeSession --> GameState
+    GamePanel --> StoryView
+    StoryView --> GameController
     GamePanel --> AssetManager
     GamePanel --> ClickTarget
     GothicButton -. implementa por herança .-> ClickTarget
@@ -49,7 +59,7 @@ flowchart TD
     GothicButton --> AssetManager
 ```
 
-O controlador não depende de `Graphics2D`. `Game --validate-story` já usa o carregador para conferir o consolidado sem janela. A separação da história ainda está incompleta: `GamePanel` contém falas do prólogo demonstrativo e não executa os nós carregados. A demonstração atual não deve ser apresentada como capítulo integrado.
+O controlador não depende de `Graphics2D`. Novo Jogo usa o consolidado nas cenas 01–04; `GamePanel` delega sua apresentação a `StoryView`. O texto fixo do prólogo em `GamePanel` permanece apenas para saves legados. O modo `STORY` separa o trecho novo de `INTRO` e `EXPLORACAO` antigos. A abertura integrada não equivale ao capítulo inteiro.
 
 ## 3. Os quatro pilares no código atual
 
@@ -59,7 +69,7 @@ O controlador não depende de `Graphics2D`. `Game --validate-story` já usa o ca
 
 `GameController` protege modo, página e estado de inspeção e controla suas mudanças. `SaveManager` concentra os detalhes dos arquivos de progresso. Esses exemplos mostram encapsulamento de estado e responsabilidade; apenas usar `private`, sem controlar alterações, seria uma demonstração incompleta.
 
-`GameState` acrescenta regras concretas: itens não se duplicam, memórias e flags correspondentes permanecem sincronizadas, e uma navegação só é permitida após desbloquear o local. As consultas devolvem cópias imutáveis das coleções. O carregador futuro validará IDs contra os catálogos; hoje a classe valida a forma dos IDs e reconhece as três memórias oficiais.
+`GameState` acrescenta regras concretas: itens não se duplicam, memórias e flags correspondentes permanecem sincronizadas, e uma navegação só é permitida após desbloquear o local. As consultas devolvem cópias imutáveis. O carregador valida as referências disponíveis no consolidado e `OpeningContent` confere a configuração parcial; os catálogos completos continuam pendentes.
 
 ### Abstração
 
@@ -105,18 +115,18 @@ A tabela abaixo apresenta responsabilidades propostas. Exceto pelas classes iden
 | Área | Responsabilidade planejada |
 | --- | --- |
 | `core/GameState` existente | Ampliar a base em memória quando o interpretador precisar de fase da interface e contexto de exploração suspenso. A classe ainda não lê JSON nem persiste dados. |
-| `narrative/` existente | Carregamento, validação e consulta de condições já disponíveis. Acrescentar executor de nós/efeitos e sua comunicação com a interface, respeitando a aplicação atômica de efeitos. |
+| `narrative/` existente | Carregamento, validação e execução já disponíveis. Ampliar a configuração da interface e os contextos de exploração para os atos posteriores. |
 | `characters/GameCharacter` | Classe abstrata de personagem, com identidade e apresentação compartilhadas e operações pertinentes ao domínio. |
 | `characters/Natasha`, `Rodion`, `Fantasma`, `Escriba` | Especializar a base, mantendo as regras e apresentações próprias sem copiar a lógica comum. Não transferir o roteiro inteiro para essas classes. |
-| `world/Interactable` | Contrato de interação com objetos do mundo. |
+| `world/Interactable` existente | `Investigation` inicia uma cena investigativa; `Passage` navega ou aciona a cena que desbloqueia a porta. Integrar novos objetos e personagens conforme os atos. |
 | `world/` | Representar ambientes, hotspots, portas, documentos e interlocutores, com disponibilidade definida pelo estado. |
 | `ui/` existente | Apresentar o estado, diálogos, escolhas, inventário e diário; encaminhar ações do jogador. |
 | `assets/` existente | Resolver imagens e seu cache, integrado ao manifesto de recursos. |
-| `core/SaveManager` existente | Evoluir para persistir o estado narrativo e tratar versões de save, sem assumir o papel do interpretador. |
+| `core/SaveManager` existente | Save narrativo versionado da abertura já disponível; ampliar e testar os contextos dos próximos atos sem assumir o papel do interpretador. |
 
 Uma cena narrativa é uma sequência de nós; um ambiente é um lugar explorável. Várias cenas podem ocorrer no mesmo ambiente, e um epílogo pode mudar de fundo durante sua execução. Essa distinção evita usar uma única classe ou enumeração para conceitos diferentes.
 
-### Fluxo planejado de interação
+### Fluxo de interação já utilizado na abertura
 
 1. A interface transforma o clique em coordenadas lógicas e verifica se há uma apresentação modal ativa.
 2. Na exploração, identifica um hotspot habilitado e aciona seu `Interactable`.
@@ -137,7 +147,7 @@ Uma porta, um documento e um personagem devem responder à mesma operação de i
 - A elegibilidade da reescrita deve usar exatamente as cinco condições oficiais. Não criar requisitos ocultos nas subclasses dos personagens.
 - Recarregar uma imagem ou redesenhar a tela não pode reaplicar efeitos narrativos.
 
-A representação dos nós usa records que implementam `NarrativeNode`, com um tipo para cada comportamento. `StoryCondition.Flag` e `All` implementam `matches` de formas diferentes: comparação de flag ou conjunção de condições. Isso acrescenta uma demonstração de abstração e polimorfismo sem colocar o conteúdo das falas nas classes. Os efeitos são dados tipados; ainda não possuem execução.
+A representação dos nós usa records que implementam `NarrativeNode`, com um tipo para cada comportamento. `StoryCondition.Flag` e `All` implementam `matches` de formas diferentes. `NarrativeSession` executa os efeitos tipados sobre `GameState.copy()` e publica o candidato validado por `replaceWith`. Isso mantém os lotes consistentes sem colocar falas ou efeitos no desenho da tela.
 
 Gson 2.13.2 é a única dependência direta acrescentada para leitura JSON. O Maven Shade inclui as dependências no artefato executável, preservando `Game` como classe principal. O roteiro consolidado é um recurso do classpath; não há cópia operacional na raiz.
 
@@ -153,9 +163,9 @@ Eventos e alterações de apresentação devem respeitar a thread de eventos do 
 
 ## 7. Persistência e testes
 
-O save atual contém modo e página do prólogo. O save completo deverá incluir cursor, mundo, escolhas, inventário, memórias e contexto de exploração suspenso. Definir versão e compatibilidade antes de substituir o formato atual.
+O save narrativo da abertura usa `StoryProgress`, formato 1, em `historia.json`. Registra cursor, ambiente, fase ativa, confirmação, escolhas, flags, valores, inventário, memórias e marcas. Os formatos antigos em `.properties` permanecem compatíveis no fluxo legado. O contexto de exploração da cena 20 ainda está fora da interface e do save liberado.
 
-`GameController.state()` expõe a instância encapsulada, e `newGame()` chama seu `reset()` sem alterar preferências. A UI demonstrativa e `continueGame()` ainda não leem ou restauram o progresso narrativo. O construtor de `GameState` aceita um ponto inicial fornecido pelo chamador; o construtor padrão usa Entrada e `c01_despertar/n001` até a integração dos dados iniciais.
+`GameController.state()` mantém a mesma instância durante Novo Jogo e Continuação. O controlador cria o estado pelo ponto inicial carregado, reinicia preferências apenas quando solicitado e restaura um candidato validado por `StoryProgress`. `NarrativeSession.restore` não executa efeitos e recusa nós automáticos ativos em saves. A UI volta a revelar a fala retomada, sem repetir recompensas.
 
 Salvar deve capturar conjuntamente os efeitos já aplicados e a posição de retomada. Ao continuar, restaurar esse estado sem conceder novamente itens ou executar eventos anteriores. Preferências permanecem separadas da progressão reiniciada por Novo Jogo.
 
@@ -175,7 +185,7 @@ A demonstração atual pode usar estes passos:
 4. Mostrar a coleção de `ClickTarget` e as duas implementações de `draw` para explicar polimorfismo.
 5. Exibir o menu e a inspeção do livro para relacionar as classes à interface do protótipo.
 
-Depois da integração, acrescentar a hierarquia dos quatro personagens e implementações diferentes de `Interactable`. Demonstrar uma investigação que usa `GameState` para atualizar memória e inventário e uma porta que navega usando o mesmo contrato.
+Na abertura atual, demonstrar a carta e a porta acionadas pelo mesmo contrato `Interactable`, com implementações diferentes. A carta atualiza inventário e memória; a porta navega ou inicia o diálogo que desbloqueia a passagem. A hierarquia dos quatro personagens permanece uma expansão planejada.
 
 Atualizar os exemplos conforme o código evoluir. Uma classe planejada, um diagrama ou uma assinatura sem comportamento não substitui a demonstração de uma funcionalidade implementada.
 

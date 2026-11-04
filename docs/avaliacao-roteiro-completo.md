@@ -73,13 +73,13 @@ A leitura do código atual confirma a separação entre o protótipo e o conteú
 
 | Área | Evidência no repositório | Trabalho restante |
 | --- | --- | --- |
-| Menu e prólogo | `GameController` controla menu, configurações, créditos, prólogo de três páginas e passagem para a demonstração de exploração. | Preservar esses fluxos e conectar Novo Jogo ao roteiro definitivo. |
-| Exploração | `GamePanel` apresenta uma demonstração no Salão Principal, com inspeção de livro. | Implementar os seis ambientes, hotspots, desbloqueios e retornos. |
-| Roteiro | `StoryLoader` já carrega as 28 entradas de `resources/story/roteiro_completo.json`, valida o grafo e fornece condições avaliáveis. | Executar nós e efeitos e conectar escolhas e apresentação. |
-| Estado narrativo | `GameState` implementa progresso em memória e é reiniciado por `GameController.newGame()`. | Conectar essa base ao carregador, à interface narrativa e ao salvamento completo. |
-| Salvamento | `SaveManager` grava modo e página do prólogo em `.properties`, além das preferências. | Persistir cenário, ponto narrativo, inventário, memórias, escolhas e estados. |
-| Recursos visuais | `src/main/resources/assets/` contém o Salão, o despertar e parte do UI Kit. | Incorporar e mapear os demais fundos, personagens, expressões e cutscenes já produzidos. |
-| Testes | `StoryLoaderTest` verifica o roteiro, 44 amostras inválidas e as 32 combinações secretas; `GameStateTest` e `MenuSmokeTest` também passaram. | Validar execução narrativa e partidas completas; dados carregados não equivalem a capítulo jogável. |
+| Menu e prólogo | Novo Jogo já executa o despertar do JSON. Menu, configurações, créditos e continuação legada foram preservados. | Integrar os atos posteriores à abertura. |
+| Exploração | Entrada e Salão têm carta, portas, livro e retorno por hotspots, com bloqueio durante diálogos e consultas. | Integrar os outros quatro ambientes e a navegação do capítulo completo. |
+| Roteiro | `StoryLoader` carrega as 28 entradas e `NarrativeSession` executa os modelos; a interface libera as cenas 01–04. | Integrar as apresentações e interações das cenas 05–26. |
+| Estado narrativo | `NarrativeSession` aplica efeitos do JSON sobre `GameState`, com lotes e marcas que impedem reaplicação. | Ampliar o uso da base aos atos seguintes. |
+| Salvamento | `StoryProgress` e `SaveManager` restauram a abertura por `historia.json`; os formatos legados permanecem compatíveis. | Validar os contextos de exploração dos atos posteriores e o capítulo inteiro. |
+| Recursos visuais | Entrada oficial, Salão, despertar, oito expressões de Natasha e UI Kit parcial foram incorporados. | Integrar os demais fundos, personagens, expressões e cutscenes produzidos. |
+| Testes | Os quatro testes passaram: carregador, estado, seis combinações da abertura e fluxo de interface por cliques. | Validar os atos restantes e partidas completas do capítulo. |
 
 O contexto oficial informa que as artes e o pacote narrativo complementar já foram produzidos separadamente. A ausência de um recurso no classpath atual indica uma pendência de localização ou integração, sem justificar sua recriação automática.
 
@@ -158,11 +158,13 @@ A implementação pode crescer a partir das classes atuais, mantendo conteúdo n
 | **Abstração** | `ClickTarget` define o contrato dos controles clicáveis. | Contrato `Interactable` para objetos do mundo e separação entre dados narrativos, execução e renderização. |
 | **Polimorfismo** | Os controles respondem ao mesmo contrato de desenho e interação. | Livros, portas, personagens e objetos respondem a uma interação comum: investigar, navegar ou conversar. |
 
-Além da base `GameState`, as expansões narrativas indicadas continuam pendentes. Na apresentação acadêmica, os exemplos devem apontar para classes e comportamentos efetivos, distinguindo-os das intenções de arquitetura.
+A abertura já demonstra `GameState`, execução narrativa e `Interactable.Investigation`/`Passage`; a hierarquia dos quatro personagens e a expansão ao capítulo completo continuam pendentes. A apresentação acadêmica deve distinguir esses estados.
 
 O `GameController` pode coordenar o fluxo, enquanto o sistema narrativo interpreta os dados e o `GamePanel` renderiza o estado. Ampliar `SaveManager` para restaurar o ponto narrativo e os efeitos já aplicados, definindo também como tratar os saves antigos do protótipo.
 
 ## 8. Ordem recomendada de desenvolvimento
+
+Carregador, executor e primeira sequência já foram entregues. A ordem abaixo registra a estrutura de trabalho; a próxima expansão é o Balcão de Rodion, seguida dos demais atos, com persistência e testes ampliados a cada integração.
 
 1. **Implementar o carregador e o sistema de diálogos.** Validar referências, apresentar falas, retratos e expressões, processar escolhas, condições e efeitos com o estado encapsulado.
 2. **Concluir a primeira sequência jogável.** Integrar menu → despertar → carta → portas → Salão, incluindo a Memória 1 e o adiamento da coleta. Esse é o primeiro marco verificável da integração.
@@ -188,6 +190,6 @@ Os cenários abaixo são verificações a executar após a integração. Não re
 | Cancelar a decisão final | Permanecer na escolha, sem executar efeitos ou iniciar um epílogo. |
 | Executar o JAR fora da pasta de fontes | Carregar os recursos integrados, manter hotspots alinhados ao redimensionar e apresentar textos legíveis. |
 
-A análise narrativa inicial foi documental. A atualização registra `GameState`, o carregador, L01/G01/P01 e o build Maven, conforme [testes-do-capitulo.md](testes-do-capitulo.md). O conteúdo do roteiro e as artes foram preservados; o capítulo completo ainda não foi executado no Java.
+A análise narrativa inicial foi documental. A atualização registra a abertura jogável, os quatro testes explícitos e o JAR testado fora da árvore de fontes, conforme [testes-do-capitulo.md](testes-do-capitulo.md). O roteiro foi preservado e as artes da abertura copiadas dos pacotes existentes, sem edição. O capítulo completo ainda não foi executado na interface.
 
 Commit sugerido: `docs: contextualiza avaliacao do roteiro com a historia oficial`.

@@ -22,7 +22,7 @@ O jogador acompanha **Natasha Rostova**, que desperta nos degraus de uma bibliot
 
 O jogo não utiliza movimentação livre ou combate: a navegação acontece por **cliques em áreas interativas (*hotspots*)**, com destaque para a atmosfera, a leitura e as consequências das decisões.
 
-> **Estado do desenvolvimento:** o **menu inicial e um prólogo demonstrativo já são executáveis**. O roteiro completo do Capítulo I foi estruturado em JSON, mas ainda precisa ser conectado ao motor de diálogos, à exploração definitiva e aos três finais jogáveis. Veja [Andamento do desenvolvimento](#andamento-do-desenvolvimento).
+> **Estado do desenvolvimento:** as **cenas 01–04 já são jogáveis**, do despertar à investigação do livro no Salão, com diálogos JSON, escolhas, retratos, retorno à carta, inventário, Memória 1 e salvamento. O restante do capítulo e os finais ainda precisam ser integrados. Veja [Andamento do desenvolvimento](#andamento-do-desenvolvimento).
 
 ## Capítulo I — O Nome que Não Deveria Existir
 
@@ -98,6 +98,15 @@ A interface utiliza Swing e Graphics2D, sem motor gráfico externo. O carregador
 
 ### Windows — execução rápida
 
+Para jogar o trecho atualizado, compile e execute o JAR atual, ou execute `Game` pela IDE:
+
+```powershell
+mvn package
+java -jar .\target\biblioteca-das-almas-menu-1.0.0.jar
+```
+
+Os atalhos e o JAR em `dist/` abaixo continuam sendo a distribuição anterior do protótipo; não foram substituídos pelo build atual.
+
 1. Extraia os arquivos do projeto em uma pasta.
 2. Abra a pasta que contém `INICIAR_WINDOWS.bat` e `dist/`.
 3. Dê dois cliques em **`INICIAR_WINDOWS.bat`**.
@@ -145,17 +154,17 @@ Para carregar e validar o roteiro sem abrir uma janela ou alterar saves:
 java -jar target/biblioteca-das-almas-menu-1.0.0.jar --validate-story
 ```
 
-A saída esperada confirma **28 cenas e 620 nós**. O carregador também pode ser usado por Java com `new StoryLoader().loadDefault()`, `load(Path)` ou `load(Reader, fonte)`. Esse carregamento ainda não conecta os diálogos à interface. Os testes explícitos estão em [Testes do capítulo](docs/testes-do-capitulo.md).
+A saída esperada confirma **28 cenas e 620 nós**, sem iniciar a partida. Novo Jogo usa esse mesmo consolidado para executar as cenas 01–04. O carregador também oferece `load(Path)` e `load(Reader, fonte)`. Os testes explícitos estão em [Testes do capítulo](docs/testes-do-capitulo.md).
 
-## Controles do protótipo
+## Controles
 
 | Controle | Ação |
 | --- | --- |
-| **Mouse** | Selecionar botões e clicar em elementos de interface. |
-| **↑ / ↓** | Navegar entre opções do menu. |
-| **Enter** | Confirmar a opção selecionada ou avançar o prólogo. |
-| **Espaço** | Avançar o texto do prólogo. |
-| **Esc** | Voltar ao menu. |
+| **Mouse** | Investigar carta/livro, atravessar passagens, selecionar respostas e consultar inventário/diário. |
+| **↑ / ↓** | Selecionar controles do menu ou da história. |
+| **Enter / Espaço** | Revelar a fala, avançar o texto ou ativar o controle selecionado. |
+| **I / J** | Abrir inventário / diário durante a exploração. |
+| **Esc** | Fechar o diário/inventário, cancelar uma confirmação ou voltar ao menu. |
 | **F11** | Alternar tela cheia. |
 
 O menu foi projetado originalmente em **1280 × 720 (16:9)** e adapta a interface ao redimensionamento da janela.
@@ -166,22 +175,22 @@ O menu foi projetado originalmente em **1280 × 720 (16:9)** e adapta a interfac
 | --- | --- |
 | Menu inicial: Novo Jogo, Continuar, Configurações, Créditos e Sair | **Implementado** |
 | Navegação por teclado/mouse e modo tela cheia | **Implementado** |
-| Cutscene inicial de Natasha e prólogo demonstrativo | **Implementado** |
-| Demonstração de exploração no Salão Principal | **Implementado** |
+| Despertar, carta, portas e livro mutável — cenas 01–04 | **Jogáveis pelo roteiro JSON** |
+| Entrada e Salão com hotspots, desbloqueio e retorno | **Implementado no primeiro trecho** |
 | Preferências e salvamento básico em `.properties` | **Implementado** |
 | `GameState`: inventário, memórias, flags, escolhas e cursor narrativo | **Implementado em memória; reiniciado por Novo Jogo** |
-| Personagens, expressões, cenários e cutscenes | **Artes produzidas em pacotes separados** |
+| Artes da abertura | **Entrada, despertar e oito expressões de Natasha incorporados; demais pacotes ainda parciais** |
 | Roteiro consolidado em `src/main/resources/story/roteiro_completo.json` | **Incorporado ao classpath, com conteúdo preservado** |
 | Carregamento JSON, modelos tipados e validação de referências | **Implementado; validável com `--validate-story`** |
-| Execução de diálogos e efeitos na interface do jogo | **Pendente** |
+| Execução de diálogos, escolhas e efeitos na interface | **Implementado e validado nas cenas 01–04** |
 | Exploração definitiva dos seis ambientes e hotspots | **Pendente** |
-| Inventário, memórias, relacionamentos e escolhas persistentes | **Pendente** |
+| Inventário, Memória 1 e escolhas persistentes | **Implementado no primeiro trecho; demais conteúdos pendentes** |
 | Lógica jogável dos três finais | **Pendente** |
 | Testes integrados do capítulo completo | **Pendente** |
 
-**Limitação visual conhecida:** a cutscene do despertar existe, mas a **imagem isolada do cenário da Entrada da Biblioteca** ainda precisa ser integrada. Por isso, após o prólogo, o protótipo atual abre uma **demonstração no Salão Principal**, e não o fluxo definitivo da narrativa.
+**Escopo disponível:** Novo Jogo executa o despertar e libera a Entrada para investigação. A carta pode ser adiada e recuperada depois, voltando do Salão. A porta oferece as três posturas oficiais; o Salão aguarda um clique no livro para concluir a cena 04. O trecho termina antes do encontro no Balcão. A voz de Rodion ainda aparece como “Uma voz”, sem retrato ou apresentação antecipada.
 
-`GameState` fornece a base de progresso para o futuro executor; suas coleções são protegidas e a reescrita exige as cinco condições oficiais. O carregador pode criar um estado pelo ponto inicial do roteiro e avaliar condições sem executar efeitos. Telas de inventário/diário, execução narrativa e salvamento completo continuam pendentes. Veja os resultados de `StoryLoaderTest`, `GameStateTest` e `MenuSmokeTest` em [Testes do capítulo](docs/testes-do-capitulo.md).
+`NarrativeSession` executa os modelos do carregador sobre `GameState`, sem colocar falas no Java. `trecho_inicial.json` configura fundos, retratos, hotspots, pausas e documentos da abertura. É um manifesto parcial; a integração dos seis ambientes e dos manifestos completos continua pendente. Veja as seis combinações de escolhas e os testes por clique em [Testes do capítulo](docs/testes-do-capitulo.md).
 
 ## Organização do projeto
 
@@ -207,9 +216,12 @@ A_Biblioteca_das_Almas_Menu/
     │   │   │   ├── GameMode.java
     │   │   │   ├── GameSettings.java
     │   │   │   ├── GameState.java
+    │   │   │   ├── StoryProgress.java
     │   │   │   └── SaveManager.java
     │   │   ├── narrative/
     │   │   │   ├── StoryLoader.java
+    │   │   │   ├── NarrativeSession.java
+    │   │   │   ├── OpeningContent.java
     │   │   │   ├── Story.java
     │   │   │   ├── NarrativeNode.java
     │   │   │   ├── ChoiceOption.java
@@ -218,8 +230,12 @@ A_Biblioteca_das_Almas_Menu/
     │   │   │   ├── StoryValidator.java
     │   │   │   ├── StrictJson.java
     │   │   │   └── StoryLoadException.java
+    │   │   ├── world/
+    │   │   │   └── Interactable.java
     │   │   └── ui/
     │   │       ├── GamePanel.java
+    │   │       ├── StoryView.java
+    │   │       ├── HotspotControl.java
     │   │       ├── ClickTarget.java
     │   │       ├── AbstractControl.java
     │   │       ├── GothicButton.java
@@ -227,13 +243,17 @@ A_Biblioteca_das_Almas_Menu/
     │   └── resources/
     │       ├── assets/
     │       │   ├── menu/
+    │       │   ├── cenarios/
+    │       │   ├── personagens/natasha/
     │       │   └── ui/
     │       └── story/
-    │           └── roteiro_completo.json
+    │           ├── roteiro_completo.json
+    │           └── trecho_inicial.json
     └── test/java/
         └── br/com/bibliotecadasalmas/
             ├── GameStateTest.java
             ├── MenuSmokeTest.java
+            ├── OpeningGameplayTest.java
             └── StoryLoaderTest.java
 ```
 
@@ -260,7 +280,7 @@ story/
 
 `index.json` define a sequência das cenas; `estado_inicial.json`, o estado inicial; `assets.json`, as referências de imagens; e cada arquivo em `cenas/` contém nós de diálogo, escolhas e eventos. Os hotspots ainda precisam de coordenadas definitivas, e um gerenciador Java deverá interpretar esses dados.
 
-> **Importante:** o consolidado já é lido e validado, mas carregar os dados **não executa a história**. O executor de eventos, a interface de diálogos e o salvamento narrativo continuam como próximas etapas. O manifesto de artes e os hotspots também não são validados sem sua integração.
+> **Importante:** o consolidado contém o capítulo inteiro; a configuração `trecho_inicial.json` libera apenas as cenas 01–04 na interface. O carregador não concede itens: os efeitos são aplicados pelo executor conforme as ações do jogador. Fundos, retratos e hotspots desse trecho são conferidos por `OpeningContent`; os manifestos completos continuam pendentes.
 
 ## Arquitetura e orientação a objetos
 
@@ -282,8 +302,10 @@ O projeto utiliza os quatro pilares da Programação Orientada a Objetos (POO) c
 - **`GameController`** — fluxo do menu, prólogo e demonstração de exploração.
 - **`GameState`** — progresso narrativo em memória, com inventário sem duplicatas, memórias, escolhas, locais desbloqueados e consulta dos requisitos da reescrita.
 - **`StoryLoader` / `StoryValidator`** — leitura estrita do consolidado, construção de modelos imutáveis e validação de referências, ciclos automáticos e condições secretas.
+- **`NarrativeSession`** — execução de nós, condições e escolhas, com lotes de efeitos sobre uma cópia do estado e marcas de aplicação.
+- **`StoryView` / `OpeningContent`** — apresentação do trecho e configuração JSON das artes, interações e documentos.
 - **`AssetManager`** — carregamento e cache de imagens do classpath.
-- **`SaveManager`** — leitura e gravação do progresso básico e das preferências.
+- **`SaveManager` / `StoryProgress`** — preferências e saves antigos em `.properties`, além do progresso narrativo versionado em `historia.json`.
 - **`GothicButton` / `TextOption`** — elementos de interface reutilizáveis.
 
 ### Salvamento local
@@ -295,9 +317,9 @@ Windows: %USERPROFILE%\.biblioteca-das-almas\
 Linux/macOS: ~/.biblioteca-das-almas/
 ```
 
-Esse salvamento **ainda não contempla as variáveis do roteiro JSON**, como inventário, memórias e finais. A expansão do `SaveManager` faz parte das próximas etapas.
+Novas partidas usam `historia.json`, gravado automaticamente após cada ação narrativa concluída. O save registra roteiro/versão, cenário, cena/nó, diálogo ativo, escolhas, flags, valores, itens, memórias, locais liberados e interações concluídas. A gravação usa um temporário antes de substituir o ponto anterior; falhas são informadas na interface.
 
-O método `Continuar` permanece restrito ao progresso básico do protótipo; ele ainda não restaura `GameState`. A posição inicial do novo estado é uma referência para a integração futura, sem substituir o prólogo demonstrativo atual.
+Continuar restaura o trecho sem reaplicar efeitos. Uma fala em andamento recomeça sua exibição, sem perder a escolha já feita. Inventário e diário fecham na retomada. Saves narrativos inválidos ou incompatíveis são preservados e geram aviso; arquivos antigos em `.properties` continuam abrindo o fluxo demonstrativo legado quando não há `historia.json`. O salvamento dos retornos e contextos dos atos posteriores ainda precisa ser ampliado e validado.
 
 ## Direção artística
 
@@ -309,13 +331,11 @@ Os recursos gráficos estão organizados em pacotes de personagens, cenários, f
 
 ## Próximas etapas
 
-1. Integrar o cenário definitivo da **Entrada da Biblioteca** e seus hotspots.
-2. Criar o **gerenciador de diálogos JSON** (falas, expressões, escolhas, condições e transições).
-3. Incorporar os personagens e os seis cenários ao sistema de exploração.
-4. Implementar **inventário**, **diário de memórias** e consequências das escolhas.
-5. Expandir o salvamento para registrar o progresso narrativo completo.
-6. Conectar as cutscenes e os **três finais** às condições da história.
-7. Realizar testes de navegação, legibilidade, salvamento e rotas alternativas.
+1. Integrar o **Balcão de Rodion**, cenas 05–07, aproveitando a base da abertura.
+2. Ampliar mundo, retratos e documentos para o Corredor, Arquivo e Câmara, incluindo as outras memórias e a confiança da Fantasma.
+3. Persistir e validar os contextos de retorno dos atos posteriores, especialmente a exploração anterior ao confronto.
+4. Integrar as cutscenes restantes e os **três finais**, preservando as cinco condições secretas.
+5. Executar partidas completas e revisar legibilidade, tela cheia, sons e transições conforme o [planejamento](docs/planejamento-capitulo-01.md).
 
 ## Desenvolvimento e organização de commits
 

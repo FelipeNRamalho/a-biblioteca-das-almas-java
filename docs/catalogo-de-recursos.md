@@ -15,19 +15,28 @@ O contexto oficial informa que cenários, personagens, expressões, cutscenes e 
 | **Mapeamento pendente** | ID narrativo conhecido, sem associação local confirmada a um arquivo. Não significa que a arte deva ser recriada. |
 | **Validação visual pendente** | Conteúdo, enquadramento ou transparência efetiva ainda precisam de inspeção visual. |
 
-Dimensões e canais da seção 2 foram lidos dos cabeçalhos PNG. RGB indica ausência de canal alfa; RGBA indica sua presença, sem comprovar que há pixels transparentes. Esta etapa não inspecionou visualmente as imagens nem verificou o conteúdo do JAR distribuído.
+Dimensões e canais da seção 2 foram lidos dos cabeçalhos PNG. RGB indica ausência de canal alfa; RGBA indica sua presença. A integração da abertura acrescentou conferência visual da Entrada, dos retratos em uso e das telas renderizadas, além da leitura dos oito PNGs de Natasha nos testes. O JAR atualizado foi testado fora da árvore de fontes; o arquivo antigo em `dist/` não foi substituído.
 
 O caminho recebido atualmente por `AssetManager.get` é relativo a `/assets/`: `menu/salao_principal.png` corresponde a `src/main/resources/assets/menu/salao_principal.png`.
 
 ## 2. PNGs incorporados ao projeto
 
-Há **11 PNGs** em `src/main/resources/assets/`. Todos os caminhos desta tabela são relativos a essa pasta; as dimensões são largura × altura em pixels.
+Há **20 PNGs** em `src/main/resources/assets/`: os 11 anteriores e nove incorporados para a abertura. Os caminhos são relativos a essa pasta; as dimensões são largura × altura em pixels.
 
 | Caminho | Dimensões | Canais | Uso verificado no código |
 | --- | --- | --- | --- |
 | `menu/salao_principal.png` | 1672 × 941 | RGB | Fundo do menu, telas auxiliares e demonstração de exploração em `GamePanel`. |
 | `menu/natasha_despertar.png` | 1672 × 941 | RGB | Ilustração do prólogo demonstrativo em `GamePanel`. |
-| `ui/dialogos/caixa_dialogo.png` | 2130 × 681 | RGBA | Caixa da inspeção do livro na demonstração. |
+| `cenarios/entrada_biblioteca.png` | 1672 × 941 | RGB | Fundo oficial da Entrada, em exploração e diálogos das cenas 01–03. |
+| `personagens/natasha/assustada.png` | 768 × 768 | RGBA | Expressão nas cenas 01–04. |
+| `personagens/natasha/cansada.png` | 768 × 768 | RGBA | Expressão do despertar. |
+| `personagens/natasha/determinada.png` | 768 × 768 | RGBA | Expressão do despertar e da porta. |
+| `personagens/natasha/neutra.png` | 768 × 768 | RGBA | Expressão nas investigações e escolhas da abertura. |
+| `personagens/natasha/pensativa.png` | 768 × 768 | RGBA | Expressão nas cenas 01–04. |
+| `personagens/natasha/seria.png` | 768 × 768 | RGBA | Expressão no despertar, adiamento da carta e livro. |
+| `personagens/natasha/surpresa.png` | 768 × 768 | RGBA | Expressão na carta, porta e livro. |
+| `personagens/natasha/vulneravel.png` | 768 × 768 | RGBA | Expressão do despertar e da investigação do livro. |
+| `ui/dialogos/caixa_dialogo.png` | 2130 × 681 | RGBA | Caixa de falas em `StoryView` e inspeção legada. |
 | `ui/escolhas/escolha_normal.png` | 1008 × 210 | RGBA | Textura de botão em `GothicButton`. |
 | `ui/escolhas/escolha_hover.png` | 1007 × 211 | RGBA | Textura de hover ou seleção por teclado em `GothicButton`. |
 | `ui/escolhas/escolha_selecionada.png` | 1009 × 212 | RGBA | Disponível, sem uso localizado. O estado selecionado atual usa `escolha_hover.png`. |
@@ -45,8 +54,8 @@ Também existem imagens de apresentação fora de `resources/`, como [preview_me
 
 | ID narrativo | Ambiente | Situação local conferida |
 | --- | --- | --- |
-| `entrada_biblioteca` | Entrada da Biblioteca | Fundo isolado ainda sem caminho confirmado. A ilustração do despertar está incorporada, mas não substitui automaticamente o cenário explorável. |
-| `salao_principal` | Salão Principal | `menu/salao_principal.png` disponível e utilizado no protótipo. O mapeamento do ambiente no sistema narrativo ainda é pendente. |
+| `entrada_biblioteca` | Entrada da Biblioteca | Fundo oficial em `cenarios/entrada_biblioteca.png`, mapeado em `trecho_inicial.json`, com carta e portas clicáveis. |
+| `salao_principal` | Salão Principal | `menu/salao_principal.png` mapeado no trecho, com livro e retorno à escadaria. |
 | `balcao_rodion` | Balcão de Rodion | Arte produzida conforme o contexto; caminho local e integração pendentes. |
 | `corredor_esquecidos` | Corredor dos Livros Esquecidos | Arte produzida conforme o contexto; caminho local e integração pendentes. |
 | `arquivo_proibido` | Arquivo Proibido | Arte produzida conforme o contexto; caminho local e integração pendentes. |
@@ -56,7 +65,7 @@ Conferir proporção, áreas relevantes e coordenadas de hotspots em cada fundo.
 
 ## 4. Personagens e expressões referenciadas
 
-Os quatro personagens e suas artes já foram produzidos segundo o contexto oficial. Não há PNGs de retratos em `src/main/resources/assets/personagens/` na árvore atual conferida. Os nomes abaixo são **expressões usadas no JSON**, sem equivaler a nomes de PNG confirmados.
+Os quatro personagens e suas artes foram produzidos segundo o contexto oficial. Oito retratos de Natasha já estão incorporados e mapeados nas cenas 01–04. As demais expressões e personagens continuam pendentes de integração; a tabela abaixo lista todas as referências do capítulo.
 
 | Personagem | Expressões usadas |
 | --- | --- |
@@ -91,7 +100,7 @@ São 12 nós de cutscene, com 12 IDs de imagem distintos. O ID `asset` precisa s
 
 | ID da imagem | Cena/nó | Situação |
 | --- | --- | --- |
-| `natasha_despertando` | `c01_despertar/n001` | Há uma ilustração de despertar em `menu/natasha_despertar.png`; confirmar equivalência visual e cadastrar a associação. O interpretador ainda não faz esse vínculo. |
+| `natasha_despertando` | `c01_despertar/n001` | Mapeado para `menu/natasha_despertar.png`; exibido pelo executor ao iniciar Novo Jogo. |
 | `rodion_lendo_livro` | `c05_bibliotecario/n001` | Mapeamento local pendente. |
 | `fantasma_primeira_aparicao` | `c09_fantasma_aparicao/n001` | Mapeamento local pendente. |
 | `natasha_descobrindo_livro` | `c16_livro_natasha/n001` | Mapeamento local pendente. |
@@ -112,9 +121,10 @@ Os finais preservar e reescrever também narram a chegada à Entrada. Além das 
 
 | Referência | Conteúdo conhecido | Pendência |
 | --- | --- | --- |
-| `story/roteiro_completo.json` | Consolidado incorporado ao classpath e validado por `StoryLoader`, sem mudança de conteúdo | Conectar os nós carregados ao executor e à interface. |
+| `story/trecho_inicial.json` | Configuração incorporada das cenas 01–04: fundos, retratos, nomes de falantes, hotspots, pausa do livro e documentos | Ampliar por atos sem confundir esse subconjunto com os manifestos completos. |
+| `story/roteiro_completo.json` | Consolidado preservado, carregado e executado nas cenas 01–04 | Integrar os atos posteriores à interface. |
 | Itens | `carta_entrada`, `fotografia_sem_nome`, `medalhao_fantasma`, `copia_clausula`, `anotacoes_rodion` | Conferir nomes, descrições, textos consultáveis e eventuais ícones nos pacotes. Não presumir que todo item tenha um PNG próprio. |
-| Memórias | `retorno`, `escolha`, `pacto` | Integrar os textos do diário e os estados de descoberta. |
+| Memórias | `retorno`, `escolha`, `pacto` | O Retorno já é consultável; integrar os textos das Memórias 2 e 3. |
 | `estado_inicial.json` | Arquivo informado no pacote narrativo | Localizar e conferir valores iniciais antes da integração. |
 | `assets.json` | Manifesto informado no pacote narrativo | Localizar, conferir estrutura e mapear os IDs existentes para arquivos reais. |
 | `interacoes_mundo.json` | Arquivo informado para exploração | Localizar e conferir hotspots, coordenadas, condições e retomada. |
@@ -138,6 +148,7 @@ src/main/resources/
 │   └── ui/                   # UI Kit já parcialmente incorporado
 └── story/
     ├── roteiro_completo.json # Fonte única já incorporada
+    ├── trecho_inicial.json   # Configuração parcial já incorporada
     └── assets.json           # Integração planejada do manifesto existente
 ```
 
@@ -154,6 +165,12 @@ Para cada incorporação:
 5. Conferir carregamento, proporção e alinhamento na interface e no JAR.
 6. Atualizar a situação do recurso e registrar a evidência de validação.
 
-Nenhuma arte foi criada, substituída ou movida para produzir este catálogo. Os procedimentos de execução estão em [testes-do-capitulo.md](testes-do-capitulo.md); a semântica dos IDs e da apresentação está no [contrato narrativo](contrato-narrativo-json.md).
+### Procedência das artes incorporadas na abertura
+
+O fundo da Entrada foi copiado de `cenarios-jogo.zip`, entrada `cenarios-jogo/primeiro-cenario/Entrada Gótica da Grande Biblioteca.png`. Os oito retratos foram copiados de `poses-natasha.zip`, pasta `Retratos para os diálogos`, preservando os PNGs originais. Apenas os caminhos internos foram padronizados; não houve edição das imagens.
+
+O pacote de cenários contém os seis fundos oficiais e os pacotes de Rodion foram localizados. Somente a Entrada foi incorporada agora, pois o Salão já existia no projeto. Os demais fundos e retratos ainda precisam de inspeção e integração nos atos correspondentes. Na cena 04, Rodion é uma voz sem retrato, preservando sua apresentação na cena 05.
+
+Os procedimentos de execução estão em [testes-do-capitulo.md](testes-do-capitulo.md); a semântica dos IDs e da apresentação está no [contrato narrativo](contrato-narrativo-json.md).
 
 Commit sugerido: `docs: cataloga recursos visuais e pendencias de integracao`.

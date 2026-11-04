@@ -2,7 +2,7 @@
 
 Referência: 30/10/2026. Este documento contém procedimentos reproduzíveis, critérios de aceitação e um registro de execução. A história oficial está em [rumos-da-historia.md](rumos-da-historia.md); os comportamentos técnicos esperados estão no [contrato narrativo](contrato-narrativo-json.md).
 
-**Os testes do carregador, do protótipo e da base `GameState` estão disponíveis; os testes do capítulo completo dependem da integração.** Um caso pendente não deve ser registrado como aprovado só porque o roteiro ou a imagem correspondente existe.
+**A abertura das cenas 01–04 tem testes de lógica e interface; o capítulo inteiro ainda depende de integração.** Um caso pendente não deve ser registrado como aprovado só porque o roteiro ou a imagem correspondente existe.
 
 ## 1. Estados dos casos e evidências
 
@@ -28,7 +28,7 @@ O teste existente renderiza sem abrir janela. Tela cheia, foco real do teclado e
 
 ## 3. Procedimentos disponíveis — Carregador, estado e protótipo
 
-Os três testes são executados por métodos `main`, com verificações próprias. `mvn test` isoladamente não comprova sua execução; o build compila os testes, mas eles devem ser chamados explicitamente.
+Os quatro testes são executados por métodos `main`, com verificações próprias. `mvn test` isoladamente não comprova sua execução; o build compila os testes, mas eles devem ser chamados explicitamente.
 
 ### Compilação e execução com Maven
 
@@ -43,7 +43,9 @@ java -cp $classpathTeste br.com.bibliotecadasalmas.StoryLoaderTest
 if ($LASTEXITCODE -ne 0) { throw 'StoryLoaderTest falhou.' }
 java -cp $classpathTeste br.com.bibliotecadasalmas.GameStateTest
 if ($LASTEXITCODE -ne 0) { throw 'GameStateTest falhou.' }
-java '-Djava.awt.headless=true' -cp $classpathTeste br.com.bibliotecadasalmas.MenuSmokeTest target/validacao-story/previews
+java '-Djava.awt.headless=true' -cp $classpathTeste br.com.bibliotecadasalmas.OpeningGameplayTest
+if ($LASTEXITCODE -ne 0) { throw 'OpeningGameplayTest falhou.' }
+java '-Djava.awt.headless=true' -cp $classpathTeste br.com.bibliotecadasalmas.MenuSmokeTest target/validacao-opening/previews
 if ($LASTEXITCODE -ne 0) { throw 'MenuSmokeTest falhou.' }
 ```
 
@@ -77,6 +79,8 @@ java -cp $classpathTeste br.com.bibliotecadasalmas.StoryLoaderTest
 if ($LASTEXITCODE -ne 0) { throw 'StoryLoaderTest falhou.' }
 java -cp $classpathTeste br.com.bibliotecadasalmas.GameStateTest
 if ($LASTEXITCODE -ne 0) { throw 'GameStateTest falhou.' }
+java '-Djava.awt.headless=true' -cp $classpathTeste br.com.bibliotecadasalmas.OpeningGameplayTest
+if ($LASTEXITCODE -ne 0) { throw 'OpeningGameplayTest falhou.' }
 java '-Djava.awt.headless=true' -cp $classpathTeste br.com.bibliotecadasalmas.MenuSmokeTest $saidaTeste
 if ($LASTEXITCODE -ne 0) { throw 'MenuSmokeTest falhou.' }
 ```
@@ -101,13 +105,21 @@ Verifica oito grupos: estado inicial e independência das partidas; inventário 
 
 Definir explicitamente uma flag de memória como falsa remove também sua memória; o roteiro atual não usa essa operação para punir personalidade. A política de preservação das descobertas na execução continua pendente de integração.
 
-### P01 — Regressão do protótipo
+### A01 — Abertura, retomada e executor
+
+Fonte: [OpeningGameplayTest.java](../src/test/java/br/com/bibliotecadasalmas/OpeningGameplayTest.java).
+
+Percorre as seis combinações de investigar/adiar a carta com as três posturas da porta. Também verifica entrar sem abrir a carta, voltar para recuperá-la, a pausa antes do livro e o limite da cena 04. Recria o controlador em pontos de diálogo e exploração e compara todas as categorias de progresso, incluindo as marcas de efeitos já aplicados.
+
+Exercita inventário modal, oito retratos legíveis pelo `ImageIO`, compatibilidade com `.properties`, saves truncados/incompatíveis/incoerentes e falha de escrita informada. Os fixtures de executor verificam rollback de um lote inválido, condicionais, evento, junção e confirmação/cancelamento. A avaliação dos nós finais nesses fixtures não equivale a uma partida completa na interface.
+
+### P01 — Menu e abertura por mouse/teclado
 
 Fonte: [MenuSmokeTest.java](../src/test/java/br/com/bibliotecadasalmas/MenuSmokeTest.java).
 
-Verifica Novo Jogo, as três páginas do prólogo, inspeção do livro, Continuar com progresso básico, configurações e créditos. Gera nove imagens das telas. O teste cria uma pasta temporária de saves; seu argumento indica apenas a pasta das imagens.
+Percorre o trecho JSON usando os listeners reais de mouse e teclado de `GamePanel`, na thread de eventos Swing. Confere revelar/avançar, escolhas, hotspots, bloqueio modal, redimensionamento para 1600 × 1000, barras fora da área lógica, inventário, diário e Continuação com novo controlador. Configurações, créditos e a demonstração legada continuam cobertos. Um relógio fixo evita testes de texto dependentes de esperas.
 
-A saída esperada contém `OK: todas as verificações do menu passaram.` Isso não comprova diálogos JSON na interface, save narrativo ou finais jogáveis. Tela cheia e foco real do teclado exigem os casos manuais abaixo.
+Gera **25 imagens** da abertura e das telas legadas. A saída começa com `OK: menu e abertura JSON passaram`. Os saves são temporários; o argumento indica apenas a pasta das imagens. Tela cheia e foco real do teclado exigem os casos manuais abaixo. Os finais e os demais cenários não são cobertos como partidas jogáveis.
 
 ## 4. Verificações manuais do protótipo
 
@@ -123,9 +135,9 @@ Esses casos complementam P01. O teste sem janela não aciona nem comprova a alte
 
 ## 5. Dados e sistema narrativo
 
-**D01 e N03 aprovados em L01 (`StoryLoaderTest`).** D02, N01 e N02 permanecem pendentes das integrações indicadas. As verificações do carregador não substituem a execução dos diálogos, efeitos ou recursos visuais.
+**D01 e N03 aprovados em L01. N01 e N02 têm execução de base aprovada em A01/P01**, com a interface limitada às cenas 01–04. D02 tem mapeamento e leitura das artes da abertura verificados, mas permanece pendente para o catálogo completo.
 
-G01 valida as operações individuais do estado. L01 acrescenta leitura e comparação das três declarações secretas do JSON, com as mesmas 32 combinações. N02 continua pendente como execução de efeitos e de lotes atômicos.
+G01 valida as operações individuais do estado e L01 compara as declarações secretas. A01 acrescenta lotes atômicos, efeitos repetidos, confirmação e retomada; P01 percorre a interface por eventos, sem abrir uma janela. A integração do resto do capítulo continua necessária.
 
 | Caso | Preparação e passos | Resultado esperado |
 | --- | --- | --- |
@@ -263,4 +275,24 @@ O build inicial encontrou outro `JAVA_HOME`; a validação foi concluída seleci
 
 SHA-256 preservado do consolidado: `95A23FE0CCF0AE8A4A8B6F52CAAAAF01B5D15276DF94AC75920BB1306ADE0DFA`.
 
-Commit sugerido para esta etapa: `feat: implementa carregador json do roteiro narrativo`.
+## 13. Registro de execução — Primeiro trecho jogável
+
+| Campo | Registro |
+| --- | --- |
+| Base | `0770b50` com a integração local da abertura. |
+| Escopo | Cenas 01–04, Entrada e Salão, oito expressões de Natasha, carta, Memória 1, escolhas da porta e livro mutável. |
+| Ambiente | JDK 21.0.13 e Maven 3.9.14, com cache em `target/maven-repository/`. |
+| Build | `mvn package` concluído; os métodos `main` dos testes foram executados explicitamente. |
+| A01 | **Aprovado**: seis combinações da abertura, porta direta, retornos, retomadas, arquivos inválidos, formato legado, falha de gravação, efeitos atômicos e confirmação. |
+| P01 | **Aprovado**: fluxo por mouse/teclado na EDT e 25 imagens em `target/validacao-opening/previews-final/`. |
+| Regressões | `StoryLoaderTest` e `GameStateTest` aprovados, mantendo 28 entradas, 620 nós, 44 amostras inválidas e as 32 combinações secretas. |
+| Pacote | Os quatro testes passaram usando uma cópia do JAR fora da árvore de fontes, com somente as classes de teste e o JAR no classpath. `--validate-story` também passou. |
+| Saves | Pastas temporárias dos testes; nenhum save pessoal foi alterado. O formato narrativo 1 restaura a abertura sem reaplicar efeitos. |
+| Conferência visual | Entrada, retrato, escolha da porta, inventário, diário e Salão conferidos por imagens renderizadas. Ajustados os espaços entre texto e ornamentos. |
+| Limites | Sem janela interativa, teste de F11/foco real, Balcão ou atos posteriores. A confirmação final foi exercitada no executor isolado, sem liberar os finais na interface. |
+
+As telas de consulta são fechadas na retomada e o texto da fala volta a ser revelado; progresso e consequências permanecem. O contexto de exploração da cena 20 não está integrado ou persistido por esse trecho.
+
+O roteiro consolidado foi preservado. Os PNGs foram copiados dos pacotes existentes, sem edição. Os atalhos e o JAR antigo de `dist/` não foram substituídos; executar o JAR de `target/` para jogar a abertura atual.
+
+Commit sugerido: `feat: conecta abertura jogavel ao roteiro json`.
