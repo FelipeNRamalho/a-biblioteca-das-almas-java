@@ -5,9 +5,17 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.StandardCopyOption;
+import java.io.IOException;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.Strictness;
 
 /** Guarda um ponto de continuação do protótipo e preferências locais. */
 public final class SaveManager {
+    private static final Gson JSON = new GsonBuilder().setStrictness(Strictness.STRICT).setPrettyPrinting().create();
     private final Path directory;
 
     public SaveManager() {
@@ -16,7 +24,40 @@ public final class SaveManager {
 
     public SaveManager(Path directory) { this.directory = directory; }
 
-    public boolean hasSave() { return Files.isRegularFile(directory.resolve("progresso.properties")); }
+    public boolean hasSave() { return hasStorySave() || Files.isRegularFile(directory.resolve("progresso.properties")); }
+    public boolean hasStorySave() { return Files.isRegularFile(directory.resolve("historia.json")); }
+
+    public StoryProgress readStoryProgress() {
+        try (var reader = Files.newBufferedReader(directory.resolve("historia.json"), StandardCharsets.UTF_8)) {
+            StoryProgress progress = JSON.fromJson(reader, StoryProgress.class);
+            if (progress == null) throw new IllegalArgumentException("Arquivo vazio");
+            return progress;
+        } catch (IOException | RuntimeException error) {
+            throw new IllegalStateException("Não foi possível carregar a história. O arquivo foi preservado.", error);
+        }
+    }
+
+    /** Grava em arquivo temporário antes de substituir o último ponto de continuação. */
+    public void writeStoryProgress(StoryProgress progress) {
+        Path temporary = null;
+        try {
+            Files.createDirectories(directory);
+            temporary = Files.createTempFile(directory, "historia-", ".tmp");
+            Files.writeString(temporary, JSON.toJson(progress), StandardCharsets.UTF_8);
+            try {
+                Files.move(temporary, directory.resolve("historia.json"), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            } catch (AtomicMoveNotSupportedException unsupported) {
+                Files.move(temporary, directory.resolve("historia.json"), StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException error) {
+            throw new IllegalStateException("Não foi possível salvar a história. Seu progresso continua aberto.", error);
+        } finally {
+            if (temporary != null) {
+                try { Files.deleteIfExists(temporary); }
+                catch (IOException ignored) { /* O save anterior não é apagado para limpar um temporário. */ }
+            }
+        }
+    }
 
     public void writeProgress(GameMode mode, int introPage) {
         Properties p = new Properties();
