@@ -1,176 +1,146 @@
 # Catálogo de recursos — A Biblioteca das Almas
 
-Conferência: 30/10/2026. Fontes: `src/main/resources/`, referências do código Java e [roteiro_completo.json](../src/main/resources/story/roteiro_completo.json).
+Conferência: **11/11/2026**, commit `389433f`. Fontes: arquivos em `src/main/resources/assets`, [manifesto do capítulo](../src/main/resources/story/trecho_inicial.json) e classes de `characters`.
 
-O contexto oficial informa que cenários, personagens, expressões, cutscenes e UI foram produzidos em pacotes separados. Este catálogo distingue essa produção da disponibilidade no repositório e do uso no jogo. **Um arquivo localizado não comprova integração narrativa ou aprovação visual.**
+## 1. Cobertura e limites
 
-## 1. Estados e limites da conferência
+Há **71 PNGs** no classpath de fontes. A revisão conferiu os cabeçalhos PNG e os caminhos referenciados; RGBA indica presença de canal alfa, sem comprovar transparência efetiva em todos os pixels. Arquivo disponível, caminho cadastrado e imagem visualmente aprovada são estados diferentes.
 
-| Estado | Significado |
+| Grupo | PNGs |
 | --- | --- |
-| **Produzido, informado** | Existência declarada no contexto oficial; caminho local ainda não confirmado nesta conferência. |
-| **Disponível no classpath de fontes** | Arquivo presente em `src/main/resources/`. Sua inclusão no JAR precisa ser conferida no pacote gerado. |
-| **Referenciado pelo protótipo** | O Java atual contém uso do recurso. Isso não comprova execução do capítulo completo. |
-| **Disponível, sem uso localizado** | Arquivo presente, sem referência encontrada no código atual. |
-| **Mapeamento pendente** | ID narrativo conhecido, sem associação local confirmada a um arquivo. Não significa que a arte deva ser recriada. |
-| **Validação visual pendente** | Conteúdo, enquadramento ou transparência efetiva ainda precisam de inspeção visual. |
+| `menu` | 2 |
+| `cenarios` | 1 |
+| `ui` | 9 |
+| `personagens/natasha` | 28 |
+| `personagens/rodion` | 9 |
+| `personagens/fantasma` | 9 |
+| `personagens/escriba` | 10 |
+| `cutscenes/finais` | 3 |
 
-Dimensões e canais da seção 2 foram lidos dos cabeçalhos PNG. RGB indica ausência de canal alfa; RGBA indica sua presença. A integração da abertura acrescentou conferência visual da Entrada, dos retratos em uso e das telas renderizadas, além da leitura dos oito PNGs de Natasha nos testes. O JAR atualizado foi testado fora da árvore de fontes; o arquivo antigo em `dist/` não foi substituído.
+O manifesto resolve **12 cutscenes**, **seis locais** e **oito documentos**. Seus 41 caminhos distintos de imagem foram encontrados. `CharacterRegistry` acrescenta o mapeamento dos personagens; o controlador prioriza esses retratos e usa o manifesto como alternativa.
 
-O caminho recebido atualmente por `AssetManager.get` é relativo a `/assets/`: `menu/salao_principal.png` corresponde a `src/main/resources/assets/menu/salao_principal.png`.
+`AssetManager.get` recebe caminhos relativos a `/assets/`. O carregamento é sob demanda com cache, não pré-carregamento integral do acervo.
 
-## 2. PNGs incorporados ao projeto
+## 2. Ambientes e fundos usados
 
-Há **20 PNGs** em `src/main/resources/assets/`: os 11 anteriores e nove incorporados para a abertura. Os caminhos são relativos a essa pasta; as dimensões são largura × altura em pixels.
+| Local lógico | Fundo atual | Situação |
+| --- | --- | --- |
+| `entrada_biblioteca` | `cenarios/entrada_biblioteca.png` | Fundo próprio e hotspots de carta/portas. |
+| `salao_principal` | `menu/salao_principal.png` | Livro, Balcão, retorno e passagem condicional do Arquivo. |
+| `balcao_rodion` | `menu/salao_principal.png` | Local integrado; fundo específico pendente. |
+| `corredor_esquecidos` | `menu/salao_principal.png` | Fotografia e Fantasma integradas; fundo específico pendente. |
+| `arquivo_proibido` | `menu/salao_principal.png` | Cláusula e acesso condicional à Câmara; fundo específico pendente. |
+| `camara_registros` | `menu/salao_principal.png` | Confronto e epílogos configurados; fundo específico pendente. |
 
-| Caminho | Dimensões | Canais | Uso verificado no código |
+A presença de seis locais não equivale à presença de seis fundos distintos. Cutscenes substituem o fundo apenas durante seus nós. A mudança de fundo ao longo das falas finais ainda precisa de conferência visual.
+
+## 3. Personagens, expressões e aliases
+
+| Classe | Expressões cadastradas | Comportamento |
+| --- | --- | --- |
+| Natasha | 15 | Expressões em `personagens/natasha/expressoes/`; oito arquivos antigos continuam presentes para referências do manifesto. |
+| Rodion | 6 | Nome “Uma voz” e sem retrato na cena 04; identidade padrão nas demais cenas. |
+| Fantasma | 6 | Nome “A Fantasma” e retratos próprios. |
+| Escriba | 5 | Retratos de rosto sem feições; não há regra que oculte todas as suas imagens. |
+
+`natasha_memoria` e `rodion_memoria` reutilizam as identidades para retratos e recebem nomes de memória. `voz_escriba` não tem retrato. Narrador, carta, inscrição, livro, documento e registro são fontes textuais.
+
+Preservar identidade, escala e alinhamento entre expressões. O Escriba deve conservar o rosto sem olhos, nariz ou boca; o nome de um arquivo não comprova esse conteúdo. Corpos inteiros e algumas artes alternativas estão disponíveis sem uso localizado na apresentação atual.
+
+## 4. Inventário de PNGs
+
+Dimensões lidas dos cabeçalhos. “Manifesto” e “Registro” indicam referências encontradas; não significam que cada arquivo foi inspecionado visualmente durante uma partida.
+
+| Caminho relativo a `assets/` | Dimensões | Canais | Referência localizada |
 | --- | --- | --- | --- |
-| `menu/salao_principal.png` | 1672 × 941 | RGB | Fundo do menu, telas auxiliares e demonstração de exploração em `GamePanel`. |
-| `menu/natasha_despertar.png` | 1672 × 941 | RGB | Ilustração do prólogo demonstrativo em `GamePanel`. |
-| `cenarios/entrada_biblioteca.png` | 1672 × 941 | RGB | Fundo oficial da Entrada, em exploração e diálogos das cenas 01–03. |
-| `personagens/natasha/assustada.png` | 768 × 768 | RGBA | Expressão nas cenas 01–04. |
-| `personagens/natasha/cansada.png` | 768 × 768 | RGBA | Expressão do despertar. |
-| `personagens/natasha/determinada.png` | 768 × 768 | RGBA | Expressão do despertar e da porta. |
-| `personagens/natasha/neutra.png` | 768 × 768 | RGBA | Expressão nas investigações e escolhas da abertura. |
-| `personagens/natasha/pensativa.png` | 768 × 768 | RGBA | Expressão nas cenas 01–04. |
-| `personagens/natasha/seria.png` | 768 × 768 | RGBA | Expressão no despertar, adiamento da carta e livro. |
-| `personagens/natasha/surpresa.png` | 768 × 768 | RGBA | Expressão na carta, porta e livro. |
-| `personagens/natasha/vulneravel.png` | 768 × 768 | RGBA | Expressão do despertar e da investigação do livro. |
-| `ui/dialogos/caixa_dialogo.png` | 2130 × 681 | RGBA | Caixa de falas em `StoryView` e inspeção legada. |
-| `ui/escolhas/escolha_normal.png` | 1008 × 210 | RGBA | Textura de botão em `GothicButton`. |
-| `ui/escolhas/escolha_hover.png` | 1007 × 211 | RGBA | Textura de hover ou seleção por teclado em `GothicButton`. |
-| `ui/escolhas/escolha_selecionada.png` | 1009 × 212 | RGBA | Disponível, sem uso localizado. O estado selecionado atual usa `escolha_hover.png`. |
-| `ui/ornamentos/canto_inferior_direito.png` | 461 × 312 | RGBA | Ornamentação das telas auxiliares em `GamePanel`. |
-| `ui/ornamentos/canto_superior_esquerdo.png` | 498 × 277 | RGBA | Ornamentação das telas auxiliares em `GamePanel`. |
-| `ui/ornamentos/divisor_flor_de_lis.png` | 1166 × 135 | RGBA | Divisor da tela de créditos. |
-| `ui/ornamentos/divisor_rubi.png` | 1026 × 120 | RGBA | Divisor do menu e telas auxiliares. |
-| `ui/ornamentos/emblema_rosa.png` | 281 × 326 | RGBA | Emblema do menu. |
+| `cenarios/entrada_biblioteca.png` | 1672 × 941 | RGB | Manifesto |
+| `cutscenes/finais/Final_01_Queimar_Livro.png` | 1672 × 941 | RGB | Manifesto |
+| `cutscenes/finais/Final_02_Preservar_Livro.png` | 1672 × 941 | RGB | Manifesto |
+| `cutscenes/finais/Final_03_Reescrever_Historia.png` | 1672 × 941 | RGB | Manifesto |
+| `menu/natasha_despertar.png` | 1672 × 941 | RGB | Manifesto |
+| `menu/salao_principal.png` | 1672 × 941 | RGB | Manifesto |
+| `personagens/escriba/corpo_inteiro/Escriba_Corpo_Inteiro.png` | 1024 × 1536 | RGBA | Sem uso localizado |
+| `personagens/escriba/cutscenes/Escriba_Apagando_Alma.png` | 1671 × 941 | RGB | Manifesto |
+| `personagens/escriba/cutscenes/Escriba_Confronto.png` | 1672 × 941 | RGB | Manifesto |
+| `personagens/escriba/cutscenes/Escriba_Derrota_Final_Secreto.png` | 1672 × 941 | RGB | Manifesto |
+| `personagens/escriba/cutscenes/Escriba_Primeira_Aparicao.png` | 1672 × 941 | RGB | Manifesto |
+| `personagens/escriba/expressoes/Escriba_Ameacador.png` | 1536 × 1024 | RGBA | Registro de personagens |
+| `personagens/escriba/expressoes/Escriba_Condenando.png` | 1536 × 1024 | RGBA | Registro de personagens |
+| `personagens/escriba/expressoes/Escriba_Derrotado.png` | 1024 × 1536 | RGBA | Registro de personagens |
+| `personagens/escriba/expressoes/Escriba_Neutro.png` | 1536 × 1024 | RGBA | Registro de personagens |
+| `personagens/escriba/expressoes/Escriba_Rindo.png` | 1536 × 1024 | RGBA | Registro de personagens |
+| `personagens/fantasma/corpo_inteiro/Fantasma_Corpo_Inteiro.png` | 1024 × 1536 | RGBA | Sem uso localizado |
+| `personagens/fantasma/cutscenes/Fantasma_Primeira_Aparicao_Corredor.png` | 1672 × 941 | RGB | Manifesto |
+| `personagens/fantasma/cutscenes/Fantasma_Visao_Capela.png` | 1672 × 941 | RGB | Sem uso localizado |
+| `personagens/fantasma/expressoes/Fantasma_Assustada.png` | 1133 × 1388 | RGBA | Registro de personagens |
+| `personagens/fantasma/expressoes/Fantasma_Neutra.png` | 1133 × 1388 | RGBA | Registro de personagens |
+| `personagens/fantasma/expressoes/Fantasma_Sombras.png` | 1133 × 1388 | RGBA | Registro de personagens |
+| `personagens/fantasma/expressoes/Fantasma_Sorriso.png` | 1133 × 1388 | RGBA | Registro de personagens |
+| `personagens/fantasma/expressoes/Fantasma_Timida.png` | 1133 × 1388 | RGBA | Registro de personagens |
+| `personagens/fantasma/expressoes/Fantasma_Triste.png` | 1133 × 1388 | RGBA | Registro de personagens |
+| `personagens/natasha/assustada.png` | 768 × 768 | RGBA | Manifesto |
+| `personagens/natasha/cansada.png` | 768 × 768 | RGBA | Manifesto |
+| `personagens/natasha/corpo_inteiro/Natasha_Corpo_Inteiro_Original.png` | 1024 × 1536 | RGB | Sem uso localizado |
+| `personagens/natasha/corpo_inteiro/Natasha_Corpo_Inteiro_Transparente.png` | 1024 × 1536 | RGBA | Sem uso localizado |
+| `personagens/natasha/cutscenes/Natasha_Descobrindo_Proprio_Livro.png` | 1672 × 941 | RGB | Manifesto |
+| `personagens/natasha/cutscenes/Natasha_Despertando_Entrada.png` | 1672 × 941 | RGB | Sem uso localizado |
+| `personagens/natasha/cutscenes/Natasha_Ilustracao_Biblioteca.png` | 1672 × 941 | RGB | Sem uso localizado |
+| `personagens/natasha/determinada.png` | 768 × 768 | RGBA | Manifesto |
+| `personagens/natasha/expressoes/Natasha_Assustada.png` | 768 × 768 | RGBA | Registro de personagens |
+| `personagens/natasha/expressoes/Natasha_Cansada.png` | 768 × 768 | RGBA | Registro de personagens |
+| `personagens/natasha/expressoes/Natasha_Chorando.png` | 768 × 768 | RGBA | Registro de personagens |
+| `personagens/natasha/expressoes/Natasha_Determinada.png` | 768 × 768 | RGBA | Registro de personagens |
+| `personagens/natasha/expressoes/Natasha_Envergonhada.png` | 768 × 768 | RGBA | Registro de personagens |
+| `personagens/natasha/expressoes/Natasha_Feliz.png` | 768 × 768 | RGBA | Registro de personagens |
+| `personagens/natasha/expressoes/Natasha_Irritada.png` | 768 × 768 | RGBA | Registro de personagens |
+| `personagens/natasha/expressoes/Natasha_Neutra.png` | 768 × 768 | RGBA | Registro de personagens |
+| `personagens/natasha/expressoes/Natasha_Pensativa.png` | 768 × 768 | RGBA | Registro de personagens |
+| `personagens/natasha/expressoes/Natasha_Provocativa.png` | 768 × 768 | RGBA | Registro de personagens |
+| `personagens/natasha/expressoes/Natasha_Sarcastica.png` | 768 × 768 | RGBA | Registro de personagens |
+| `personagens/natasha/expressoes/Natasha_Seria.png` | 768 × 768 | RGBA | Registro de personagens |
+| `personagens/natasha/expressoes/Natasha_Surpresa.png` | 768 × 768 | RGBA | Registro de personagens |
+| `personagens/natasha/expressoes/Natasha_Triste.png` | 768 × 768 | RGBA | Registro de personagens |
+| `personagens/natasha/expressoes/Natasha_Vulneravel.png` | 768 × 768 | RGBA | Registro de personagens |
+| `personagens/natasha/neutra.png` | 768 × 768 | RGBA | Manifesto |
+| `personagens/natasha/pensativa.png` | 768 × 768 | RGBA | Manifesto |
+| `personagens/natasha/seria.png` | 768 × 768 | RGBA | Manifesto |
+| `personagens/natasha/surpresa.png` | 768 × 768 | RGBA | Manifesto |
+| `personagens/natasha/vulneravel.png` | 768 × 768 | RGBA | Manifesto |
+| `personagens/rodion/corpo_inteiro/Rodion_Corpo_Inteiro.png` | 1024 × 1536 | RGBA | Sem uso localizado |
+| `personagens/rodion/cutscenes/Rodion_Lendo_Livro.png` | 1920 × 1080 | RGB | Manifesto |
+| `personagens/rodion/cutscenes/Rodion_Revelacao.png` | 1920 × 1080 | RGB | Manifesto |
+| `personagens/rodion/expressoes/Rodion_Desconfiado.png` | 1254 × 1254 | RGBA | Registro de personagens |
+| `personagens/rodion/expressoes/Rodion_Melancolico.png` | 1254 × 1254 | RGBA | Registro de personagens |
+| `personagens/rodion/expressoes/Rodion_Neutro.png` | 1254 × 1254 | RGBA | Registro de personagens |
+| `personagens/rodion/expressoes/Rodion_Pensativo.png` | 1254 × 1254 | RGBA | Registro de personagens |
+| `personagens/rodion/expressoes/Rodion_Reflexivo.png` | 1254 × 1254 | RGBA | Registro de personagens |
+| `personagens/rodion/expressoes/Rodion_Serio.png` | 1254 × 1254 | RGBA | Registro de personagens |
+| `ui/dialogos/caixa_dialogo.png` | 2130 × 681 | RGBA | Interface |
+| `ui/escolhas/escolha_hover.png` | 1007 × 211 | RGBA | Interface |
+| `ui/escolhas/escolha_normal.png` | 1008 × 210 | RGBA | Interface |
+| `ui/escolhas/escolha_selecionada.png` | 1009 × 212 | RGBA | Sem uso localizado |
+| `ui/ornamentos/canto_inferior_direito.png` | 461 × 312 | RGBA | Interface |
+| `ui/ornamentos/canto_superior_esquerdo.png` | 498 × 277 | RGBA | Interface |
+| `ui/ornamentos/divisor_flor_de_lis.png` | 1166 × 135 | RGBA | Interface |
+| `ui/ornamentos/divisor_rubi.png` | 1026 × 120 | RGBA | Interface |
+| `ui/ornamentos/emblema_rosa.png` | 281 × 326 | RGBA | Interface |
 
-As três texturas de escolha têm dimensões ligeiramente diferentes. Ao definir áreas de clique, usar uma geometria lógica consistente; não presumir que todos os arquivos têm o mesmo tamanho original.
+## 5. Documentos, memórias e cutscenes
 
-Também existem imagens de apresentação fora de `resources/`, como [preview_menu.png](../preview_menu.png), [previews/intro.png](../previews/intro.png) e [previews/configuracoes.png](../previews/configuracoes.png). São registros do protótipo, sem substituir fundos ou cutscenes oficiais. Não devem ser confundidas com imagens geradas por uma execução de teste desta revisão.
+Os oito documentos consultáveis são `carta_entrada`, `fotografia_sem_nome`, `medalhao_fantasma`, `copia_clausula`, `anotacoes_rodion` e as memórias `retorno`, `escolha`, `pacto`. Seus textos são recuperados de nós do roteiro. Cada documento só fica disponível se o estado contiver o item ou a memória correspondente.
 
-## 3. Os seis ambientes oficiais
+Os 12 IDs de cutscene são `natasha_despertando`, `rodion_lendo_livro`, `fantasma_primeira_aparicao`, `natasha_descobrindo_livro`, `rodion_revelacao`, `escriba_primeira_aparicao`, `escriba_apagando_alma`, `escriba_confronto`, `final_queimar`, `final_preservar`, `final_reescrever` e `escriba_derrota_final`. Todos possuem caminho no manifesto; evitar duplicar esse mapeamento em um segundo JSON.
 
-| ID narrativo | Ambiente | Situação local conferida |
-| --- | --- | --- |
-| `entrada_biblioteca` | Entrada da Biblioteca | Fundo oficial em `cenarios/entrada_biblioteca.png`, mapeado em `trecho_inicial.json`, com carta e portas clicáveis. |
-| `salao_principal` | Salão Principal | `menu/salao_principal.png` mapeado no trecho, com livro e retorno à escadaria. |
-| `balcao_rodion` | Balcão de Rodion | Arte produzida conforme o contexto; caminho local e integração pendentes. |
-| `corredor_esquecidos` | Corredor dos Livros Esquecidos | Arte produzida conforme o contexto; caminho local e integração pendentes. |
-| `arquivo_proibido` | Arquivo Proibido | Arte produzida conforme o contexto; caminho local e integração pendentes. |
-| `camara_registros` | Câmara dos Registros | Arte produzida conforme o contexto; caminho local e integração pendentes. |
+Os complementos `assets.json`, `estado_inicial.json`, `interacoes_mundo.json`, índice e cenas individuais informados no histórico não estão integrados como entradas operacionais. O jogo usa `roteiro_completo.json` e `trecho_inicial.json`; a ausência de outro manifesto não implica ausência dos mapeamentos atuais.
 
-Conferir proporção, áreas relevantes e coordenadas de hotspots em cada fundo. A tela lógica atual é 1280 × 720; um arquivo com outra proporção pode sofrer recorte ao preencher a tela. Validar que portas, pistas e objetos não desapareçam nesse recorte.
+## 6. Distribuição, procedência e pendências
 
-## 4. Personagens e expressões referenciadas
+`dist/BibliotecaDasAlmas-Menu.jar` é o pacote atual, com recursos e Gson, gerenciado por Git LFS. O arquivo materializado nesta revisão tem **122.162.585 bytes**. Clones que tenham apenas o ponteiro precisam baixar o conteúdo com `git lfs pull`.
 
-Os quatro personagens e suas artes foram produzidos segundo o contexto oficial. Oito retratos de Natasha já estão incorporados e mapeados nas cenas 01–04. As demais expressões e personagens continuam pendentes de integração; a tabela abaixo lista todas as referências do capítulo.
+Não foram encontrados arquivos de áudio na árvore de fontes. Áudio pré-carregado, som de colisão e volume continuam pendentes.
 
-| Personagem | Expressões usadas |
-| --- | --- |
-| `natasha` | `assustada`, `cansada`, `determinada`, `irritada`, `neutra`, `pensativa`, `provocativa`, `sarcastica`, `seria`, `surpresa`, `triste`, `vulneravel` |
-| `rodion` | `desconfiado`, `melancolico`, `neutro`, `pensativo`, `reflexivo`, `serio` |
-| `fantasma` | `assustada`, `neutra`, `sombras`, `sorriso`, `timida`, `triste` |
-| `escriba` | `ameacador`, `condenando`, `derrotado`, `neutro` |
+O histórico registra a Entrada proveniente de `cenarios-jogo.zip` e oito retratos antigos de `poses-natasha.zip`, preservando os PNGs. O commit atual acrescenta os demais recursos; créditos e procedência de cada pacote devem ser completados pela dupla, sem presumir autoria por nome de pasta.
 
-Há 28 combinações de personagem principal e expressão. Contando os identificadores de fala de memória e voz como aparecem no arquivo, são 31 pares distintos:
+As imagens da raiz e de `previews/` são registros anteriores. As novas imagens de teste ficam em `target/validacao-docs-2026-11-11/`; detalhes e limites estão em [Testes do capítulo](testes-do-capitulo.md).
 
-| Alias de fala | Expressão usada | Associação a definir no manifesto |
-| --- | --- | --- |
-| `natasha_memoria` | `neutra` | Identidade de Natasha em uma lembrança, com apresentação apropriada. |
-| `rodion_memoria` | `neutro` | Identidade de Rodion em uma lembrança. |
-| `voz_escriba` | `neutro` | Voz do Escriba; não pressupor retrato visível ou revelação antecipada. |
-
-`narrador`, `carta`, `documento`, `inscricao`, `livro` e `registro` também falam no JSON. São fontes de texto e não exigem retratos de novos personagens.
-
-### Critérios de conferência visual
-
-- **Natasha:** preservar cabelo loiro-platinado curto, volumoso e ondulado, olhos rosados ou avermelhados, vestido vitoriano vinho/ameixa/preto e acessórios oficiais. Não alongar o cabelo para adequar uma expressão.
-- **Rodion:** preservar cabelos escuros compridos parcialmente presos, óculos, olhos âmbar-avermelhados, trajes vitorianos escuros com dourado e gola clara.
-- **Fantasma:** preservar aparência sobrenatural e triste, cabelos longos escuros com fios prateados, bandagens, vestido desgastado e sombras. Não reinterpretá-la como mal-intencionada.
-- **Escriba:** preservar altura sobrenatural, halo com pontas, dedos semelhantes a penas e rosto de pergaminho **sem olhos, nariz ou boca**, inclusive nas expressões de ameaça e derrota.
-- Conferir alinhamento, escala e transparência entre expressões, evitando saltos de posição ou fundos opacos ao trocar o PNG.
-
-A conferência anterior por nomes do acervo externo, mencionada na avaliação, não substitui a localização dos caminhos e a inspeção das imagens nesta integração.
-
-## 5. Cutscenes usadas no roteiro
-
-São 12 nós de cutscene, com 12 IDs de imagem distintos. O ID `asset` precisa ser resolvido pelo manifesto; não é um caminho de arquivo.
-
-| ID da imagem | Cena/nó | Situação |
-| --- | --- | --- |
-| `natasha_despertando` | `c01_despertar/n001` | Mapeado para `menu/natasha_despertar.png`; exibido pelo executor ao iniciar Novo Jogo. |
-| `rodion_lendo_livro` | `c05_bibliotecario/n001` | Mapeamento local pendente. |
-| `fantasma_primeira_aparicao` | `c09_fantasma_aparicao/n001` | Mapeamento local pendente. |
-| `natasha_descobrindo_livro` | `c16_livro_natasha/n001` | Mapeamento local pendente. |
-| `rodion_revelacao` | `c19_confissao_rodion/n001` | Mapeamento local pendente. |
-| `escriba_primeira_aparicao` | `c21_escriba_aparicao/n001` | Mapeamento local pendente. |
-| `escriba_apagando_alma` | `c22_apagamento/n010` | Mapeamento local pendente. |
-| `escriba_confronto` | `c23_armadilha_pacto/n001` | Mapeamento local pendente. |
-| `final_queimar` | `c26_final_queimar/n014` | Mapeamento local pendente. |
-| `final_preservar` | `c26_final_preservar/n015` | Mapeamento local pendente. |
-| `final_reescrever` | `c26_final_reescrever/n012` | Mapeamento local pendente. |
-| `escriba_derrota_final` | `c26_final_reescrever/n020` | Mapeamento local pendente. |
-
-O contexto oficial confirma a produção das principais cutscenes e finais. Localizar os pacotes antes de criar imagens substitutas. A presença de uma ilustração de final não comprova que seu ramo esteja executável.
-
-Os finais preservar e reescrever também narram a chegada à Entrada. Além das cutscenes, definir mudanças de fundo dentro dos epílogos: `location: camara_registros` é a localização inicial, não uma instrução para manter o mesmo fundo até o fim.
-
-## 6. Objetos, memórias e dados complementares
-
-| Referência | Conteúdo conhecido | Pendência |
-| --- | --- | --- |
-| `story/trecho_inicial.json` | Configuração incorporada das cenas 01–04: fundos, retratos, nomes de falantes, hotspots, pausa do livro e documentos | Ampliar por atos sem confundir esse subconjunto com os manifestos completos. |
-| `story/roteiro_completo.json` | Consolidado preservado, carregado e executado nas cenas 01–04 | Integrar os atos posteriores à interface. |
-| Itens | `carta_entrada`, `fotografia_sem_nome`, `medalhao_fantasma`, `copia_clausula`, `anotacoes_rodion` | Conferir nomes, descrições, textos consultáveis e eventuais ícones nos pacotes. Não presumir que todo item tenha um PNG próprio. |
-| Memórias | `retorno`, `escolha`, `pacto` | O Retorno já é consultável; integrar os textos das Memórias 2 e 3. |
-| `estado_inicial.json` | Arquivo informado no pacote narrativo | Localizar e conferir valores iniciais antes da integração. |
-| `assets.json` | Manifesto informado no pacote narrativo | Localizar, conferir estrutura e mapear os IDs existentes para arquivos reais. |
-| `interacoes_mundo.json` | Arquivo informado para exploração | Localizar e conferir hotspots, coordenadas, condições e retomada. |
-| `index.json` e cenas individuais | Organização informada no pacote narrativo | Localizar e conferir consistência com o consolidado da raiz. |
-
-Exceto pelo consolidado já incorporado, os arquivos complementares não foram localizados na árvore de recursos atual. Sua situação é de localização e integração pendentes, sem presumir que precisem ser reescritos.
-
-Não foram encontrados arquivos de áudio nos formatos `.wav`, `.mp3` ou `.ogg` na árvore examinada fora de saídas de compilação. Música, efeitos e controles de volume dependem da disponibilidade e integração desses recursos.
-
-## 7. Organização e atualização do manifesto
-
-Destinos recomendados, sujeitos à conferência dos pacotes existentes:
-
-```text
-src/main/resources/
-├── assets/
-│   ├── menu/                 # Recursos atuais: preservar caminhos até migrar referências
-│   ├── cenarios/             # Integração planejada
-│   ├── personagens/          # Por personagem e expressão
-│   ├── cutscenes/             # Por função narrativa ou cena
-│   └── ui/                   # UI Kit já parcialmente incorporado
-└── story/
-    ├── roteiro_completo.json # Fonte única já incorporada
-    ├── trecho_inicial.json   # Configuração parcial já incorporada
-    └── assets.json           # Integração planejada do manifesto existente
-```
-
-O formato de `assets.json` ainda precisa ser conferido. Independentemente da estrutura adotada, o mapeamento deve permitir identificar ID lógico, categoria, caminho no classpath, personagem/expressão quando aplicável e referência narrativa. Dimensões podem ser calculadas a partir dos arquivos; evitar mantê-las manualmente em vários catálogos.
-
-Após a integração, o manifesto será a referência operacional dos caminhos. Este documento deve registrar cobertura, critérios de conferência e pendências, apontando para o manifesto em vez de duplicar suas associações completas.
-
-Para cada incorporação:
-
-1. Localizar o original e registrar sua procedência no projeto e os créditos confirmados.
-2. Conferir conteúdo, dimensões, transparência e aderência à referência oficial.
-3. Copiar para a pasta adequada sem sobrescrever outro recurso válido por engano.
-4. Cadastrar o ID no manifesto e verificar os usos no roteiro.
-5. Conferir carregamento, proporção e alinhamento na interface e no JAR.
-6. Atualizar a situação do recurso e registrar a evidência de validação.
-
-### Procedência das artes incorporadas na abertura
-
-O fundo da Entrada foi copiado de `cenarios-jogo.zip`, entrada `cenarios-jogo/primeiro-cenario/Entrada Gótica da Grande Biblioteca.png`. Os oito retratos foram copiados de `poses-natasha.zip`, pasta `Retratos para os diálogos`, preservando os PNGs originais. Apenas os caminhos internos foram padronizados; não houve edição das imagens.
-
-O pacote de cenários contém os seis fundos oficiais e os pacotes de Rodion foram localizados. Somente a Entrada foi incorporada agora, pois o Salão já existia no projeto. Os demais fundos e retratos ainda precisam de inspeção e integração nos atos correspondentes. Na cena 04, Rodion é uma voz sem retrato, preservando sua apresentação na cena 05.
-
-Os procedimentos de execução estão em [testes-do-capitulo.md](testes-do-capitulo.md); a semântica dos IDs e da apresentação está no [contrato narrativo](contrato-narrativo-json.md).
-
-Commit sugerido: `docs: cataloga recursos visuais e pendencias de integracao`.
+Próximas conferências: fundos específicos dos quatro ambientes, textos longos, enquadramento das expressões, transições dos epílogos e créditos. Consultar [planejamento](planejamento-capitulo-01.md).

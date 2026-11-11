@@ -1,12 +1,12 @@
 # Contrato narrativo JSON — Capítulo I
 
-Referência: 30/10/2026. Fonte conferida: [roteiro_completo.json](../src/main/resources/story/roteiro_completo.json), versão `1.0`.
+Referência: **11/11/2026**, commit `389433f`. Fonte conferida: [roteiro_completo.json](../src/main/resources/story/roteiro_completo.json), versão `1.0`.
 
-Este documento descreve o formato existente e o comportamento do interpretador Java. **Carregamento, condições e execução dos sete tipos de nó estão implementados. A interface libera apenas as cenas 01–04.** Os atos posteriores ainda precisam de configuração de mundo, artes e validação integrada, sem alterar a história aprovada.
+Este documento descreve o formato existente e o comportamento do interpretador Java. **Os sete tipos de nó, quatro atos e três epílogos estão configurados para execução.** Os resultados atuais estão em [Testes do capítulo](testes-do-capitulo.md). A integração lógica não comprova acabamento de todos os fundos ou revisão visual de cada fala.
 
-A base `GameState` mantém progresso e requisitos da reescrita. `NarrativeSession` aplica os efeitos do JSON em uma cópia, valida o destino e publica o lote na instância original. Marcas `effect/cena/nó[/opção]` impedem reaplicação. `GameController` coordena as pausas e a exploração da abertura; `StoryView` apresenta o estado sem conceder recompensas.
+A base `GameState` mantém progresso e requisitos da reescrita. `NarrativeSession` aplica os efeitos do JSON em uma cópia, valida o destino e publica o lote na instância original. Marcas `effect/cena/nó[/opção]` impedem reaplicação. `GameController` coordena pausas e exploração do capítulo; `StoryView` apresenta o estado sem conceder recompensas.
 
-`story/trecho_inicial.json` é uma configuração parcial, separada do consolidado: fundos, expressões de Natasha, falantes, hotspots, saídas de cena, pausa antes do livro e referências de documentos. O texto da carta e da memória é consultado nos nós originais. Os manifestos completos informados no projeto continuam pendentes de integração.
+`story/trecho_inicial.json` preserva o nome histórico, mas agora configura o capítulo: 28 saídas de cena, seis locais, 12 cutscenes, oito documentos, falantes e pausas. `CharacterRegistry` resolve nomes e retratos dos quatro personagens antes da alternativa do manifesto. Os textos consultáveis vêm dos nós originais. O jogo não depende da presença dos manifestos externos citados no histórico.
 
 A história oficial está em [rumos-da-historia.md](rumos-da-historia.md); as tarefas estão no [planejamento](planejamento-capitulo-01.md). Este contrato trata de dados e comportamento, sem substituir essas referências.
 
@@ -26,7 +26,7 @@ O arquivo foi movido da raiz para `src/main/resources/story/roteiro_completo.jso
 
 | Campo de `metadata` | Uso |
 | --- | --- |
-| `id`, `chapter_title`, `version`, `language` | Identificação do conteúdo. A versão do roteiro não substitui a futura versão do formato de save. |
+| `id`, `chapter_title`, `version`, `language` | Identificação do conteúdo. A versão do roteiro não substitui a versão própria do formato de save, atualmente 1. |
 | `entry_scene` | Cena inicial: `c01_despertar`. |
 | `scene_count` | Quantidade de entradas no consolidado: 28. |
 | `cutscene_count` | Quantidade de nós de cutscene: 12. |
@@ -137,11 +137,11 @@ Os efeitos de uma escolha ou evento formam uma unidade: validar dados, calcular 
 
 Itens conhecidos no roteiro: `carta_entrada`, `fotografia_sem_nome`, `medalhao_fantasma`, `copia_clausula` e `anotacoes_rodion`. Seus nomes e descrições devem vir de catálogo, não de texto fixo no interpretador.
 
-### Pendência do medalhão
+### Entrega e devolução do medalhão
 
-Em `c12_medalhao/n002`, a entrega imediata contém `remove_item` sem coleta anterior nesse caminho. A remoção tolerante proposta impede que essa ausência interrompa a história, mas não substitui a definição da coleta: adicionar ao encontrar e remover ao entregar, ou entregar diretamente sem passagem pelo inventário. Conferir o pacote antes de corrigir os dados.
+Em `c12_medalhao/n002`, a entrega imediata contém `remove_item` sem coleta anterior nesse caminho. `GameState.removeItem` tolera item ausente, permitindo a entrega direta sem passagem pelo inventário. Os testes do Ato II exercitam as escolhas de guardar e devolver.
 
-A devolução posterior deve remover o medalhão guardado e definir `medalhao_devolvido` e `fantasma_confia`. Não permitir guardá-lo de novo após a devolução. Essa disponibilidade depende das interações do mundo, ainda pendentes de integração.
+A devolução posterior remove o medalhão guardado e define `medalhao_devolvido` e `fantasma_confia`. O hotspot da conversa é ocultado após a devolução por `hideWhenFlag`; a integridade das revisitas e a confiança são exercitadas nos testes de atos.
 
 ## 6. Regra dos finais
 
@@ -165,7 +165,7 @@ Os epílogos são `c26_final_queimar`, `c26_final_preservar` e `c26_final_reescr
 
 ## 7. Exploração, repetição e retomada
 
-Na abertura, terminar a cena 01 libera a escadaria para cliques. Carta e portas são interações distintas. Terminar a carta devolve o controle à exploração, sem acionar automaticamente as portas. A cena 03 segue para a 04; após a apresentação do Salão, a execução pausa em `c04_livro_mutavel/n005` e aguarda o clique no livro. A marca `opening/salon_arrival` permite voltar à Entrada e retomar esse ponto sem repetir a chegada. O fim da cena 04 encerra o trecho disponível, sem iniciar a cena 05.
+Na abertura, terminar a cena 01 libera a escadaria para cliques. Carta e portas são interações distintas. Terminar a carta devolve o controle à exploração, sem acionar automaticamente as portas. A cena 03 segue para a 04; após a apresentação do Salão, a execução pausa em `c04_livro_mutavel/n005` e aguarda o clique no livro. A marca `opening/salon_arrival` permite voltar à Entrada e retomar esse ponto sem repetir a chegada. O fim da cena 04 libera a exploração, incluindo a passagem ao Balcão, cuja cena de entrada é a 05.
 
 A carta não coletada continua disponível nas revisitas. Depois de coletada, seu hotspot desaparece e o inventário permite releitura; a memória é consultável no diário. Uma resposta de adiamento não recebe item nem memória. Diálogos, escolhas e telas de consulta bloqueiam hotspots atrás deles.
 
@@ -187,7 +187,7 @@ A opção real `revisitar`, em `c20_caminho_sem_retorno/n015`, declara:
 }
 ```
 
-O contrato proposto é guardar também o nó chamador `n015` no estado de execução. Abrir exploração suspende a escolha; ao retornar, retomá-la com os requisitos recalculados. Esse nó de retorno é informação do estado, não um campo que já exista no JSON.
+Na configuração atual, a pausa de `c20_caminho_sem_retorno/n015` utiliza a marca `effect/c20_caminho_sem_retorno/n015/revisitar`. A ação de exploração e a reentrada pelo hotspot `porta_camara` preservam o cursor e reavaliam as opções. Não existe campo genérico de contexto suspenso em `StoryProgress`; essa implementação específica não deve ser descrita como uma pilha arbitrária de retornos. `ActFourGameplayTest` verifica revisita, salvamento e retomada desse percurso.
 
 Uma investigação acionada durante a revisita recebe um contexto de retorno. Ao concluí-la, voltar à exploração; não executar seu `next_scene` histórico e reiniciar o capítulo pelo encadeamento principal. Preservar todos os efeitos válidos já obtidos.
 
@@ -199,7 +199,7 @@ O save narrativo deve registrar versão do formato, versão/ID do roteiro, cena 
 
 Definir se a gravação acontece no meio de uma fala ou em pontos seguros. Em qualquer caso, persistir conjuntamente o resultado dos efeitos e o cursor correspondente. Carregar não reaplica efeitos do ponto anterior. Novo Jogo cria um estado limpo, preservando apenas as preferências do jogador.
 
-`StoryProgress` define o formato narrativo 1 em `historia.json`, gravado por `SaveManager` após as ações da abertura. Inclui roteiro/versão, local, cena/nó, estado ativo, confirmação pendente, escolhas, flags, valores, inventário, memórias, locais e interações concluídas. A restauração valida um candidato antes de substituir `GameState`, sem executar efeitos. A fala retomada reinicia sua revelação de texto; inventário e diário fecham.
+`StoryProgress` define o formato narrativo 1 em `historia.json`, gravado por `SaveManager` após ações narrativas do capítulo. Inclui roteiro/versão, local, cena/nó, estado ativo, confirmação pendente, escolhas, flags, valores textuais, inventário, memórias, locais e interações concluídas. A restauração valida um candidato antes de substituir `GameState`, sem executar efeitos. A fala retomada reinicia sua revelação de texto; inventário e diário fecham. Os atos posteriores têm testes de retomada, incluindo confirmação final e epílogo.
 
 A gravação usa arquivo temporário e substituição atômica quando suportada. Erros são exibidos na interface. Save inválido é preservado; não há queda silenciosa para outra partida. Saves antigos em `.properties` mantêm o fluxo demonstrativo quando não existe `historia.json`. Os contextos de retorno dos atos posteriores, incluindo `open_exploration` da cena 20, ainda precisam de persistência e integração próprias; não fazem parte desse formato liberado na interface.
 
@@ -207,7 +207,7 @@ A gravação usa arquivo temporário e substituição atômica quando suportada.
 
 `StoryLoader` usa Gson 2.13.2 em modo estrito, sem conversão automática de strings em booleanos ou inteiros. `StrictJson` rejeita chaves duplicadas antes de montar a árvore; `StoryValidator` confere referências e rejeita ciclos formados somente por nós automáticos, inclusive entre cenas. Campos e operadores desconhecidos são recusados. Erros semânticos identificam fonte, cena, nó/opção e campo; erros sintáticos incluem o caminho JSON.
 
-Sem `estado_inicial.json` e os catálogos complementares, o carregador infere flags de `set_flag`/`unlock_memory`, itens de `give_item` e locais de `scene.location`. Isso não substitui os futuros catálogos: um ID errado tanto na definição quanto no uso pode permanecer consistente. `OpeningContent` acrescenta a conferência das referências de imagens, expressões e hotspots das cenas 01–04; a validação visual e dos recursos dos outros atos continua pendente.
+Sem `estado_inicial.json` e os catálogos complementares, o carregador infere flags de `set_flag`/`unlock_memory`, itens de `give_item` e locais de `scene.location`. Um ID errado tanto na definição quanto no uso pode permanecer consistente. `OpeningContent` confere os caminhos e referências configurados no capítulo; isso não substitui inspeção visual ou catálogo independente do roteiro.
 
 A validação específica do Capítulo I compara a regra dos metadados, `c24_terceira_possibilidade/n001` e `c25_decisao/n004`, aceitando mudanças de ordem na conjunção e exigindo as cinco condições oficiais. O carregador não exige que os PNGs estejam disponíveis para validar os dados narrativos.
 

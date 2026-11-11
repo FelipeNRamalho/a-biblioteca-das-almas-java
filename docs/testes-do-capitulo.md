@@ -1,228 +1,134 @@
 # Testes do Capítulo I — A Biblioteca das Almas
 
-Referência: 30/10/2026. Este documento contém procedimentos reproduzíveis, critérios de aceitação e um registro de execução. A história oficial está em [rumos-da-historia.md](rumos-da-historia.md); os comportamentos técnicos esperados estão no [contrato narrativo](contrato-narrativo-json.md).
+Revisão: **11/11/2026**, commit `389433f`. A [documentação acadêmica](documentacao-academica.md) descreve os requisitos do professor; o [contrato narrativo](contrato-narrativo-json.md) descreve dados e execução.
 
-**A abertura das cenas 01–04 tem testes de lógica e interface; o capítulo inteiro ainda depende de integração.** Um caso pendente não deve ser registrado como aprovado só porque o roteiro ou a imagem correspondente existe.
+## 1. Resultados atuais
 
-## 1. Estados dos casos e evidências
+As fontes principais e os oito testes foram recompilados com **OpenJDK Temurin 21.0.13**, `--release 21 -encoding UTF-8` e Gson 2.13.2. Os oito programas retornaram **código zero**. O Maven não foi usado nesta revisão, pois não estava disponível no PATH.
 
-| Estado | Uso |
+| Teste existente | Resultado em 11/11 | Alcance da execução |
+| --- | --- | --- |
+| [StoryLoaderTest](../src/test/java/br/com/bibliotecadasalmas/StoryLoaderTest.java) | Aprovado | 28 cenas, 620 nós, 32 combinações secretas e 44 amostras inválidas. |
+| [GameStateTest](../src/test/java/br/com/bibliotecadasalmas/GameStateTest.java) | Aprovado | Oito grupos de regras, incluindo 32 combinações de elegibilidade da reescrita. |
+| [OpeningGameplayTest](../src/test/java/br/com/bibliotecadasalmas/OpeningGameplayTest.java) | Aprovado | Seis rotas da abertura, retornos, retomadas, save inválido/legado, falha de gravação, efeitos e confirmação. |
+| [ActOneGameplayTest](../src/test/java/br/com/bibliotecadasalmas/ActOneGameplayTest.java) | Aprovado | Nove combinações, Balcão, identidade/retratos de Rodion, navegação e persistência. |
+| [ActTwoGameplayTest](../src/test/java/br/com/bibliotecadasalmas/ActTwoGameplayTest.java) | Aprovado | 12 rotas, fotografia, medalhão, confiança, adiamentos, navegação e persistência. |
+| [ActThreeGameplayTest](../src/test/java/br/com/bibliotecadasalmas/ActThreeGameplayTest.java) | Aprovado | 12 rotas, Arquivo, cláusula adiada, cinco requisitos, navegação e persistência. |
+| [ActFourGameplayTest](../src/test/java/br/com/bibliotecadasalmas/ActFourGameplayTest.java) | Aprovado | R01/R02/R03: três finais; R04/S02: revisita; R08: confirmação/cancelamento; estados de cutscene e saves. |
+| [MenuSmokeTest](../src/test/java/br/com/bibliotecadasalmas/MenuSmokeTest.java) | Aprovado | Mouse/teclado da abertura, escolhas, diário, retomada, escala e telas legadas; 25 imagens. |
+
+Os testes dos atos usam controlador e executor, incluindo percursos desde Novo Jogo. Uma asserção sobre um nó de cutscene comprova o estado narrativo, não a inspeção visual de sua arte.
+
+## 2. Evidências da revisão
+
+| Evidência | Local / resultado |
 | --- | --- |
-| **Aprovado** | Procedimento executado e resultado esperado observado na versão registrada. |
-| **Reprovado** | Procedimento executado com divergência; registrar a falha e a evidência. |
-| **Pendente** | Ainda não executado. Informar a funcionalidade necessária quando ela não estiver integrada. |
+| Classes recompiladas | `target/validacao-docs-2026-11-11/classes/` |
+| Logs individuais | `target/validacao-docs-2026-11-11/<NomeDoTeste>.log` |
+| Resultado consolidado | `target/validacao-docs-2026-11-11/resultados.json`, oito códigos zero. |
+| Imagens da interface das fontes | `target/validacao-docs-2026-11-11/previews/`, 25 PNGs. |
+| JAR materializado via LFS | `dist/BibliotecaDasAlmas-Menu.jar`, 122.162.585 bytes. |
+| Pacote fora da árvore de fontes | Copiado para diretório temporário; `--validate-story` confirmou 28 cenas/620 nós e `--preview` gerou imagem. |
+| Prévia do pacote | `target/validacao-docs-2026-11-11/preview-distribuicao.png`, com diretório pessoal isolado. |
+| Testes contra o pacote | `ActFourGameplayTest` e `MenuSmokeTest` aprovados usando somente classes de teste e o JAR no classpath. |
+| Logs do pacote | `ActFourGameplayTest-pacote.log` e `MenuSmokeTest-pacote.log` na pasta da revisão. |
+| Imagens do pacote | `target/validacao-docs-2026-11-11/previews-pacote/`, 25 PNGs. |
+| Caminhos de imagens | 41 referências distintas do manifesto encontradas; 71 cabeçalhos PNG catalogados. |
 
-Cada execução deve registrar data, commit, estado local relevante, sistema/JDK, caso, passos, resultado e evidência. Imagens ajudam a conferir composição, mas sua geração automática não comprova uma revisão visual humana.
+`target/` é ignorado pelo Git e os artefatos são locais, não arquivos garantidos em um clone novo. O caminho temporário do pacote foi registrado em `diretorio-pacote.txt`. Os testes criaram saves temporários e a prévia usou `user.home` isolado.
 
-Preferir testes da lógica para requisitos, efeitos e persistência; usar testes de interface e partidas para apresentação e navegação. Não é necessário testar cada fala isoladamente nem criar testes que apenas copiem a implementação.
+A conferência do JAR não recompilou nem substituiu a distribuição. Também não registra nova execução de `mvn package`.
 
-## 2. Preparação
+## 3. Reproduzir os testes
 
-1. Usar a raiz do repositório e JDK 21. Consultar o [README](../README.md) para execução geral.
-2. Registrar o commit e alterações locais antes de validar uma entrega.
-3. Separar saídas de compilação e evidências em uma pasta ignorada, como `target/validacao-documentacao/`.
-4. Usar um diretório temporário de saves. `SaveManager(Path)` permite isso e `MenuSmokeTest` já o faz. Não apagar ou sobrescrever saves pessoais para preparar os testes.
-5. Na futura bateria narrativa, criar estados de teste controlados por `GameState` ou fixtures isoladas. Não modificar o roteiro oficial ou saves pessoais para simular requisitos ausentes.
+Os oito testes têm `main` e verificações próprias. `mvn test` isoladamente não comprova que foram chamados.
 
-O teste existente renderiza sem abrir janela. Tela cheia, foco real do teclado e interação visual completa exigem validação manual em ambiente gráfico.
+### 3.1 Maven e execução explícita no PowerShell
 
-## 3. Procedimentos disponíveis — Carregador, estado e protótipo
-
-Os quatro testes são executados por métodos `main`, com verificações próprias. `mvn test` isoladamente não comprova sua execução; o build compila os testes, mas eles devem ser chamados explicitamente.
-
-### Compilação e execução com Maven
-
-Conferir que `mvn -version` indica JDK 21, inclusive o `JAVA_HOME` usado pelo Maven. No PowerShell, a partir da raiz:
+Na raiz, com Maven e JDK 21:
 
 ```powershell
 mvn package
-if ($LASTEXITCODE -ne 0) { throw 'Falha no build.' }
+if ($LASTEXITCODE -ne 0) { throw 'Build falhou.' }
 
 $classpathTeste = 'target/test-classes;target/biblioteca-das-almas-menu-1.0.0.jar'
-java -cp $classpathTeste br.com.bibliotecadasalmas.StoryLoaderTest
-if ($LASTEXITCODE -ne 0) { throw 'StoryLoaderTest falhou.' }
-java -cp $classpathTeste br.com.bibliotecadasalmas.GameStateTest
-if ($LASTEXITCODE -ne 0) { throw 'GameStateTest falhou.' }
-java '-Djava.awt.headless=true' -cp $classpathTeste br.com.bibliotecadasalmas.OpeningGameplayTest
-if ($LASTEXITCODE -ne 0) { throw 'OpeningGameplayTest falhou.' }
-java '-Djava.awt.headless=true' -cp $classpathTeste br.com.bibliotecadasalmas.MenuSmokeTest target/validacao-opening/previews
-if ($LASTEXITCODE -ne 0) { throw 'MenuSmokeTest falhou.' }
+$testes = @(
+    'StoryLoaderTest', 'GameStateTest', 'OpeningGameplayTest',
+    'ActOneGameplayTest', 'ActTwoGameplayTest',
+    'ActThreeGameplayTest', 'ActFourGameplayTest', 'MenuSmokeTest'
+)
+foreach ($teste in $testes) {
+    if ($teste -eq 'MenuSmokeTest') {
+        java '-Djava.awt.headless=true' -cp $classpathTeste "br.com.bibliotecadasalmas.$teste" target/validacao-atual/previews
+    } else {
+        java '-Djava.awt.headless=true' -cp $classpathTeste "br.com.bibliotecadasalmas.$teste"
+    }
+    if ($LASTEXITCODE -ne 0) { throw "$teste falhou." }
+}
 ```
 
-O Maven Shade inclui Gson e os recursos no JAR executável; não é necessário acrescentar `src/main/resources` ou um JAR externo ao classpath desse procedimento. O arquivo em `dist/` continua sendo a distribuição anterior do protótipo.
-
-Para uma validação rápida do conteúdo do JAR, sem janela nem acesso a saves:
-
-```powershell
-java -jar target/biblioteca-das-almas-menu-1.0.0.jar --validate-story
-if ($LASTEXITCODE -ne 0) { throw 'Roteiro inválido ou ausente do pacote.' }
-```
+Em Linux/macOS, o separador de classpath é `:`, em vez de `;`.
 
 ### Alternativa com javac e JAR do Gson
 
-Disponibilizar previamente o JAR do Gson **2.13.2** e ajustar `$gsonJar` ao caminho real. Nesta validação, a dependência usada pelo procedimento manual foi colocada em `target/validacao-story/lib/`; esse diretório é temporário e não acompanha um clone novo.
+Disponibilizar o Gson **2.13.2** e ajustar o caminho; a dependência local em `target/validacao-story/lib` não acompanha um clone novo.
 
 ```powershell
 $gsonJar = 'target/validacao-story/lib/gson-2.13.2.jar'
-if (-not (Test-Path -LiteralPath $gsonJar)) { throw 'Indique o caminho do JAR do Gson 2.13.2.' }
-$saidaClasses = 'target/validacao-story/classes'
-$saidaTeste = 'target/validacao-story/previews'
-New-Item -ItemType Directory -Path $saidaClasses,$saidaTeste -Force | Out-Null
-
+$saidaClasses = 'target/validacao-atual/classes'
+if (-not (Test-Path -LiteralPath $gsonJar)) { throw 'Indique o JAR do Gson 2.13.2.' }
+New-Item -ItemType Directory -Path $saidaClasses -Force | Out-Null
 $fontesJava = @(Get-ChildItem -Path src/main/java,src/test/java -Recurse -Filter '*.java' |
     ForEach-Object { $_.FullName })
 javac --release 21 -encoding UTF-8 -cp $gsonJar -d $saidaClasses $fontesJava
-if ($LASTEXITCODE -ne 0) { throw 'Falha na compilação.' }
-
+if ($LASTEXITCODE -ne 0) { throw 'Compilação falhou.' }
 $classpathTeste = "$saidaClasses;$gsonJar;src/main/resources"
-java -cp $classpathTeste br.com.bibliotecadasalmas.StoryLoaderTest
-if ($LASTEXITCODE -ne 0) { throw 'StoryLoaderTest falhou.' }
-java -cp $classpathTeste br.com.bibliotecadasalmas.GameStateTest
-if ($LASTEXITCODE -ne 0) { throw 'GameStateTest falhou.' }
-java '-Djava.awt.headless=true' -cp $classpathTeste br.com.bibliotecadasalmas.OpeningGameplayTest
-if ($LASTEXITCODE -ne 0) { throw 'OpeningGameplayTest falhou.' }
-java '-Djava.awt.headless=true' -cp $classpathTeste br.com.bibliotecadasalmas.MenuSmokeTest $saidaTeste
-if ($LASTEXITCODE -ne 0) { throw 'MenuSmokeTest falhou.' }
 ```
 
-A compilação conjunta e a execução manual foram verificadas. Na execução realizada, a enumeração das fontes usou `rg --files`; o exemplo usa PowerShell para não exigir essa ferramenta. O JAR não é copiado para o repositório versionado.
+Executar depois o mesmo laço da seção anterior, mantendo o classpath manual. Esse procedimento verifica as fontes; ele não empacota um novo JAR.
 
-### L01 — Carregamento e validação do roteiro real
+### 3.3 Validar a distribuição
 
-Fonte: [StoryLoaderTest.java](../src/test/java/br/com/bibliotecadasalmas/StoryLoaderTest.java).
+```powershell
+java -jar dist/BibliotecaDasAlmas-Menu.jar --validate-story
+```
 
-Verifica a leitura das 28 entradas e 620 nós, os sete tipos de nó, os seis ambientes, preservação de texto UTF-8, leitura com BOM, fontes de entrada, conteúdo imutável e criação independente de `GameState`. Avalia as condições dos metadados, da revelação e da decisão final nas 32 combinações e compara com `GameState.canRewritePact()`.
+Para testar o pacote, compilar **somente** `src/test/java` contra ele e usar as classes de teste mais o JAR no classpath. Incluir `target/classes` antes do JAR testaria as classes locais em seu lugar. Para provar independência da árvore de fontes, executar uma cópia em diretório temporário sem `src/main/resources` no classpath.
 
-As 44 amostras inválidas desta versão cobrem sintaxe, chaves e IDs duplicados, campos desconhecidos, tipos indevidos, destinos inexistentes, opções sem saída ou com duas saídas, referências a memórias/locais/flags, regras secretas divergentes e ciclos automáticos locais ou entre cenas. As fixtures são cópias em memória ou arquivos temporários; o roteiro oficial não é alterado.
+O arquivo distribuído usa Git LFS; um ponteiro textual não é executável. Nesse caso, executar `git lfs install` e `git lfs pull`. Os atalhos priorizam o nome acima e aceitam o nome Maven como alternativa quando presente.
 
-L01 não valida os PNGs ou o manifesto externo, não executa efeitos e não simula uma partida completa. A aceitação de referências é limitada às definições disponíveis no consolidado, conforme o contrato narrativo.
+## 4. Critérios por funcionalidade
 
-### G01 — Regras do estado em memória
-
-Fonte: [GameStateTest.java](../src/test/java/br/com/bibliotecadasalmas/GameStateTest.java).
-
-Verifica oito grupos: estado inicial e independência das partidas; inventário sem duplicatas e snapshots protegidos; sincronização das três memórias com suas flags nos dois sentidos; escolhas por cena/nó e interações concluídas; navegação condicionada ao desbloqueio; 32 combinações da reescrita; entradas inválidas sem alterações parciais; reinício por Novo Jogo sem perder preferências.
-
-Definir explicitamente uma flag de memória como falsa remove também sua memória; o roteiro atual não usa essa operação para punir personalidade. A política de preservação das descobertas na execução continua pendente de integração.
-
-### A01 — Abertura, retomada e executor
-
-Fonte: [OpeningGameplayTest.java](../src/test/java/br/com/bibliotecadasalmas/OpeningGameplayTest.java).
-
-Percorre as seis combinações de investigar/adiar a carta com as três posturas da porta. Também verifica entrar sem abrir a carta, voltar para recuperá-la, a pausa antes do livro e o limite da cena 04. Recria o controlador em pontos de diálogo e exploração e compara todas as categorias de progresso, incluindo as marcas de efeitos já aplicados.
-
-Exercita inventário modal, oito retratos legíveis pelo `ImageIO`, compatibilidade com `.properties`, saves truncados/incompatíveis/incoerentes e falha de escrita informada. Os fixtures de executor verificam rollback de um lote inválido, condicionais, evento, junção e confirmação/cancelamento. A avaliação dos nós finais nesses fixtures não equivale a uma partida completa na interface.
-
-### P01 — Menu e abertura por mouse/teclado
-
-Fonte: [MenuSmokeTest.java](../src/test/java/br/com/bibliotecadasalmas/MenuSmokeTest.java).
-
-Percorre o trecho JSON usando os listeners reais de mouse e teclado de `GamePanel`, na thread de eventos Swing. Confere revelar/avançar, escolhas, hotspots, bloqueio modal, redimensionamento para 1600 × 1000, barras fora da área lógica, inventário, diário e Continuação com novo controlador. Configurações, créditos e a demonstração legada continuam cobertos. Um relógio fixo evita testes de texto dependentes de esperas.
-
-Gera **25 imagens** da abertura e das telas legadas. A saída começa com `OK: menu e abertura JSON passaram`. Os saves são temporários; o argumento indica apenas a pasta das imagens. Tela cheia e foco real do teclado exigem os casos manuais abaixo. Os finais e os demais cenários não são cobertos como partidas jogáveis.
-
-## 4. Verificações manuais do protótipo
-
-Estado atual dos casos abaixo: **pendente**.
-
-| Caso | Preparação e passos | Resultado esperado |
+| Casos | Evidência automatizada atual | Conferência adicional |
 | --- | --- | --- |
-| **P02 — Controles** | Abrir a aplicação em ambiente gráfico. Navegar no menu com mouse, setas e Enter; avançar o prólogo com Enter/Espaço; usar Esc. | A seleção respeita controles habilitados; o prólogo avança e Esc retorna ao menu ou fecha a inspeção aberta. |
-| **P03 — Janela e tela cheia** | Redimensionar a janela, alternar F11 e interagir com botões nas diferentes posições. | A proporção é preservada, textos permanecem legíveis e o clique corresponde à área desenhada. |
-| **P04 — Preferências** | Em uma execução com save isolado, mudar efeitos, velocidade e tela cheia; fechar e reabrir com o mesmo diretório. | As preferências são restauradas. Registrar qualquer falha de exibição ou gravação. |
+| D01/N03 — JSON e regra secreta | `StoryLoaderTest` e `GameStateTest`. | Catálogos independentes e conteúdo visual. |
+| R01/R02/R03 — finais | `ActFourGameplayTest`. | Legibilidade dos epílogos e apresentação dos desfechos. |
+| R04 — pistas adiadas e revisita | Testes dos atos II–IV. | Percurso manual com mouse e cliques fora de sequência. |
+| R05/R06 — reação à Fantasma e medalhão | `ActTwoGameplayTest`. | Clareza das opções na UI. |
+| R07 — revisitas e duplicação | Testes de estado e atos. | Ações repetidas na interface interativa. |
+| R08 — confirmar/cancelar | `OpeningGameplayTest` e `ActFourGameplayTest`. | Apresentação modal e foco real. |
+| S01/S02 — saves | Testes de abertura e atos. | Retomada pelo menu em ambiente gráfico. |
+| S05 — falha de gravação | `OpeningGameplayTest`. | Mensagem compreensível ao jogador. |
+| V04 — pacote independente | Validação, prévia e dois testes contra cópia isolada. | Instalação em clone novo e execução interativa em outro computador. |
 
-Esses casos complementam P01. O teste sem janela não aciona nem comprova a alternância real de tela cheia.
+Os identificadores foram mantidos para ligação com os registros anteriores. Aprovação de casos não constitui medição de cobertura de 100%.
 
-## 5. Dados e sistema narrativo
+## 5. Pendências e limites
 
-**D01 e N03 aprovados em L01. N01 e N02 têm execução de base aprovada em A01/P01**, com a interface limitada às cenas 01–04. D02 tem mapeamento e leitura das artes da abertura verificados, mas permanece pendente para o catálogo completo.
+- Conferir foco do teclado, F11, redimensionamento e apresentação dos atos/finais em janela real.
+- Conferir textos longos, todas as expressões e transições de fundo nos epílogos.
+- Substituir o fundo compartilhado dos quatro ambientes que ainda usam o Salão.
+- Atender às exigências acadêmicas ainda ausentes: tela cheia inicial sem bordas, Esc imediato, movimento por setas/WASD/diagonais, colisão e som pré-carregado.
+- Conferir Git LFS e acesso de avaliação a partir de um clone novo.
+- Revisar créditos, divisão da dupla e ferramentas utilizadas.
 
-G01 valida as operações individuais do estado e L01 compara as declarações secretas. A01 acrescenta lotes atômicos, efeitos repetidos, confirmação e retomada; P01 percorre a interface por eventos, sem abrir uma janela. A integração do resto do capítulo continua necessária.
+Não há áudio integrado nem testes de movimento/colisão. Gerar prévias sem janela não comprova esses requisitos. A interface automatizada cobre principalmente abertura e legado; os testes dos atos cobrem regras e fluxo do controlador.
 
-| Caso | Preparação e passos | Resultado esperado |
-| --- | --- | --- |
-| **D01 — Estrutura do roteiro** | Carregar o consolidado. Conferir sintaxe, chaves duplicadas, IDs, referências e contagens. Usar cópias de teste com destinos ou tipos inválidos. | Aceita o roteiro válido; identifica arquivo, cena/nó e campo nas amostras inválidas. Não altera o original. |
-| **D02 — Recursos referenciados** | Resolver locais, falantes, expressões e cutscenes pelo manifesto integrado; incluir uma referência inexistente em uma cópia de teste. | Carrega os recursos válidos e diagnostica a referência ausente, sem substituir silenciosamente por outra arte. |
-| **N01 — Falas e nós automáticos** | Executar uma sequência com `line`, `join`, `condition`, `event`, `cutscene` e `end`. Revelar texto e avançar por clique. | Falas e cutscenes aguardam avanço; nós automáticos seguem sem cliques extras, sem travar em ciclos. Cliques não ativam hotspots atrás da apresentação. |
-| **N02 — Efeitos e consistência** | Investigar a carta, consultar inventário e diário; repetir a interação e simular clique duplo. Usar um lote inválido em fixture separada. | Carta e memória aparecem uma vez, flags ficam coerentes e o lote inválido não aplica alterações parciais. |
-| **N03 — Regra secreta** | Avaliar as 32 combinações booleanas das cinco flags oficiais em estados de teste. Comparar metadados, cena 24 e opção de reescrita da cena 25. | Apenas a combinação com cinco valores verdadeiros permite reescrever. As três declarações são equivalentes; postura e `final_secreto_revelado` não viram requisitos adicionais. |
+## 6. Registros históricos herdados
 
-No percurso normal, `memoria_pacto` é concedida obrigatoriamente na cena 16. Sua ausência deve ser testada diretamente na regra, sem criar uma rota narrativa que ignore a revelação principal.
+Os registros a seguir documentam versões e execuções anteriores, inclusive relatos recebidos no commit `389433f`. Expressões como “atual”, “pendente”, “100%” e “completo” nesses registros pertencem à data/base original. A seção 1 e os limites da seção 5 prevalecem para a revisão presente. Afirmações históricas de cobertura ou atomicidade não são uma medição nova.
 
-## 6. Partidas completas e finais
-
-Estado atual dos casos abaixo: **pendente de integração do capítulo**. Cada partida começa por Novo Jogo, com progresso isolado. A ordem detalhada das cenas está no roteiro e na direção narrativa oficial.
-
-### R01 — Final I: A Última Página
-
-**Preparação:** partida nova. Para comprovar que o final não depende da investigação completa, adiar carta e fotografia, guardar o medalhão e ignorar a cláusula. Seguir a progressão obrigatória, incluindo o livro de Natasha e a confissão de Rodion.
-
-**Passos:** entrar na Câmara, acompanhar o confronto, selecionar queimar e confirmar. Avançar até o fim do epílogo.
-
-**Resultado esperado:** as almas vinculadas são libertadas e Natasha desaparece. No encerramento, `final_conquistado` vale `queimar`, `capitulo_1_concluido` e `almas_libertas` são verdadeiros. A ausência das pistas opcionais não bloqueia esse caminho.
-
-### R02 — Final II: Entre Páginas Fechadas
-
-**Preparação:** outra partida nova com investigação incompleta, como em R01.
-
-**Passos:** chegar à decisão final, selecionar preservar, confirmar e concluir o epílogo.
-
-**Resultado esperado:** Natasha continua existindo, o pacto permanece e as almas continuam presas. `final_conquistado` vale `preservar` e `capitulo_1_concluido` é verdadeiro. `almas_libertas` e `escriba_derrotado` permanecem falsos no estado dessa partida nova. A narrativa mantém a complexidade do desejo de sobreviver.
-
-### R03 — Final III: A História que Ainda Não Foi Escrita
-
-**Preparação:** partida nova. Investigar a carta e a fotografia, devolver o medalhão, recuperar a memória do pacto e ler a cláusula. Conferir as cinco flags antes de iniciar o confronto.
-
-**Passos:** entrar na Câmara, acompanhar a terceira possibilidade e o testemunho da Fantasma. Selecionar reescrever, confirmar e concluir o epílogo.
-
-**Resultado esperado:** a autoria volta às almas, o Escriba é derrotado e Natasha sobrevive com memórias incompletas. A Fantasma deixa de carregar sozinha as histórias. Conferir quebra do halo e do rosto sem feições, sem acrescentar olhos, nariz ou boca. `final_conquistado` vale `reescrever`; `capitulo_1_concluido`, `almas_libertas` e `escriba_derrotado` são verdadeiros ao final.
-
-A conclusão do capítulo só deve ser registrada no nó final do epílogo. Não marcar o caso como aprovado ao abrir sua primeira cutscene.
-
-## 7. Revisitas, escolhas e confirmação
-
-Estado atual dos casos abaixo: **pendente de integração**.
-
-| Caso | Preparação e passos | Resultado esperado |
-| --- | --- | --- |
-| **R04 — Recuperar pistas ignoradas** | Em uma partida, adiar carta, fotografia e cláusula. Na cena 20, escolher investigar; visitar cada local desbloqueado, obter as pistas e retornar. | Atualiza memórias e requisitos e retoma a escolha da cena 20. Não reinicia atos pelo `next_scene` das cenas revisitadas. |
-| **R05 — Confiança reparável** | Recuar diante da Fantasma, guardar o medalhão e avançar. Antes do confronto, retornar e devolvê-lo. | Remove o item guardado e define `medalhao_devolvido` e `fantasma_confia`. A reação inicial não bloqueia o final secreto. |
-| **R06 — Entrega imediata** | Em partida nova, devolver o medalhão na primeira oportunidade, sem guardá-lo antes. | A entrega não falha por remover um item ainda ausente. A confiança é concedida e o item não permanece no inventário. |
-| **R07 — Repetição após descoberta** | Revisitar carta, fotografia, cláusula e medalhão já devolvido. | Não duplica itens, memórias ou efeitos; não permite guardar o medalhão novamente nem apaga confiança conquistada. |
-| **R08 — Cancelar a decisão final** | Na cena 25, selecionar uma opção e cancelar a confirmação; depois selecionar outra e confirmar. | Cancelar mantém a escolha sem efeitos. Somente a opção confirmada inicia seu epílogo. |
-
-R04 deve ser executado com requisitos suficientes para que a coleta posterior das pistas realmente complete as cinco condições. Registrar quais estavam ausentes antes e quais foram obtidas no retorno.
-
-## 8. Salvamento e reinício
-
-Estado atual dos casos narrativos abaixo: **pendente de integração**. O teste P01 cobre apenas o save básico do protótipo.
-
-| Caso | Preparação e passos | Resultado esperado |
-| --- | --- | --- |
-| **S01 — Retomada após efeitos** | Investigar carta ou fotografia, salvar no ponto previsto, encerrar e continuar com o mesmo diretório isolado. | Restaura cenário, cursor, item, memória e flags, sem repetir os efeitos. |
-| **S02 — Retomada em revisita** | Na cena 20, abrir exploração, recuperar uma pista, salvar e continuar. Voltar ao confronto. | Preserva a pista e o contexto suspenso; retoma a escolha correta sem reiniciar a história. |
-| **S03 — Novo Jogo** | Após uma partida com descobertas ou final, iniciar outra usando o mesmo diretório isolado. | Reinicia progresso, itens, memórias e estados de final, mantendo preferências. Não herda `almas_libertas` do final anterior. |
-| **S04 — Save antigo ou inválido** | Usar cópias de teste de um save básico antigo e de um arquivo inválido. Tentar continuar. | Aplica a política documentada de compatibilidade ou recuperação, com mensagem compreensível. Não inventa progresso nem destrói outra partida. |
-| **S05 — Falha de gravação** | Usar uma implementação de teste ou destino controlado que simule falha de escrita. | Comunica a falha, sem afirmar salvamento concluído ou deixar estado parcialmente persistido. |
-
-Se o jogo adotar somente pontos seguros de gravação, registrar quais são e ajustar os passos de S01/S02. Não exigir um save no meio de uma fala sem antes implementar essa política.
-
-## 9. Interface e distribuição
-
-Estado atual dos casos do capítulo integrado: **Aprovados**.
-
-| Caso | Preparação e passos | Resultado esperado | Estado |
-| --- | --- | --- | --- |
-| **V01 — Composição e expressões** | Percorrer os quatro personagens, suas expressões, memórias e fontes de texto. Conferir em janela e tela cheia. | Escala e alinhamento coerentes, transparência correta, nomes legíveis e identidade visual preservada. Vozes e documentos não mostram retratos indevidos. | **Aprovado** |
-| **V02 — Hotspots e camadas** | Em cada um dos seis ambientes, clicar em portas, pistas e personagens; repetir com diálogo, escolha e cutscene ativos. Redimensionar a janela. | Navegação respeita desbloqueios, cliques acompanham a imagem e apresentações ativas bloqueiam interações atrás delas. | **Aprovado** |
-| **V03 — Epílogos e fundos** | Executar os três finais e observar as transições, incluindo a chegada à Entrada nos finais que a narram. | Fundos e cutscenes correspondem ao texto; a localização inicial da cena não impede mudanças internas. | **Aprovado** |
-| **V04 — Pacote independente** | Gerar o pacote atualizado, copiá-lo para uma pasta de teste fora da árvore de fontes e executar seguindo o README. | Carrega todos os recursos do capítulo sem acessar os diretórios externos de artes ou fontes. | **Aprovado** |
-
-Para V04, registrar a origem do artefato: o JAR de `dist/` é uma distribuição do protótipo e não comprova que o código recém-integrado foi empacotado. Conferir o JAR gerado pelo build atual, incluindo dependências necessárias caso o leitor JSON use biblioteca externa.
-
-O [catálogo de recursos](catalogo-de-recursos.md) lista os arquivos conhecidos e as pendências de mapeamento. O teste de pacote deve usar esse inventário como referência e registrar os recursos ausentes.
-
-## 10. Registro de execução desta revisão
+### Histórico 10 — Registro de execução desta revisão
 
 | Campo | Registro |
 | --- | --- |
@@ -241,7 +147,7 @@ A primeira tentativa de compilação em duas etapas não resolveu as classes pri
 
 Para novas execuções, acrescentar um registro com versão e evidências, mantendo os resultados anteriores identificados. O histórico não deve ser sobrescrito como se todos os casos tivessem sido executados novamente.
 
-## 11. Registro de execução — Base GameState
+### Histórico 11 — Registro de execução — Base GameState
 
 | Campo | Registro |
 | --- | --- |
@@ -256,7 +162,7 @@ Para novas execuções, acrescentar um registro com versão e evidências, mante
 
 Comandos para reproduzir esse registro: usar a compilação conjunta da seção 3 com destino `target/validacao-gamestate/classes`; executar G01 com esse classpath e P01 com `target/validacao-gamestate/classes;src/main/resources`, indicando `target/validacao-gamestate/previews` para as imagens.
 
-## 12. Registro de execução — Carregador JSON
+### Histórico 12 — Registro de execução — Carregador JSON
 
 | Campo | Registro |
 | --- | --- |
@@ -275,7 +181,7 @@ O build inicial encontrou outro `JAVA_HOME`; a validação foi concluída seleci
 
 SHA-256 preservado do consolidado: `95A23FE0CCF0AE8A4A8B6F52CAAAAF01B5D15276DF94AC75920BB1306ADE0DFA`.
 
-## 13. Registro de execução — Primeiro trecho jogável
+### Histórico 13 — Registro de execução — Primeiro trecho jogável
 
 | Campo | Registro |
 | --- | --- |
@@ -295,7 +201,7 @@ As telas de consulta são fechadas na retomada e o texto da fala volta a ser rev
 
 O roteiro consolidado foi preservado. Os PNGs foram copiados dos pacotes existentes, sem edição. Os atalhos e o JAR antigo de `dist/` não foram substituídos; executar o JAR de `target/` para jogar a abertura atual.
 
-## 14. Registro de execução — Atos I, II e III integrados
+### Histórico 14 — Registro de execução — Atos I, II e III integrados
 
 | Campo | Registro |
 | --- | --- |
@@ -306,7 +212,7 @@ O roteiro consolidado foi preservado. Os PNGs foram copiados dos pacotes existen
 | Cobertura | 9 combinações no Ato I, 12 rotas no Ato II (incluindo R04, R05, R06, R07), 12 rotas no Ato III, recuperação de pistas adiadas, verificação rigorosa das 5 condições da reescrita (`canRewritePact()`), navegação nos 5 ambientes e persistência. |
 | Regressões | `StoryLoaderTest`, `GameStateTest`, `OpeningGameplayTest` e `MenuSmokeTest` permanecem **Aprovados**. |
 
-## 15. Registro de execução — Ato IV e Epílogos integrados (Capítulo I Completo)
+### Histórico 15 — Registro de execução — Ato IV e Epílogos integrados (Capítulo I Completo)
 
 | Campo | Registro |
 | --- | --- |

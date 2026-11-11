@@ -1,8 +1,8 @@
 # A Biblioteca das Almas — Documentação do Trabalho Prático
 
-**Programação Orientada a Objetos e Desenvolvimento de Jogos 2D**  
-**Referência da documentação:** 10/11/2026  
-**Base de código analisada:** commit `7a8c05e`
+**Programação Orientada a Objetos e Desenvolvimento de Jogos 2D**
+**Referência da documentação:** 11/11/2026
+**Base de código analisada:** commit `389433f`
 
 | Identificação | Informação |
 | --- | --- |
@@ -12,15 +12,28 @@
 | Professor | Cainã Antunes |
 | Integrante 1 | Felipe Nunes Ramalho - 26154726  |
 | Integrante 2 | Juliana Karla Camargo da Silva - 26154769 |
-| Repositório Git/GitHub para entrega | https://github.com/FelipeNRamalho/a-biblioteca-das-almas-java.git |
+| Repositório Git/GitHub para entrega | [A Biblioteca das Almas](https://github.com/FelipeNRamalho/a-biblioteca-das-almas-java) |
 
 ## 1. Objetivo e referência acadêmica
 
 Este documento apresenta o projeto **A Biblioteca das Almas**, sua arquitetura, os exemplos implementados dos quatro pilares de POO, os procedimentos de execução e a situação dos requisitos do trabalho prático.
 
-A referência é o arquivo **Orientações-jg-em-dupla.md**, fornecido pelo professor e consultado na elaboração desta documentação. Suas orientações definem Java desktop, Swing/Graphics2D, demonstração de POO, tela cheia sem bordas, encerramento por Esc, movimento por setas e WASD com diagonais, imagens, áudio pré-carregado, colisões, versionamento e documentação Markdown com Mermaid.
+As referências são o arquivo **Orientações-jg-em-dupla.md** e o material **Mini Projeto 01: ScreenSaver**, fornecidos na conversa. O [repositório do projeto-base do professor](https://github.com/ProfCainaAntunes/backend_screenSaver_solved) apresenta a infraestrutura didática de formas, personagem, teclado, imagens, áudio e colisões.
+
+O documento de orientações estabelece os requisitos do trabalho. O material do ScreenSaver explica os recursos da base e sugere extensões. Uma funcionalidade apresentada como implementada no ScreenSaver só é descrita como implementada em **A Biblioteca das Almas** quando há evidência no código deste jogo. As sugestões de placar, vidas, moedas, perseguidor e projéteis são desafios de extensão da base, não funcionalidades já presentes nesta aventura narrativa.
 
 O projeto atual é uma aventura narrativa com exploração por cliques. Essa escolha explica sua organização, mas **não comprova dispensa dos requisitos de movimentação, colisão, áudio ou da hierarquia de referência do professor**. As diferenças estão registradas na seção 4 para adequação ou validação formal com o professor. Esta documentação descreve o código existente; não implementa os requisitos pendentes.
+
+### 1.1 Objetivo didático aplicado ao jogo
+
+O objetivo é demonstrar os quatro pilares de POO em uma aplicação gráfica interativa:
+
+1. **Abstração:** representar controles por `ClickTarget` e ações do mundo por `Interactable`, separando seus contratos dos detalhes de execução.
+2. **Encapsulamento:** proteger o progresso em `GameState`, controlando a coleta de itens, recuperação de memórias e liberação de ambientes.
+3. **Herança:** compartilhar geometria e acionamento em `AbstractControl`, especializado por botões, opções e hotspots.
+4. **Polimorfismo:** desenhar controles de tipos distintos por `List<ClickTarget>` e acionar investigações e passagens pela operação `interact`.
+
+A seção 6 apresenta os trechos de código e o diagrama das classes que sustentam esses exemplos.
 
 ## 2. Apresentação do jogo
 
@@ -35,15 +48,26 @@ A experiência combina cenas ilustradas, retratos de personagens, diálogos prog
 | Parte | Situação observada |
 | --- | --- |
 | Menu inicial | Novo Jogo, Continuar, Configurações, Créditos e Sair disponíveis. |
-| Abertura jogável | Cenas 01–04: despertar, carta, passagem pela porta e investigação do livro. |
-| Ambientes exploráveis na abertura | Entrada da Biblioteca e Salão Principal, incluindo retorno para investigar a carta adiada. |
-| Narrativa | Roteiro consolidado carregado e validado: 28 entradas de cena e 620 nós. A presença do capítulo no JSON não significa que todo ele esteja jogável. |
-| Progresso | Inventário, Memória 1, escolhas, flags e retomada da abertura implementados. |
-| Capítulo completo | Planejado com 26 cenas narrativas; as variações da cena final resultam nas 28 entradas do consolidado. Integração posterior à cena 04 pendente. |
-| Personagens | Natasha tem retratos integrados. Rodion, Fantasma e Escriba fazem parte do roteiro; sua apresentação completa e hierarquia própria de classes permanecem planejadas. |
-| Finais | Três finais previstos nos dados. A lógica das condições é verificável, mas os percursos completos ainda não estão disponíveis na interface. |
+| Abertura e atos | Cenas 01–04 e quatro atos integrados à configuração de execução, até a decisão final e os epílogos. |
+| Ambientes | Entrada, Salão, Balcão, Corredor, Arquivo e Câmara têm estado e interações próprios. Balcão, Corredor, Arquivo e Câmara reutilizam visualmente o fundo do Salão. |
+| Narrativa | 28 entradas de cena e 620 nós. `trecho_inicial.json`, apesar do nome histórico, configura o capítulo inteiro. |
+| Progresso | Inventário com cinco itens catalogados, três memórias, escolhas, flags e save narrativo. |
+| Capítulo | 26 cenas narrativas, com três variantes da cena 26. Há testes dos quatro atos; consultar os resultados e limites na seção 10. |
+| Personagens | `GameCharacter` é especializada por `Natasha`, `Rodion`, `Fantasma` e `Escriba`; `CharacterRegistry` resolve nomes, expressões e aliases. |
+| Finais | Queimar, preservar e reescrever estão no executor e no manifesto, com confirmação da escolha. A reescrita exige as cinco condições oficiais. |
 
 O ciclo jogável atual é: **explorar → investigar → ler → escolher → atualizar o progresso → salvar → continuar a exploração**.
+
+### 2.3 Funcionalidades e recursos implementados
+
+- **Exploração por hotspots:** a carta inicia uma investigação; a porta permite avançar ou retornar conforme o desbloqueio do ambiente.
+- **Diálogos e escolhas:** o roteiro JSON fornece os textos e as opções; `NarrativeSession` conduz a sequência e aplica seus efeitos.
+- **Inventário e diário:** oito documentos representam cinco itens e três memórias, consultáveis conforme as descobertas da partida.
+- **Imagens e retratos:** 71 PNGs incluem expressões dos quatro personagens e cutscenes dos atos e finais. Os caminhos são resolvidos pelo manifesto e pelo registro de personagens.
+- **Continuação da partida:** o save narrativo registra escolhas e descobertas, incluindo pontos dos atos posteriores. Os casos conferidos e as limitações estão em [Testes do capítulo](testes-do-capitulo.md).
+- **Interface por mouse e teclado:** há seleção de controles, avanço de texto e alternância de tela cheia por F11. O comportamento exato de cada tecla consta na seção 7.2.
+
+Os recursos de áudio, movimento livre e colisão descritos no projeto-base permanecem com a situação indicada na seção 4.
 
 ## 3. Tecnologias e organização dos arquivos
 
@@ -55,7 +79,7 @@ O ciclo jogável atual é: **explorar → investigar → ler → escolher → at
 | Maven | Compilação e empacotamento declarados em `pom.xml`. |
 | Gson 2.13.2 | Leitura de dados JSON e suporte à persistência narrativa. |
 | PNG | Fundos, retratos, escolhas e ornamentos da interface. |
-| Git | Histórico de alterações do projeto. A URL de entrega no GitHub deve ser informada pela dupla. |
+| Git/GitHub | Histórico de alterações e remoto `origin` configurado para o repositório identificado no início deste documento. |
 | Markdown e Mermaid | Documentação, arquitetura e relações entre classes. |
 
 Não há motor gráfico externo. A Java Sound API é exigida pelas orientações, mas ainda não está implementada no projeto.
@@ -67,7 +91,7 @@ a-biblioteca-das-almas-java/
 ├── INICIAR_WINDOWS.bat
 ├── INICIAR_LINUX_MAC.sh
 ├── dist/
-│   └── BibliotecaDasAlmas-Menu.jar    # Distribuição anterior do protótipo
+│   └── BibliotecaDasAlmas-Menu.jar    # Fat JAR atual, gerenciado por Git LFS
 ├── docs/
 │   ├── documentacao-academica.md
 │   ├── arquitetura-e-poo.md
@@ -78,6 +102,7 @@ a-biblioteca-das-almas-java/
 │   │   ├── java/br/com/bibliotecadasalmas/
 │   │   │   ├── Game.java
 │   │   │   ├── assets/              # Carregamento e cache de imagens
+│   │   │   ├── characters/          # GameCharacter, quatro subclasses e registro
 │   │   │   ├── core/                # Controlador, estado e persistência
 │   │   │   ├── narrative/           # Modelos, carregador e executor JSON
 │   │   │   ├── ui/                  # Painel, apresentação e controles
@@ -91,7 +116,11 @@ a-biblioteca-das-almas-java/
 │       ├── StoryLoaderTest.java
 │       ├── GameStateTest.java
 │       ├── OpeningGameplayTest.java
-│       └── MenuSmokeTest.java
+│       ├── MenuSmokeTest.java
+│       ├── ActOneGameplayTest.java
+│       ├── ActTwoGameplayTest.java
+│       ├── ActThreeGameplayTest.java
+│       └── ActFourGameplayTest.java
 └── target/                         # Saída de compilação; ignorada pelo Git
 ```
 
@@ -116,7 +145,7 @@ A organização usa as convenções Maven. `src/main/java` contém as classes e 
 | Colisão por bounding box entre entidades | Pendente | Há teste de ponto dentro de retângulo para cliques, mas não `intersects(MyShape)` ou sistema de colisão entre entidades. |
 | Laço reverso para remoção de entidades em listas | Sem caso implementado; regra pendente para a mecânica | A abertura não mantém uma lista de entidades coletáveis por colisão. Remoções de inventário usam `Set`. Não há demonstração do laço reverso exigido. |
 | Pastas `src`, `bin`, `model`, `view`, `image` e `sound` | Parcial / a validar | `src` existe; a estrutura adota Maven, pacotes próprios e `assets`. Não há pacote de sons integrado. |
-| Versionamento Git/GitHub | Parcial / a validar | Há histórico Git local. Confirmar acesso ao repositório remoto e preencher a URL de entrega. |
+| Versionamento Git/GitHub | Configurado; acesso de avaliação a validar | Há histórico Git local e remoto `origin` configurado para o repositório da dupla. A URL consta na identificação; conferir o acesso do professor à versão entregue. |
 | Documentação Markdown e diagramas Mermaid | Atendido no repositório | Este documento inclui diagramas de arquitetura e classes, além dos documentos técnicos relacionados. |
 | Compilar e executar em terminal e IDE | Parcialmente verificado | Fontes compiladas com JDK 21 e testes executáveis conferidos conforme seção 10. Execução interativa na IDE e tela cheia exigem conferência manual. |
 | Domínio do código e das ferramentas auxiliares/IA | A validar pela dupla | Cada integrante deve explicar as classes, regras e recursos usados; registrar autoria e ferramentas efetivamente utilizadas. |
@@ -132,7 +161,8 @@ Não há registro, nos arquivos consultados, de autorização do professor para 
 | [GameState](../src/main/java/br/com/bibliotecadasalmas/core/GameState.java) | Mantém e protege local, cursor narrativo, inventário, memórias, escolhas e flags. |
 | [StoryLoader](../src/main/java/br/com/bibliotecadasalmas/narrative/StoryLoader.java) / [StoryValidator](../src/main/java/br/com/bibliotecadasalmas/narrative/StoryValidator.java) | Carregam JSON estrito, constroem modelos e validam referências e regras. |
 | [NarrativeSession](../src/main/java/br/com/bibliotecadasalmas/narrative/NarrativeSession.java) | Executa nós, escolhas, condições e efeitos sobre o estado da partida. |
-| [OpeningContent](../src/main/java/br/com/bibliotecadasalmas/narrative/OpeningContent.java) | Carrega a configuração parcial das artes, hotspots, documentos e pausas da abertura. |
+| [OpeningContent](../src/main/java/br/com/bibliotecadasalmas/narrative/OpeningContent.java) | Carrega a configuração do capítulo: 28 saídas de cena, seis ambientes, 12 cutscenes, oito documentos e pausas de exploração. |
+| [GameCharacter](../src/main/java/br/com/bibliotecadasalmas/characters/GameCharacter.java) / [CharacterRegistry](../src/main/java/br/com/bibliotecadasalmas/characters/CharacterRegistry.java) | Compartilham identidade e expressões; resolvem nomes/retratos por personagem e aliases de memória/voz. |
 | [GamePanel](../src/main/java/br/com/bibliotecadasalmas/ui/GamePanel.java) / [StoryView](../src/main/java/br/com/bibliotecadasalmas/ui/StoryView.java) | Desenham telas, convertem coordenadas e encaminham entradas. |
 | [ClickTarget](../src/main/java/br/com/bibliotecadasalmas/ui/ClickTarget.java) e subclasses de [AbstractControl](../src/main/java/br/com/bibliotecadasalmas/ui/AbstractControl.java) | Padronizam geometria, ativação e desenho de controles. |
 | [Interactable](../src/main/java/br/com/bibliotecadasalmas/world/Interactable.java) | Permite acionar investigações e passagens pelo mesmo contrato. |
@@ -149,6 +179,7 @@ flowchart TD
     Controller --> Loader[StoryLoader / StoryValidator]
     Loader --> JSON[Roteiro JSON no classpath]
     Controller --> Opening[OpeningContent]
+    Controller --> Characters[CharacterRegistry / GameCharacter]
     Opening --> Manifest[trecho_inicial.json]
     Controller --> Session[NarrativeSession]
     Controller --> State[GameState]
@@ -202,7 +233,7 @@ O método privado `snapshot` cria uma cópia e a envolve com uma coleção não 
 
 `GothicButton`, `TextOption` e `HotspotControl` estendem `AbstractControl`. Reutilizam os campos protegidos `bounds`, `label` e `command` e a implementação compartilhada de habilitação e clique. Cada classe concretiza o desenho; `HotspotControl` também sobrescreve `contains` para considerar o rótulo da área interativa.
 
-O projeto atual demonstra herança na interface. Não há, nesta versão, subclasses de personagem como Natasha ou Rodion, nem a família `MyShape` do exemplo do professor.
+Há também herança no domínio: `Natasha`, `Rodion`, `Fantasma` e `Escriba` estendem `GameCharacter`. A base tem campos privados `id`, `defaultName` e `expressions`, além de implementações de `displayName(GameState, String)` e `portrait(String, GameState, String)`. `Rodion` sobrescreve esses métodos para aparecer como “Uma voz”, sem retrato, na cena 04. A família `MyShape` do professor continua ausente.
 
 ### 6.4 Polimorfismo
 
@@ -217,6 +248,8 @@ for (int i = 0; i < controls.size(); i++) {
 ```
 
 No mundo do jogo, `Investigation.interact` chama `controller.investigate(sceneId)` e `Passage.interact` chama `controller.travel(locationId, gateScene)`. A operação comum produz comportamentos diferentes conforme o objeto concreto.
+
+`CharacterRegistry` mantém `Map<String, GameCharacter>` e delega a resolução de nome e retrato ao personagem concreto. Os aliases `natasha_memoria` e `rodion_memoria` recebem nomes próprios de apresentação e reutilizam os retratos das respectivas identidades. `voz_escriba` não apresenta retrato.
 
 ### 6.5 Diagrama das classes existentes
 
@@ -264,6 +297,15 @@ classDiagram
     class Passage {
         +interact(GameController controller) void
     }
+    class GameCharacter {
+        <<abstract>>
+        -String id
+        -String defaultName
+        -Map expressions
+        +displayName(GameState state, String sceneId) String
+        +portrait(String expression, GameState state, String sceneId) Optional
+    }
+    class CharacterRegistry
     ClickTarget <|.. AbstractControl
     AbstractControl <|-- GothicButton
     AbstractControl <|-- TextOption
@@ -272,6 +314,11 @@ classDiagram
     StoryView --> ClickTarget : usa coleção
     Interactable <|.. Investigation
     Interactable <|.. Passage
+    GameCharacter <|-- Natasha
+    GameCharacter <|-- Rodion
+    GameCharacter <|-- Fantasma
+    GameCharacter <|-- Escriba
+    CharacterRegistry --> GameCharacter : registra e consulta
 ```
 
 `Investigation` e `Passage` são records aninhados na interface selada `Interactable`. Os nomes foram abreviados no diagrama para facilitar a leitura. A hierarquia acima representa o código atual, não substitui a hierarquia oficial sem o aceite do professor.
@@ -307,13 +354,36 @@ A resolução lógica é **1280 × 720**. O desenho é escalado proporcionalment
 
 `AssetManager.get` procura imagens em `/assets/` no classpath. O cache usa `computeIfAbsent`: a primeira solicitação carrega o recurso; as seguintes reutilizam a imagem. Trata-se de carregamento sob demanda com cache, e não de pré-carregamento integral de todos os recursos na inicialização.
 
-Os retratos, fundos e elementos de UI já utilizam esse mecanismo. O manifesto `trecho_inicial.json` associa artes e interações à abertura.
+Os retratos, fundos e elementos de UI já utilizam esse mecanismo. O manifesto `trecho_inicial.json` associa artes e interações a todo o capítulo. `StoryView` desenha o retrato antes da caixa de fala, centraliza o nome na faixa e mantém a indicação de clique dentro do diálogo. Cinco ambientes compartilham o fundo do Salão; as cutscenes substituem temporariamente o fundo durante seus nós.
 
 **Áudio pendente:** para atender ao guia, os efeitos deverão ser carregados em `Clip` antes de seu acionamento e reiniciados por `setFramePosition(0)`, evitando reabrir arquivos durante o evento de jogo.
 
 **Colisão pendente:** `Rectangle.contains` serve à seleção de hotspots por um ponto do mouse. Isso não equivale à interseção entre as caixas de duas entidades. A implementação exigida deverá verificar sobreposição de limites e tratar o resultado, por exemplo coletando um item ou disparando um som.
 
 **Remoções:** `GameState.removeItem` remove de um `Set`; a sincronização de memórias percorre um mapa e altera outro conjunto. Não há lista de entidades removidas por colisão durante a iteração. Quando essa mecânica for acrescentada, aplicar o laço reverso obrigatório para remoções por índice e não remover elementos da mesma lista dentro de um `for-each`.
+
+### 7.4 Pontos de extensão: da base ScreenSaver ao jogo narrativo
+
+O material do professor organiza a extensão em declaração, instanciação, atualização e desenho. No jogo atual, esses pontos estão distribuídos pelas responsabilidades das classes:
+
+| Etapa do ScreenSaver | Local correspondente no jogo | Orientação para estender |
+| --- | --- | --- |
+| Declarar entidades e estado | `GameState`, `GameController` e modelos de `narrative`/`world` | Manter o progresso protegido e representar novas interações por contratos coerentes com o domínio. |
+| Instanciar os elementos | Construtor de `GameController`, `newGame`, `StoryLoader` e `OpeningContent` | Carregar dados e recursos, preparar o estado inicial e configurar os hotspots. Textos e coordenadas da abertura ficam nos JSONs. |
+| Atualizar lógica e tratar eventos | `GameController.interact`, `investigate`, `travel` e `NarrativeSession` | Encaminhar a ação, conferir condições e aplicar efeitos antes do checkpoint. Movimento e colisões exigirão uma atualização própria quando forem implementados. |
+| Desenhar elementos e informações | `GamePanel.paintComponent`/`render`, `StoryView.draw` e `ClickTarget.draw` | Apresentar o estado e respeitar a transformação de coordenadas. Conceder itens e alterar regras pertence à lógica, não ao desenho. |
+
+Exemplo existente do acionamento polimórfico em `GameController.interact`:
+
+```java
+public void interact(String hotspotId) {
+    if (!exploring()) return;
+    hotspots().stream().filter(h -> h.id().equals(hotspotId)).findFirst()
+            .ifPresent(h -> h.interaction().interact(this));
+}
+```
+
+Uma interação concreta pode investigar uma cena ou atravessar uma passagem sem mudar a operação usada pelo controlador. Para estender o capítulo, atualizar o roteiro e a configuração visual, integrar as interações e conferir retomada e persistência. O [planejamento](planejamento-capitulo-01.md) registra o acabamento e as validações restantes.
 
 ## 8. Estado e salvamento
 
@@ -328,7 +398,7 @@ Windows:     %USERPROFILE%\.biblioteca-das-almas\
 Linux/macOS: ~/.biblioteca-das-almas/
 ```
 
-Os testes usam diretórios temporários por meio de `SaveManager(Path)`. O suporte aos contextos dos atos posteriores ainda precisa ser ampliado; o salvamento da abertura não comprova o funcionamento do capítulo inteiro.
+Os testes usam diretórios temporários por meio de `SaveManager(Path)`. O formato 1 inclui os atos posteriores; a cena 20 usa cursor e marcas para a revisita, sem um campo separado de contexto suspenso em `StoryProgress`. O alcance efetivamente conferido consta em [Testes do capítulo](testes-do-capitulo.md).
 
 ## 9. Compilação e execução
 
@@ -357,7 +427,13 @@ java -jar target/biblioteca-das-almas-menu-1.0.0.jar --validate-story
 
 Resultado esperado: confirmação de **28 cenas e 620 nós**.
 
-Os atalhos `INICIAR_WINDOWS.bat` e `INICIAR_LINUX_MAC.sh` apontam para `dist/BibliotecaDasAlmas-Menu.jar`, distribuição anterior do protótipo. Para apresentar a abertura atual, gerar e executar o JAR de `target/`.
+Os atalhos `INICIAR_WINDOWS.bat` e `INICIAR_LINUX_MAC.sh` priorizam `dist/BibliotecaDasAlmas-Menu.jar`, pacote atual versionado com Git LFS; aceitam o nome Maven em `dist/` como alternativa. Para executar a distribuição:
+
+```shell
+java -jar dist/BibliotecaDasAlmas-Menu.jar
+```
+
+Em clones que tenham apenas o ponteiro LFS, executar `git lfs install` e `git lfs pull`. Recompilações locais produzem o JAR de `target/`; não substituem automaticamente a distribuição.
 
 O comando `javac` simplificado do guia do professor não pode ser aplicado literalmente: este projeto possui pacotes Maven, fontes em outros diretórios e dependência do Gson. A alternativa manual com classpath explícito está em [Testes do capítulo](testes-do-capitulo.md#alternativa-com-javac-e-jar-do-gson).
 
@@ -374,6 +450,8 @@ A conferência interativa na IDE deve ser feita antes da entrega. O arquivo ativ
 
 ### 10.1 Verificações realizadas em 10/11/2026
 
+**Registro histórico da abertura (`7a8c05e`).** As verificações abaixo permanecem como evidência da versão anterior; a revisão atual é registrada na seção 10.2 e em [Testes do capítulo](testes-do-capitulo.md).
+
 Ambiente: Windows, OpenJDK Temurin **21.0.13**, fontes do commit `7a8c05e`. O Maven não estava disponível no `PATH`; portanto, a verificação desta documentação utilizou `javac` e o Gson 2.13.2 já disponível localmente. Isso não registra uma nova validação do empacotamento Maven.
 
 As fontes de `src/main/java` e `src/test/java` foram compiladas com `--release 21 -encoding UTF-8` em `target/validacao-documentacao-professor/classes`. A compilação concluída retornou código de saída zero, sem diagnóstico.
@@ -389,21 +467,25 @@ As fontes de `src/main/java` e `src/test/java` foram compiladas com `--release 2
 
 Os comandos reproduzíveis e o detalhamento dos casos estão em [Testes do capítulo](testes-do-capitulo.md). Os testes são programas com `main`, não uma suíte JUnit: executar `mvn test` isoladamente não comprova que foram chamados. Para chamadas manuais no Windows, o classpath usa `;`; em Linux/macOS, usa `:`.
 
-### 10.2 Conferências ainda necessárias
+### 10.2 Revisão de 11/11/2026
 
-- [ ] Executar o JAR recém-gerado fora da árvore de fontes.
+O commit `389433f` foi incorporado preservando as alterações locais de documentação. As fontes principais e os oito testes foram compilados novamente com JDK 21 em `target/validacao-docs-2026-11-11/classes`, e os oito testes passaram. Uma cópia do JAR de `dist/` fora da árvore de fontes confirmou 28 cenas e 620 nós, gerou uma prévia e passou em `ActFourGameplayTest` e `MenuSmokeTest`. Os resultados individuais atuais estão em [Testes do capítulo](testes-do-capitulo.md), separados dos registros históricos.
+
+### 10.3 Conferências ainda necessárias
+
+- [x] Conferir o JAR distribuído fora da árvore de fontes por validação, prévia e testes de finais/interface.
 - [ ] Executar pela IDE e conferir foco real do teclado.
 - [ ] Conferir tela cheia sem bordas desde a inicialização após a adequação.
 - [ ] Conferir encerramento imediato por Esc após a adequação.
 - [ ] Validar quatro setas, WASD e diagonais após implementar movimentação.
 - [ ] Demonstrar colisão, efeito sonoro pré-carregado e remoção segura após a implementação.
-- [ ] Percorrer o capítulo completo e os três finais após integrar os atos restantes.
+- [ ] Conferir manualmente a apresentação dos quatro atos e dos três finais, além dos testes de lógica disponíveis.
 
 Testes sem janela e geração de imagens não comprovam comportamento de tela cheia, ausência de travamentos de áudio ou uma partida completa.
 
 ## 11. Organização da dupla e plano de adequação
 
-Não há identificação nem divisão de autoria individual registrada nos arquivos consultados. A tabela abaixo é uma **proposta de trabalho**, a ser atribuída pela dupla; não representa tarefas já executadas pelos integrantes.
+A dupla é formada por **Felipe Nunes Ramalho** e **Juliana Karla Camargo da Silva**, identificados no início deste documento. A distribuição individual de tarefas ainda deve ser registrada. A tabela abaixo é uma **proposta de trabalho**, a ser atribuída pela dupla; não representa tarefas já executadas pelos integrantes.
 
 | Ciclo | Objetivo | Instruções e arquivos envolvidos | Critério de aceite | Responsável |
 | --- | --- | --- | --- | --- |
@@ -421,28 +503,33 @@ O documento do professor informa **entregas de 23/11 a 27/11 e prova em 27/11**,
 
 ## 12. Roteiro de demonstração acadêmica
 
-1. Apresentar a proposta e delimitar a abertura jogável das cenas 01–04.
+1. Apresentar a proposta, os quatro atos integrados e os limites de acabamento e validação registrados.
 2. Mostrar o ponto de entrada `Game` e a separação entre apresentação, controle, estado e dados JSON.
 3. Explicar abstração com `ClickTarget` e implementação parcial com `AbstractControl`.
 4. Abrir as subclasses e mostrar o comportamento herdado e os métodos sobrescritos.
 5. Mostrar a coleção `List<ClickTarget>` e o despacho de `draw` para explicar polimorfismo.
 6. Explicar encapsulamento com `GameState`: inventário sem duplicatas, consultas imutáveis e navegação condicionada ao desbloqueio.
 7. Executar Novo Jogo, investigar a carta, consultar inventário e diário, escolher uma postura e atravessar a porta.
-8. Comparar investigação e passagem por `Interactable` e demonstrar Continuação.
+8. Comparar investigação e passagem por `Interactable`, mostrar a hierarquia `GameCharacter` e o anonimato de Rodion na cena 04; demonstrar Continuação.
 9. Apresentar os resultados dos testes e a matriz de requisitos, mostrando as adequações concluídas na versão de entrega.
 
 Após implementar os pontos pendentes, acrescentar à demonstração os exemplos exigidos de movimento, colisão, som, laço reverso, tela cheia inicial e Esc. Cada integrante deve conseguir explicar o funcionamento e as decisões de implementação.
 
 ## 13. Autoria, recursos e ferramentas auxiliares
 
-Os arquivos consultados não trazem os créditos individuais completos nem uma relação verificável de todas as ferramentas usadas na produção. Preencher a identificação inicial e relacionar a autoria do código, roteiro, imagens, áudio e ferramentas auxiliares efetivamente utilizadas.
+**Equipe:** Felipe Nunes Ramalho, matrícula 26154726, e Juliana Karla Camargo da Silva, matrícula 26154769. **Professor:** Cainã Antunes. **Instituição e turma:** UniSenai, ADS — TADS2, disciplina BackEnd.
+
+**Referência didática:** [ScreenSaver — projeto-base do professor](https://github.com/ProfCainaAntunes/backend_screenSaver_solved). O material orienta a comparação de arquitetura e recursos apresentada neste documento. Essa referência não atribui ao jogo classes ou funcionalidades ausentes do seu código.
+
+Relacionar ainda a contribuição de cada integrante para código, roteiro e recursos, além das ferramentas auxiliares efetivamente utilizadas. A identificação da equipe não define, por si só, a autoria de cada imagem ou arquivo.
 
 O guia permite bibliotecas auxiliares, geradores e IA desde que a equipe compreenda integralmente a solução. A dupla deve revisar os exemplos deste documento e saber explicar o código apresentado. A biblioteca externa identificada no `pom.xml` é Gson 2.13.2; o próprio guia recomenda esclarecer eventuais restrições a dependências com o professor.
 
 ## 14. Checklist final de entrega
 
-- [ ] Identificação da instituição, professor, turma e dois integrantes preenchida.
-- [ ] URL do repositório informada e acesso de avaliação conferido.
+- [x] Identificação da instituição, professor, turma e dois integrantes preenchida.
+- [x] URL do repositório informada e remoto `origin` configurado.
+- [ ] Acesso do professor à versão de entrega conferido.
 - [ ] Quatro pilares demonstrados pelas classes efetivamente entregues.
 - [ ] Hierarquia e estrutura de pastas alinhadas ao guia ou adaptação formalmente aceita.
 - [ ] Compilação, execução no terminal, IDE e JAR de entrega verificadas.
@@ -456,16 +543,18 @@ O guia permite bibliotecas auxiliares, geradores e IA desde que a equipe compree
 - [ ] Créditos e uso de ferramentas auxiliares registrados e compreendidos pela dupla.
 - [ ] Data de entrega confirmada com a turma e o professor.
 
-As caixas acima representam a conferência final, não uma declaração de aprovação. Consultar a seção 4 para o estado observado na elaboração.
+As caixas marcadas registram os dados e a configuração já conferidos; as demais representam a conferência final pendente. Consultar a seção 4 para o estado observado na elaboração.
 
 ## 15. Documentos relacionados
 
+- [ScreenSaver — projeto-base do professor](https://github.com/ProfCainaAntunes/backend_screenSaver_solved).
 - [README — apresentação e execução geral](../README.md).
 - [Arquitetura e POO — detalhamento técnico](arquitetura-e-poo.md).
 - [Testes do capítulo — procedimentos e resultados](testes-do-capitulo.md).
 - [Planejamento do Capítulo I — tarefas e integração narrativa](planejamento-capitulo-01.md).
 - [Contrato narrativo JSON — regras dos dados e da execução](contrato-narrativo-json.md).
 - [Catálogo de recursos — artes e integração](catalogo-de-recursos.md).
+- [Relatório de POO — exemplos e roteiro de apresentação](relatorio-academico-poo.md).
 - [Rumos da história — referência narrativa](rumos-da-historia.md).
 
-Referência acadêmica externa ao repositório: **Orientações-jg-em-dupla.md**, fornecida pelo professor. Nenhuma autorização de adaptação é presumida por esta documentação.
+Referências acadêmicas: **Orientações-jg-em-dupla.md**, **Mini Projeto 01: ScreenSaver** e o repositório do projeto-base indicado acima. Nenhuma autorização de adaptação é presumida por esta documentação.

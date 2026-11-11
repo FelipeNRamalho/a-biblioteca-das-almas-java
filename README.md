@@ -22,7 +22,7 @@ O jogador acompanha **Natasha Rostova**, que desperta nos degraus de uma bibliot
 
 O jogo não utiliza movimentação livre ou combate: a navegação acontece por **cliques em áreas interativas (*hotspots*)**, com destaque para a atmosfera, a leitura e as consequências das decisões.
 
-> **Estado do desenvolvimento:** o **Capítulo I está 100% completo e jogável**, do despertar na Entrada aos três desfechos na Câmara dos Registros. Conta com 28 cenas narrativas no roteiro JSON consolidado, seis ambientes exploráveis por cliques, quatro personagens canônicos com retratos e expressões, inventário, diário de memórias, cutscenes, salvamento versionado e oito suítes de testes automatizados com aprovação integral. Disponível como pacote autônomo (*fat JAR*) independente. Veja [Andamento do desenvolvimento](#andamento-do-desenvolvimento).
+> **Estado em 11/11/2026 (`389433f`):** os quatro atos do **Capítulo I estão integrados**, do despertar aos três desfechos, com 28 entradas no roteiro, seis ambientes lógicos, quatro personagens, inventário, diário, cutscenes e salvamento. Os oito testes existentes passaram; acabamento visual e requisitos acadêmicos pendentes estão registrados em [Andamento do desenvolvimento](#andamento-do-desenvolvimento) e na documentação acadêmica.
 
 **Documentação do trabalho prático:** veja a [documentação acadêmica](docs/documentacao-academica.md), organizada conforme as orientações do professor, com diagramas Mermaid, exemplos de POO, execução, validação e a situação dos requisitos obrigatórios. As pendências de tela cheia inicial, Esc, movimentação, colisões, áudio e hierarquia de referência estão registradas nesse documento.
 
@@ -52,7 +52,7 @@ O capítulo foi planejado com **26 cenas narrativas**, incluindo uma cena final 
 | **Arquivo Proibido** | Descoberta do livro de Natasha, memórias e regras ocultas. |
 | **Câmara dos Registros** | Confronto com o Escriba e decisão que determina o final. |
 
-### Mecânicas narrativas planejadas
+### Mecânicas narrativas
 
 - **Diálogos ramificados:** respostas que mudam a postura de Natasha e as reações dos personagens.
 - **Investigação:** interação com livros, portas, cartas, fotografias e documentos.
@@ -100,15 +100,14 @@ A interface utiliza Swing e Graphics2D, sem motor gráfico externo. O carregador
 
 ### Windows — execução rápida
 
-### Windows — execução rápida
-
 O pacote executável independente (*fat JAR*) completo está disponível na pasta `dist/` com todas as dependências e artes embutidas:
 
-1. Dê dois cliques em **`INICIAR_WINDOWS.bat`** (executa diretamente `dist\biblioteca-das-almas-menu-1.0.0.jar`).
+1. Dê dois cliques em **`INICIAR_WINDOWS.bat`** (prioriza `dist\BibliotecaDasAlmas-Menu.jar`; aceita o nome Maven como alternativa, quando presente).
 2. Se preferir executar via PowerShell na raiz do projeto:
 
 ```powershell
-java -jar .\dist\biblioteca-das-almas-menu-1.0.0.jar
+java -version
+java -jar .\dist\BibliotecaDasAlmas-Menu.jar
 ```
 
 A primeira linha deve indicar Java **21**. Se `java` não for reconhecido, instale o [Eclipse Temurin 21](https://adoptium.net/temurin/releases/?version=21), habilite a configuração de `PATH` e abra um novo terminal.
@@ -123,7 +122,7 @@ chmod +x INICIAR_LINUX_MAC.sh
 Alternativamente:
 
 ```bash
-java -jar dist/biblioteca-das-almas-menu-1.0.0.jar
+java -jar dist/BibliotecaDasAlmas-Menu.jar
 ```
 
 ### Compilação a partir do código-fonte (Maven)
@@ -141,7 +140,7 @@ O JAR executável completo será gerado em `target/biblioteca-das-almas-menu-1.0
 Para carregar e validar o roteiro completo sem abrir janela gráfica ou alterar saves:
 
 ```powershell
-java -jar dist/biblioteca-das-almas-menu-1.0.0.jar --validate-story
+java -jar dist/BibliotecaDasAlmas-Menu.jar --validate-story
 ```
 
 *Saída esperada:* confirmação de **28 cenas e 620 nós validados** com sucesso.
@@ -149,7 +148,7 @@ java -jar dist/biblioteca-das-almas-menu-1.0.0.jar --validate-story
 Para renderizar uma imagem de teste da interface em modo *headless*:
 
 ```powershell
-java -jar dist/biblioteca-das-almas-menu-1.0.0.jar --preview preview_teste.png
+java -jar dist/BibliotecaDasAlmas-Menu.jar --preview preview_teste.png
 ```
 
 ## Controles
@@ -177,16 +176,16 @@ O menu foi projetado originalmente em **1280 × 720 (16:9)** e adapta a interfac
 | Ato III: Arquivo Proibido, Pacto e Confissão — cenas 13–19 | **Implementado e testado** |
 | Ato IV: Câmara dos Registros e Escriba — cenas 20–25 | **Implementado e testado** |
 | Três Finais Canônicos e Epílogos — cena 26 (I, II e III) | **Implementado e testado** |
-| Exploração definitiva dos seis ambientes e hotspots | **Implementado** |
+| Exploração dos seis ambientes lógicos e hotspots | **Implementado; quatro ambientes reutilizam o fundo do Salão** |
 | Inventário, diário de memórias e persistência de escolhas | **Implementado** |
 | Roteiro consolidado em `src/main/resources/story/roteiro_completo.json` | **Validado (28 cenas, 620 nós)** |
 | Carregamento JSON estrito com Gson 2.13.2 | **Implementado; validável com `--validate-story`** |
 | Hierarquia de personagens com retratos dinâmicos e anonimato | **Implementado (Natasha, Rodion, Fantasma, Escriba)** |
 | Salvamento narrativo atômico versionado (`historia.json`) | **Implementado** |
 | Pacote autônomo (*fat JAR*) executável e scripts de inicialização | **Implementado e validado em `dist/`** |
-| Testes integrados de regressão do capítulo completo | **8 suítes aprovadas (100% verde)** |
+| Testes de regressão | **Oito programas de teste; resultados e limites em [Testes do capítulo](docs/testes-do-capitulo.md)** |
 
-**Escopo completo entregue:** Novo Jogo executa o despertar e libera a Entrada para investigação. O jogador investiga o Salão, conversa com Rodion no Balcão, encontra a Fantasma no Corredor dos Livros Esquecidos, descobre o livro de Natasha e a cláusula no Arquivo Proibido e confronta o Escriba na Câmara dos Registros. Na cena 20, o jogador pode entrar na Câmara ou revisitar livremente a biblioteca para buscar pistas pendentes. A decisão final da cena 25 conta com confirmação/cancelamento modal e conduz aos três epílogos canônicos da cena 26 com cutscenes de encerramento.
+**Escopo integrado:** Novo Jogo executa o despertar e libera a Entrada para investigação. O jogador investiga o Salão, conversa com Rodion no Balcão, encontra a Fantasma no Corredor dos Livros Esquecidos, descobre o livro de Natasha e a cláusula no Arquivo Proibido e confronta o Escriba na Câmara dos Registros. A configuração contempla revisita antes do confronto, confirmação/cancelamento da decisão final e os três epílogos. Os testes verificam os percursos descritos em [Testes do capítulo](docs/testes-do-capitulo.md), sem constituir medição de cobertura de 100% ou conferência manual completa.
 
 ## Organização do projeto
 
@@ -199,10 +198,10 @@ A_Biblioteca_das_Almas_Menu/
 ├── INICIAR_WINDOWS.bat
 ├── INICIAR_LINUX_MAC.sh
 ├── dist/
-│   ├── biblioteca-das-almas-menu-1.0.0.jar (Fat JAR autônomo, 116 MB)
-│   └── BibliotecaDasAlmas-Menu.jar (Cópia para compatibilidade)
+│   └── BibliotecaDasAlmas-Menu.jar # Fat JAR versionado com Git LFS
 ├── docs/
 │   ├── arquitetura-e-poo.md
+│   ├── documentacao-academica.md
 │   ├── relatorio-academico-poo.md
 │   ├── planejamento-capitulo-01.md
 │   ├── testes-do-capitulo.md
@@ -260,7 +259,9 @@ A_Biblioteca_das_Almas_Menu/
     │       │   ├── menu/
     │       │   ├── personagens/
     │       │   │   ├── natasha/
-    │       │   │   └── rodion/
+    │       │   │   ├── rodion/
+    │       │   │   ├── fantasma/
+    │       │   │   └── escriba/
     │       │   └── ui/
     │       └── story/
     │           ├── roteiro_completo.json (28 cenas, 620 nós)
@@ -287,7 +288,7 @@ O projeto foi projetado com rigor acadêmico, aplicando os quatro pilares da Pro
 
 | Pilar | Aplicação no código |
 | --- | --- |
-| **Encapsulamento** | `GameState` protege progresso e coleções através de cópias defensivas (`unmodifiableSet`/`unmodifiableMap`), valida adições de inventário, sincroniza atômica e internamente memórias e flags (`syncFlagForMemory`) e encapsula a regra canônica dos cinco requisitos da reescrita (`canRewritePact`). `SaveManager` garante persistência atômica via arquivos temporários (`.tmp`). |
+| **Encapsulamento** | `GameState` protege coleções com cópias imutáveis, controla itens por `giveItem`, sincroniza memórias e flags por `unlockMemory`/`setFlag` e concentra os cinco requisitos em `canRewritePact`. `SaveManager` grava por temporário e solicita substituição atômica quando suportada. |
 | **Abstração** | `ClickTarget` abstrai o comportamento de elementos clicáveis de interface; `Interactable` abstrai interações de exploração do mundo; `GameCharacter` abstrai identidades e retratos de personagens; `NarrativeNode` e `NarrativeEffect` abstraem os tipos formais do roteiro via interfaces seladas (*sealed interfaces*). |
 | **Herança** | `AbstractControl` compartilha limites geométricos e disparo de comandos com `GothicButton`, `HotspotControl` e `TextOption`. A classe abstrata `GameCharacter` é especializada por `Natasha`, `Rodion`, `Fantasma` e `Escriba`. |
 | **Polimorfismo** | O loop de renderização do `GamePanel` desenha polimorficamente qualquer `ClickTarget`. Os cliques em cenários despacham polimorficamente `Interactable.interact` para investigações ou passagens. `CharacterRegistry` resolve polimorficamente nomes de exibição e retratos dinâmicos (incluindo o anonimato de Rodion na cena 04 e pseudônimos de memória). O interpretador `NarrativeSession` avalia nós e efeitos usando *pattern matching* exaustivo. |
@@ -319,23 +320,23 @@ Windows: %USERPROFILE%\.biblioteca-das-almas\
 Linux/macOS: ~/.biblioteca-das-almas/
 ```
 
-Partidas em andamento usam `historia.json`, gravado automaticamente após cada avanço ou escolha do jogador. O save registra roteiro, versão, cenário, cena/nó, diálogo ativo, escolhas, flags, valores numéricos, inventário, memórias, locais liberados e interações concluídas. A gravação é atômica (grava em `.tmp` e substitui com segurança). Continuar partida restaura perfeitamente o ambiente e o ponto exato da narrativa, incluindo revisitas livres na cena 20 e o confronto na Câmara dos Registros.
+Partidas usam `historia.json`, formato 1, com roteiro/versão, local, cena/nó, diálogo ativo, confirmação pendente, escolhas, flags, valores textuais, itens, memórias e marcas de interação. A escrita usa temporário e substituição atômica quando suportada, com alternativa de substituição comum. Preferências e saves legados em `.properties` permanecem disponíveis. A retomada não reaplica efeitos; as consultas fecham e a fala volta a revelar seu texto. Os casos executados e os limites da revisita da cena 20 estão em [Testes do capítulo](docs/testes-do-capitulo.md).
 
 ## Direção artística
 
 O estilo visual combina arquitetura **gótica vitoriana**, ilustração **2D com acabamento pictórico**, fantasia sombria e manuscritos antigos. A paleta prioriza **carvão, vinho, ameixa, azul frio e dourado envelhecido**.
 
-Todas as ilustrações oficiais foram incorporadas ao pacote executável:
-- Cenários completos em alta resolução dos seis ambientes (`entrada_biblioteca`, `salao_principal`, `balcao_rodion`, `corredor_esquecidos`, `arquivo_proibido`, `camara_registros`).
-- Oito expressões canônicas de Natasha Rostova e retratos de Rodion Raskólnikov e da Fantasma.
-- O Escriba com rosto em pergaminho sem olhos, nariz ou boca, respeitando estritamente o cânone.
-- Cutscenes ilustradas para momentos-chave: despertar, Rodion no livro, aparição da Fantasma, descoberta do livro de Natasha, aparição do Escriba e os três desfechos finais (`final_queimar`, `final_preservar`, `final_reescrever`).
+O repositório contém **71 PNGs**, com expressões dos quatro personagens, ilustrações de corpo inteiro, cutscenes e UI. O manifesto mapeia 12 cutscenes e oito documentos consultáveis. Há 15 expressões cadastradas para Natasha, seis para Rodion, seis para a Fantasma e cinco para o Escriba.
+
+Os seis ambientes são distintos na lógica. A Entrada usa seu próprio fundo; Salão, Balcão, Corredor, Arquivo e Câmara usam `menu/salao_principal.png`. Fundos específicos para os quatro últimos ainda são acabamento pendente. Consulte o [catálogo de recursos](docs/catalogo-de-recursos.md) para distinguir arquivos disponíveis e referências efetivamente usadas.
+
+O JAR distribuído é gerenciado por **Git LFS**. Em clones que contenham apenas o ponteiro textual do arquivo, executar `git lfs install` e `git lfs pull` antes de abrir o JAR. O nome Maven em `dist/` é uma alternativa aceita pelos scripts; o arquivo versionado nesta revisão é `BibliotecaDasAlmas-Menu.jar`.
 
 ## Fases Concluídas e Próximos Passos
 
-1. **Capítulo I — 100% Concluído e Validado:** Todos os 4 atos, 28 cenas, três finais canônicos, salvamento, pacote autônomo (*fat JAR*) e 8 suítes de testes estão entregues.
+1. **Capítulo I integrado:** quatro atos, 28 entradas de cena, três finais, salvamento e oito testes disponíveis. A revisão atual, as pendências e os resultados estão em [Testes do capítulo](docs/testes-do-capitulo.md).
 2. **Entrega Acadêmica de POO:** Relatório acadêmico completo com comprovação dos quatro pilares, padrões de projeto e roteiro para apresentação em banca disponível em [Relatório Acadêmico de POO](docs/relatorio-academico-poo.md).
-3. **Capítulos Futuros (Pós-Entrega):** Expansão da história para o Capítulo II utilizando o mesmo motor narrativo desacoplado baseado em JSON.
+3. **Próximos passos:** conferir a apresentação interativa e a distribuição, resolver os pontos registrados no [planejamento](docs/planejamento-capitulo-01.md) e atender às exigências acadêmicas pendentes de tela cheia inicial, Esc, movimento, colisão e áudio antes de expandir a história.
 
 ## Desenvolvimento e organização de commits
 
@@ -355,7 +356,11 @@ Antes de abrir uma contribuição, confira se os recursos adicionados estão nas
 
 Projeto acadêmico de desenvolvimento de jogos em Java, com roteiro e recursos visuais criados para **A Biblioteca das Almas**.
 
-Os créditos individuais da equipe e a licença de distribuição **ainda não foram definidos neste repositório**. Até que uma licença seja adicionada, não presuma autorização para redistribuir o código ou os recursos gráficos.
+**Equipe:** Felipe Nunes Ramalho e Juliana Karla Camargo da Silva — UniSenai, ADS — TADS2, disciplina BackEnd, professor Cainã Antunes.
+
+**Referência didática:** [ScreenSaver — projeto-base do professor](https://github.com/ProfCainaAntunes/backend_screenSaver_solved), usado como referência para os conceitos de POO e a comparação de recursos na [documentação acadêmica](docs/documentacao-academica.md).
+
+A distribuição individual de autoria dos recursos e a licença de distribuição ainda precisam ser registradas. Até que uma licença seja adicionada, não presuma autorização para redistribuir o código ou os recursos gráficos.
 
 ---
 

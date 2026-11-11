@@ -4,6 +4,8 @@
 
 Avaliação original: 29/10/2026. Revisão contextualizada: 30/10/2026.
 
+**Nota de 11/11/2026:** esta avaliação preserva a análise e as pendências da base original. O commit `389433f` integra os quatro atos, personagens e testes dos três finais. Para a situação de implementação atual, consultar o [planejamento](planejamento-capitulo-01.md) e os [resultados de testes](testes-do-capitulo.md); os estados técnicos descritos abaixo não substituem essa revisão.
+
 Fonte narrativa analisada: [roteiro_completo.json](../src/main/resources/story/roteiro_completo.json), versão declarada `1.0`.
 
 Este documento avalia a coerência do roteiro com o contexto oficial do projeto e identifica o trabalho necessário para integrá-lo à aplicação Java existente. Contém spoilers dos três finais.

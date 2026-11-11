@@ -4,6 +4,8 @@
 
 Revisão contextualizada: 30/10/2026.
 
+**Nota de implementação em 11/11/2026:** a direção narrativa permanece a referência; os quatro atos e três finais estão integrados no commit `389433f`. O trabalho técnico restante e os resultados atuais constam no [planejamento](planejamento-capitulo-01.md) e em [Testes do capítulo](testes-do-capitulo.md). As propostas históricas abaixo não acrescentam novas rotas.
+
 Este documento consolida a direção narrativa aprovada e preserva o histórico das propostas que a antecederam. O nome `rumos-da-historia.md` foi mantido para conservar as referências existentes. Contém spoilers de todo o capítulo.
 
 A história e os finais estão definidos. As alternativas históricas da seção 9 não são escolhas pendentes nem rotas adicionais. O desenvolvimento deve seguir o contexto oficial, o [roteiro completo em JSON](../src/main/resources/story/roteiro_completo.json), a [avaliação do roteiro](avaliacao-roteiro-completo.md) e o [planejamento de integração](planejamento-capitulo-01.md).

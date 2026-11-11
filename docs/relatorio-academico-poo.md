@@ -1,401 +1,157 @@
-# Relatório Acadêmico de Programação Orientada a Objetos (POO)
-## Projeto: A Biblioteca das Almas — Capítulo I: *O Nome que Não Deveria Existir*
+# Relatório Acadêmico de Programação Orientada a Objetos
 
----
+**A Biblioteca das Almas — Capítulo I: O Nome que Não Deveria Existir**
+Revisão: **11/11/2026**, commit `389433f`.
 
-### Identificação do Projeto
-- **Aplicação:** *A Biblioteca das Almas* (Capítulo I)
-- **Gênero:** RPG Narrativo / Visual Novel / Point-and-Click de Fantasia Gótica
-- **Linguagem / Plataforma:** Java 21 (LTS) · Java Swing & Java 2D (`Graphics2D`)
-- **Gerenciador de Dependências & Build:** Apache Maven (`pom.xml`)
-- **Biblioteca Externa Única:** Google Gson 2.13.2 (leitura estrita de contratos narrativos JSON)
-- **Arquitetura:** Orientada a Objetos com Separação Estrita de Responsabilidades (MVC Adaptado para Games 2D)
+Equipe: **Felipe Nunes Ramalho** (26154726) e **Juliana Karla Camargo da Silva** (26154769).
+UniSenai — ADS/TADS2 — BackEnd — Professor Cainã Antunes.
 
----
+Este relatório demonstra os quatro pilares usando nomes e assinaturas existentes no código. A [documentação acadêmica](documentacao-academica.md) contém a matriz dos requisitos do professor. A [arquitetura](arquitetura-e-poo.md) detalha as dependências, e [Testes do capítulo](testes-do-capitulo.md) registra os resultados.
 
-## 1. Visão Geral da Arquitetura e Engenharia de Software
+## 1. Escopo
 
-O projeto foi construído sobre a premissa de que **regras de negócio, estado do mundo e apresentação visual não devem se misturar**, e que **todo o conteúdo literário, diálogos e ramificações devem ser dirigidos por dados (*data-driven*)**, sem nenhuma fala ou texto de roteiro codificado de forma rígida (*hardcoded*) nas classes Java.
+Java 21, Swing, Graphics2D, Maven e Gson 2.13.2 sustentam a aventura narrativa por cliques. O consolidado contém 28 entradas de cena e 620 nós, com configuração para os quatro atos e três epílogos.
 
-```mermaid
-flowchart TD
-    subgraph UI ["Camada de Apresentação (UI)"]
-        GamePanel["GamePanel (Swing/Graphics2D)"]
-        StoryView["StoryView (Renderizador Narrativo)"]
-        ClickTarget["<<interface>> ClickTarget"]
-        GothicButton["GothicButton"]
-        HotspotControl["HotspotControl"]
-        TextOption["TextOption"]
-    end
+A separação de estado, coordenação, dados e apresentação permite explicar responsabilidades sem criar uma classe para cada fala. O conteúdo narrativo atual vem dos JSONs; o fluxo legado em `GamePanel` ainda contém texto fixo para compatibilidade com saves antigos.
 
-    subgraph Core ["Núcleo do Jogo (Core & Controle)"]
-        GameController["GameController"]
-        GameState["GameState (Estado Puro e Encapsulado)"]
-        SaveManager["SaveManager (Persistência Atômica)"]
-        GameSettings["GameSettings"]
-    end
+## 2. Encapsulamento
 
-    subgraph Narrative ["Motor Narrativo (Data-Driven)"]
-        StoryLoader["StoryLoader (Gson Estrito)"]
-        StoryValidator["StoryValidator"]
-        NarrativeSession["NarrativeSession (Interpretador de Nós)"]
-        NarrativeNode["<<sealed>> NarrativeNode"]
-        NarrativeEffect["<<sealed>> NarrativeEffect"]
-        StoryCondition["<<sealed>> StoryCondition"]
-    end
+[GameState.java](../src/main/java/br/com/bibliotecadasalmas/core/GameState.java) protege as coleções e concentra operações que preservam as regras:
 
-    subgraph WorldChar ["Mundo e Personagens"]
-        Interactable["<<interface>> Interactable"]
-        GameCharacter["<<abstract>> GameCharacter"]
-        Natasha["Natasha"]
-        Rodion["Rodion"]
-        Fantasma["Fantasma"]
-        Escriba["Escriba"]
-        CharacterRegistry["CharacterRegistry"]
-    end
+| Operação existente | Regra demonstrada |
+| --- | --- |
+| `giveItem(String)` | Valida o identificador e usa um conjunto, evitando itens duplicados. |
+| `unlockMemory(String)` / `setFlag(String, boolean)` | Mantêm a memória e a flag correspondente sincronizadas. |
+| `moveToLocation(String)` | Recusa destino ainda bloqueado. |
+| `inventory()`, `memories()`, `flags()` | Retornam cópias imutáveis. |
+| `copy()` / `replaceWith(GameState)` | Permitem preparar e publicar um candidato de estado. |
+| `canRewritePact()` | Concentra os cinco requisitos da reescrita. |
 
-    GamePanel --> GameController
-    GamePanel --> StoryView
-    StoryView --> NarrativeSession
-    StoryView --> CharacterRegistry
-    GameController --> GameState
-    GameController --> SaveManager
-    NarrativeSession --> GameState
-    NarrativeSession --> NarrativeNode
-    NarrativeSession --> NarrativeEffect
-    GamePanel --> ClickTarget
-    ClickTarget <|.. GothicButton
-    ClickTarget <|.. HotspotControl
-    ClickTarget <|.. TextOption
-    GameCharacter <|-- Natasha
-    GameCharacter <|-- Rodion
-    GameCharacter <|-- Fantasma
-    GameCharacter <|-- Escriba
-    CharacterRegistry --> GameCharacter
-    Interactable --> GameController
+Trecho existente:
+
+```java
+public boolean canRewritePact() {
+    return hasMemory("retorno") && hasMemory("escolha") && hasMemory("pacto")
+            && flag("fantasma_confia") && flag("regra_reescrita_descoberta");
+}
 ```
 
----
+Nem todos os atributos são finais: local e cursor mudam por operações controladas. Os campos protegidos de `AbstractControl` também fazem parte do desenho atual.
 
-## 2. Demonstração dos Quatro Pilares da POO no Código-Fonte
+[GameCharacter.java](../src/main/java/br/com/bibliotecadasalmas/characters/GameCharacter.java) mantém `id`, `defaultName` e `expressions` privados e finais, copiando o mapa de expressões para uma visão não modificável.
 
-A seguir, demonstra-se como cada um dos quatro pilares fundamentais da Programação Orientada a Objetos foi rigorosamente projetado e implementado nas classes concretas do jogo.
+[SaveManager.java](../src/main/java/br/com/bibliotecadasalmas/core/SaveManager.java) encapsula os arquivos. A gravação usa temporário e solicita substituição atômica, com alternativa comum quando o sistema não suporta `ATOMIC_MOVE`. Isso não garante imunidade a qualquer falha de armazenamento.
 
----
+## 3. Abstração
 
-### Pilar 1: Encapsulamento
+[ClickTarget.java](../src/main/java/br/com/bibliotecadasalmas/ui/ClickTarget.java) define o contrato de um controle:
 
-O encapsulamento garante que o estado interno de um objeto seja protegido contra manipulações externas indevidas, mantendo invariantes de negócio válidas durante toda a execução.
-
-#### 1.1. `GameState` ([`GameState.java`](file:///c:/Users/felipe.ramalho/Downloads/A_Biblioteca_das_Almas_Menu_Inicial_Java21%20(1)/A_Biblioteca_das_Almas_Menu/src/main/java/br/com/bibliotecadasalmas/core/GameState.java))
-A classe central de estado do jogo exemplifica o encapsulamento pleno:
-- **Atributos estritamente privados:** todos os campos (`cursor`, `currentLocation`, `inventory`, `memories`, `flags`, `numericValues`, `choicesMade`, `completedInteractions`, `unlockedLocations`) são `private final`.
-- **Cópia Defensiva (*Defensive Copying*):** nos métodos assessores (`inventory()`, `memories()`, `flags()`, etc.), o `GameState` nunca expõe as referências para as coleções internas mutáveis. Ele sempre retorna cópias imutáveis via `Collections.unmodifiableSet(...)` ou `Collections.unmodifiableMap(...)`.
-- **Validação de Invariantes de Domínio:**
-  - *Sincronização Atômica de Memória e Flag:* O método `addMemory(String memoryId)` não apenas registra a memória recuperada, mas invoca internamente `syncFlagForMemory(memoryId)`, garantindo que flags essenciais de roteiro (`memoria_retorno`, `memoria_escolha`, `memoria_pacto`) jamais fiquem dessincronizadas do diário.
-  - *Prevenção de Duplicatas:* `addInventoryItem(String item)` rejeita itens repetidos para assegurar a consistência do inventário.
-  - *Navegação Controlada:* O método `navigateTo(String targetLocation)` valida se o local de destino já foi desbloqueado através de `canNavigateTo(targetLocation)`, impedindo que o jogador avance para ambientes restritos antes de cumprir os pré-requisitos narrativos.
-  - *Regra Canônica da Reescrita:* O método `canRewritePact()` encapsula a regra canônica dos 5 requisitos necessários para o Final III:
-    ```java
-    public boolean canRewritePact() {
-        return hasMemory("retorno")
-            && hasMemory("escolha")
-            && hasMemory("pacto")
-            && hasFlag("fantasma_confia")
-            && hasFlag("regra_reescrita_descoberta");
-    }
-    ```
-- **Clonagem e Substituição Segura (*Snapshot / Rollback*):** O método `copy()` cria um clone isolado do estado para que `NarrativeSession` possa testar e aplicar lotes de efeitos atômicos sem sujar o estado ativo caso ocorra uma interrupção.
-
-#### 1.2. `StoryProgress` e `SaveManager` ([`SaveManager.java`](file:///c:/Users/felipe.ramalho/Downloads/A_Biblioteca_das_Almas_Menu_Inicial_Java21%20(1)/A_Biblioteca_das_Almas_Menu/src/main/java/br/com/bibliotecadasalmas/core/SaveManager.java))
-- O salvamento é encapsulado por um DTO versionado (`StoryProgress`), que valida a integridade estrutural dos dados salvos antes de autorizar a reconstrução de um `GameState`.
-- O `SaveManager` isola a complexidade de I/O em disco usando escrita atômica com arquivos temporários (`historia.json.tmp` renomeado atomicamente para `historia.json`), prevenindo corrupção de save mesmo em caso de desligamento abrupto.
-
-#### 1.3. `GameSettings` ([`GameSettings.java`](file:///c:/Users/felipe.ramalho/Downloads/A_Biblioteca_das_Almas_Menu_Inicial_Java21%20(1)/A_Biblioteca_das_Almas_Menu/src/main/java/br/com/bibliotecadasalmas/core/GameSettings.java))
-- Mantém preferências de efeitos visuais e velocidade do texto com acessores privados e operações controladas (`cycleTextSpeed()`, `toggleEffects()`, `setFullscreen()`), validando os intervalos numéricos aceitáveis.
-
----
-
-### Pilar 2: Abstração
-
-A abstração oculta detalhes operacionais e expõe apenas contratos essenciais de alto nível através de interfaces e classes abstratas.
-
-#### 2.1. Abstração de Controles de Interface: `ClickTarget` ([`ClickTarget.java`](file:///c:/Users/felipe.ramalho/Downloads/A_Biblioteca_das_Almas_Menu_Inicial_Java21%20(1)/A_Biblioteca_das_Almas_Menu/src/main/java/br/com/bibliotecadasalmas/ui/ClickTarget.java))
-A interface `ClickTarget` define o que significa um elemento clicável na tela 2D:
 ```java
 public interface ClickTarget {
     boolean contains(int x, int y);
     boolean enabled();
     void click();
-    void draw(Graphics2D g2, boolean hovered, boolean selected);
+    void draw(Graphics2D graphics, boolean hovered, boolean selected);
 }
 ```
-A camada de apresentação (`GamePanel`) manipula apenas coleções de `ClickTarget`, sem precisar conhecer se o alvo é um botão ornamentado gótico, uma opção de diálogo textual ou uma área transparente de hotspot no cenário.
 
-#### 2.2. Abstração de Elementos Interativos do Mundo: `Interactable` ([`Interactable.java`](file:///c:/Users/felipe.ramalho/Downloads/A_Biblioteca_das_Almas_Menu_Inicial_Java21%20(1)/A_Biblioteca_das_Almas_Menu/src/main/java/br/com/bibliotecadasalmas/world/Interactable.java))
-A interface `Interactable` define a operação fundamental de interação no mundo do jogo:
+[Interactable.java](../src/main/java/br/com/bibliotecadasalmas/world/Interactable.java) oferece a operação `interact(GameController)`, implementada por `Investigation` e `Passage`.
+
+`GameCharacter` oferece a abstração de interlocutor, compartilhando identidade e retratos. A classe é abstrata, mas seus métodos de nome/retrato têm implementação:
+
 ```java
-public interface Interactable {
-    void interact(GameController controller);
+public String displayName(GameState state, String sceneId) {
+    return defaultName;
+}
+
+public Optional<String> portrait(String expression, GameState state, String sceneId) {
+    if (expression == null) return Optional.empty();
+    return Optional.ofNullable(expressions.get(expression));
 }
 ```
-Seja uma porta de transição para outro cenário (`Interactable.Passage`) ou uma investigação que dispara um nó narrativo ou documento (`Interactable.Investigation`), o motor de exploração apenas invoca `interact(controller)`.
 
-#### 2.3. Abstração de Personagens: `GameCharacter` ([`GameCharacter.java`](file:///c:/Users/felipe.ramalho/Downloads/A_Biblioteca_das_Almas_Menu_Inicial_Java21%20(1)/A_Biblioteca_das_Almas_Menu/src/main/java/br/com/bibliotecadasalmas/characters/GameCharacter.java))
-Classe abstrata que modela a identidade de qualquer interlocutor no jogo:
-```java
-public abstract class GameCharacter {
-    private final String id;
-    private final String canonicalName;
-    
-    public abstract String displayName(GameState state);
-    public abstract String portraitAsset(GameState state, String expression);
-    public abstract boolean hasPortrait(GameState state);
-}
-```
-Isso permite que o sistema de diálogo (`StoryView`) solicite o nome e o retrato de quem está falando sem saber qual personagem específico é, nem quais regras de disfarce ou memória estão ativas.
+[NarrativeNode.java](../src/main/java/br/com/bibliotecadasalmas/narrative/NarrativeNode.java) usa os tipos `Line`, `Cutscene`, `Choice`, `Branch`, `Event`, `Join` e `End`. [NarrativeEffect.java](../src/main/java/br/com/bibliotecadasalmas/narrative/NarrativeEffect.java) usa `SetFlag`, `SetValue`, `GiveItem`, `RemoveItem`, `UnlockMemory` e `UnlockLocation`. Esses são os nomes dos records existentes.
 
-#### 2.4. Abstração do Roteiro: `NarrativeNode` e `NarrativeEffect` ([`NarrativeNode.java`](file:///c:/Users/felipe.ramalho/Downloads/A_Biblioteca_das_Almas_Menu_Inicial_Java21%20(1)/A_Biblioteca_das_Almas_Menu/src/main/java/br/com/bibliotecadasalmas/narrative/NarrativeNode.java))
-O roteiro é abstraído através de interfaces seladas (*sealed interfaces* do Java 21) que modelam os tipos formais de nós e efeitos:
-- `NarrativeNode`: `Dialogue`, `Choice`, `Condition`, `Event`, `Join`, `Pause`.
-- `NarrativeEffect`: `SetFlag`, `AddInventory`, `AddMemory`, `UnlockLocation`, `SetScene`, `SetVariable`, `CustomAction`.
-
----
-
-### Pilar 3: Herança
-
-A herança estabelece relações de especialização (*"é um"* / *is-a*), permitindo reaproveitamento de código e extensão comportamental.
-
-#### 3.1. Hierarquia de Controles de Interface do Usuário
+## 4. Herança
 
 ```mermaid
 classDiagram
     class ClickTarget {
         <<interface>>
-        +contains(x, y) boolean
-        +enabled() boolean
-        +click() void
-        +draw(g2, hovered, selected) void
     }
     class AbstractControl {
         <<abstract>>
         #Rectangle bounds
         #String label
         #Runnable command
-        #boolean enabled
-        +contains(x, y) boolean
-        +enabled() boolean
-        +click() void
-        +draw(g2, hovered, selected)* void
+        -boolean enabled
     }
-    class GothicButton {
-        -String textureBase
-        +draw(g2, hovered, selected) void
-    }
-    class HotspotControl {
-        -boolean visible
-        +draw(g2, hovered, selected) void
-    }
-    class TextOption {
-        -Font font
-        +draw(g2, hovered, selected) void
-    }
-
-    ClickTarget <|.. AbstractControl : implementa
-    AbstractControl <|-- GothicButton : estende
-    AbstractControl <|-- HotspotControl : estende
-    AbstractControl <|-- TextOption : estende
-```
-
-- `AbstractControl` fornece a lógica comum de cálculo de caixa delimitadora (`bounds`), rótulo de acessibilidade e despacho do comando `Runnable`.
-- `GothicButton` herda os limites e estados e especializa a renderização desenhando texturas góticas do UI Kit com sombras e brilhos.
-- `HotspotControl` herda o controle de limites e personaliza a resposta visual (borda sutil de destaque ou área invisível de colisão em cena estática).
-- `TextOption` herda a manipulação de cliques e especializa a tipografia com marcadores de seleção góticos (`›`).
-
-#### 3.2. Hierarquia de Personagens
-
-```mermaid
-classDiagram
+    ClickTarget <|.. AbstractControl
+    AbstractControl <|-- GothicButton
+    AbstractControl <|-- TextOption
+    AbstractControl <|-- HotspotControl
     class GameCharacter {
         <<abstract>>
         -String id
-        -String canonicalName
-        +id() String
-        +canonicalName() String
-        +displayName(state)* String
-        +portraitAsset(state, expression)* String
-        +hasPortrait(state)* boolean
+        -String defaultName
+        -Map expressions
+        +displayName(GameState state, String sceneId) String
+        +portrait(String expression, GameState state, String sceneId) Optional
     }
-    class Natasha {
-        +displayName(state) String
-        +portraitAsset(state, expression) String
-        +hasPortrait(state) boolean
-    }
-    class Rodion {
-        +displayName(state) String
-        +portraitAsset(state, expression) String
-        +hasPortrait(state) boolean
-    }
-    class Fantasma {
-        +displayName(state) String
-        +portraitAsset(state, expression) String
-        +hasPortrait(state) boolean
-    }
-    class Escriba {
-        +displayName(state) String
-        +portraitAsset(state, expression) String
-        +hasPortrait(state) boolean
-    }
-
-    GameCharacter <|-- Natasha : estende
-    GameCharacter <|-- Rodion : estende
-    GameCharacter <|-- Fantasma : estende
-    GameCharacter <|-- Escriba : estende
+    GameCharacter <|-- Natasha
+    GameCharacter <|-- Rodion
+    GameCharacter <|-- Fantasma
+    GameCharacter <|-- Escriba
 ```
 
-- **`Natasha`:** especializa a resolução de retratos mapeando as 8 expressões canônicas (`neutra`, `pensativa`, `determinada`, `assustada`, etc.) sob `/assets/personagens/natasha/`.
-- **`Rodion`:** especializa o anonimato canônico: na cena 04, antes da apresentação formal, ele não revela seu nome (retorna `"Uma voz"`) e desativa seu retrato (`hasPortrait = false`). A partir da cena 05, após a apresentação, seu nome se torna `"Rodion Raskólnikov"` e seus retratos sob `/assets/personagens/rodion/` são ativados.
-- **`Fantasma`:** especializa o nome canônico `"A Fantasma"` e resolve seus retratos etéreos com sombras suaves.
-- **`Escriba`:** em conformidade com o cânone visual (rosto em pergaminho sem olhos, nariz ou boca), o Escriba especializa `hasPortrait()` para retornar `false` e `displayName()` para `"O Escriba"` (ou `"Uma voz fria"` antes de seu surgimento na Câmara), garantindo que nenhum retrato antropomórfico seja desenhado, mantendo o mistério da entidade.
+As subclasses de `AbstractControl` reutilizam limites e acionamento e especializam `draw`. `HotspotControl` sobrescreve também `contains`.
 
----
+As quatro classes de personagem configuram seus mapas no construtor. [Rodion.java](../src/main/java/br/com/bibliotecadasalmas/characters/Rodion.java) sobrescreve `displayName` e `portrait`: na cena 04, retorna “Uma voz” e nenhum retrato; nas demais, usa a identidade padrão.
 
-### Pilar 4: Polimorfismo
+O Escriba tem retratos cadastrados. Seu rosto sem feições é uma característica visual; não há método `hasPortrait` que oculte todas as suas imagens. O alias `voz_escriba` é tratado pelo registro sem retrato.
 
-O polimorfismo permite que objetos de diferentes classes concretas respondam à mesma mensagem (invocação de método) de maneiras distintas e especializadas.
+## 5. Polimorfismo
 
-#### 4.1. Polimorfismo na Interface Gráfica (`GamePanel` e `ClickTarget`)
-No loop de renderização e tratamento de eventos do `GamePanel`:
+Em `GamePanel`, o mesmo contrato desenha controles diferentes:
+
 ```java
-for (ClickTarget target : activeControls) {
-    if (target.enabled() && target.contains(mouseX, mouseY)) {
-        target.draw(g2, true, false); // Resolução polimórfica de desenho
-    } else {
-        target.draw(g2, false, false);
-    }
+for (int i = 0; i < controls.size(); i++) {
+    controls.get(i).draw(g, i == hover, i == keyboardSelection);
 }
 ```
-O `GamePanel` não executa `if (target instanceof GothicButton)` nem `switch`. Ele simplesmente chama `draw(...)`, e cada subclasse executa sua renderização polimórfica específica.
 
-#### 4.2. Polimorfismo no Mundo Interativo (`Interactable`)
-Quando o jogador clica em um *hotspot* no cenário:
-```java
-Interactable interactable = hotspot.target();
-interactable.interact(controller);
-```
-- Se o alvo for uma instância de `Interactable.Investigation`, ele suspende a exploração aberta e abre a cena de exame correspondente no `NarrativeSession`.
-- Se o alvo for uma instância de `Interactable.Passage`, ele atualiza a localização atual no `GameState` e muda o fundo para o novo ambiente, tocando a transição adequada.
+Na exploração, `h.interaction().interact(this)` despacha a ação para investigação ou passagem. No [CharacterRegistry.java](../src/main/java/br/com/bibliotecadasalmas/characters/CharacterRegistry.java), `Map<String, GameCharacter>` permite consultar personagens pelo tipo base e executar a implementação concreta de nome/retrato.
 
-#### 4.3. Polimorfismo nos Nós e Efeitos Narrativos (Pattern Matching & Sealed Hierarchies)
-A classe `NarrativeSession` aproveita os recursos modernos do Java 21 para executar avaliação polimórfica de nós e efeitos:
-```java
-switch (node) {
-    case NarrativeNode.Dialogue d -> renderDialogue(d);
-    case NarrativeNode.Choice c -> presentChoiceOptions(c);
-    case NarrativeNode.Condition cond -> evaluateConditionBranch(cond);
-    case NarrativeNode.Event ev -> triggerWorldEvent(ev);
-    case NarrativeNode.Join j -> advanceToNode(j.targetNode());
-    case NarrativeNode.Pause p -> suspendSession(p);
-}
-```
-A semântica exaustiva das interfaces seladas garante em tempo de compilação que nenhum tipo de nó ou efeito fique sem tratamento polimórfico adequado.
+Os aliases de memória recebem nomes de apresentação no registro e reutilizam os retratos do personagem. Isso é diferente de declarar novas subclasses para cada lembrança.
 
-#### 4.4. Polimorfismo de Identidade Narrativa (`CharacterRegistry`)
-O `CharacterRegistry` armazena uma coleção de `GameCharacter` mapeada por identificador e resolve dinamicamente:
-```java
-GameCharacter character = registry.resolve(speakerId);
-String name = character.displayName(gameState);
-String portrait = character.portraitAsset(gameState, expression);
-```
-Mesmo ao processar falas com pseudônimos de memória (`natasha_memoria`, `rodion_memoria`), a chamada polimórfica delega para a subclasse correspondente, que compõe o nome adequado (ex.: `"Natasha (Memória)"`) sem alterar a regra base do personagem.
+O pattern matching do executor seleciona o tratamento dos tipos selados. O exemplo direto de despacho virtual é a chamada de um método sobrescrito, como `draw` ou `Rodion.displayName`.
 
----
+## 6. Organização e persistência
 
-## 3. Padrões de Projeto (Design Patterns) Utilizados
+A organização separa modelo (`GameState`, roteiro e personagens), apresentação (`GamePanel`, `StoryView`, controles) e coordenação (`GameController`, `NarrativeSession`). É uma descrição de responsabilidades, não comprovação de implementação formal de todos os padrões clássicos.
 
-1. **State Pattern / Memento:** `GameState` e `StoryProgress` operam em conjunto como um padrão Memento para criar cópias de segurança instantâneas, validar transições e restaurar partidas salvas de forma íntegra.
-2. **Registry Pattern:** `CharacterRegistry` centraliza o registro e instanciação de personagens, desacoplando o motor narrativo de instâncias isoladas.
-3. **Data Transfer Object (DTO):** `StoryProgress` atua como DTO versionado imutável, separando o formato JSON persistido em disco das regras operacionais de negócio de `GameState`.
-4. **Interpreter / Session Pattern:** `NarrativeSession` atua como o interpretador do grafo de nós narrativos construído pelo `StoryLoader`.
-5. **Model-View-Controller (MVC):**
-   - **Model:** `GameState`, `Story`, `NarrativeNode`, `GameCharacter`.
-   - **View:** `GamePanel`, `StoryView`, `GothicButton`, `HotspotControl`.
-   - **Controller:** `GameController`, `NarrativeSession`.
+`CharacterRegistry` centraliza identidades. `StoryProgress` é um DTO em record, formato 1, que separa o JSON salvo do estado de execução. `NarrativeSession` interpreta o grafo narrativo e aplica lotes sobre uma cópia do estado.
 
----
+Há suporte a persistência de cursor, escolhas e marcas dos atos posteriores. A revisita da cena 20 depende das marcas e pausas configuradas; não existe um campo genérico de contexto suspenso no save.
 
-## 4. Guia de Demonstração Acadêmica (Roteiro para Apresentação em Banca)
+## 7. Demonstração acadêmica
 
-Para demonstrar a aplicação perante avaliadores acadêmicos, siga o roteiro estruturado abaixo:
+1. Mostrar a identificação e a matriz de requisitos na [documentação acadêmica](documentacao-academica.md).
+2. Validar o JAR: `java -jar dist/BibliotecaDasAlmas-Menu.jar --validate-story`.
+3. Executar Novo Jogo e demonstrar carta, escolha e consulta de inventário/diário.
+4. Abrir os contratos e as duas hierarquias para explicar abstração e herança.
+5. Mostrar inventário protegido, memória/flag e navegação em `GameState`.
+6. Mostrar os três exemplos de despacho: controles, interações e identidade de Rodion.
+7. Demonstrar os atos seguintes, confirmação da decisão e Continuação, conforme os casos registrados nos testes.
+8. Apresentar os resultados atuais sem atribuir cobertura total ou validação manual a testes de lógica.
 
-### Passo 1: Execução e Autonomia do Pacote (T21/T22)
-1. Abra o terminal e comprove a validação completa do roteiro e dos nós sem dependências externas:
-   ```powershell
-   java -jar dist/biblioteca-das-almas-menu-1.0.0.jar --validate-story
-   ```
-   *Evidência:* Confirmação de 28 cenas e 620 nós validados via contrato estrito Gson.
-2. Demonstre a geração autônoma de prévia gráfica em modo headless:
-   ```powershell
-   java -jar dist/biblioteca-das-almas-menu-1.0.0.jar --preview preview_teste.png
-   ```
+A demonstração deve distinguir os seis ambientes lógicos dos fundos compartilhados. Exigências de áudio, colisão, movimento, tela cheia inicial e Esc imediato continuam com o estado registrado na matriz acadêmica.
 
-### Passo 2: Menu Inicial e Configurações (Encapsulamento e UI)
-1. Execute o jogo via duplo clique em `INICIAR_WINDOWS.bat` ou pelo terminal:
-   ```powershell
-   java -jar dist/biblioteca-das-almas-menu-1.0.0.jar
-   ```
-2. No menu principal, clique em **Configurações**: altere a velocidade do texto e os efeitos visuais (demonstrando `GameSettings`).
-3. Volte ao menu e clique em **Novo Jogo**.
+## 8. Evidências e limites
 
-### Passo 3: Prólogo e Ato I — Entrada e Balcão (Abstração e Polimorfismo)
-1. **Despertar (Cenas 01–03):** Natasha acorda na Entrada. Mostre o texto com revelação progressiva (`StoryView`), as expressões dinâmicas de Natasha e o exame da carta (aquisição de item `carta_entrada` e `memoria_retorno` no `GameState`).
-2. **Exploração da Entrada:** Demonstre que a carta pode ser examinada ou adiada e que as 3 opções de postura na porta definem flags sem travar a progressão.
-3. **Salão e Balcão (Cenas 04–07):** Interaja com o livro mutável no Salão. Encontre Rodion no Balcão:
-   - Observe que na cena 04 Rodion é introduzido polimorficamente como `"Uma voz"`, sem retrato.
-   - Na cena 05, Rodion se apresenta, exibindo seu retrato canônico vitoriano e desbloqueando a passagem para o Corredor.
+Existem oito programas de teste com `main`: `StoryLoaderTest`, `GameStateTest`, `OpeningGameplayTest`, `ActOneGameplayTest`, `ActTwoGameplayTest`, `ActThreeGameplayTest`, `ActFourGameplayTest` e `MenuSmokeTest`.
 
-### Passo 4: Ato II e Ato III — Corredor e Arquivo Proibido (Invariantes de Estado)
-1. **Corredor e A Fantasma (Cenas 08–12):** Encontre a Fantasma. Examine a fotografia antiga (`memoria_escolha`). Pegue o medalhão antigo e devolva-o para consolidar a confiança da Fantasma (`fantasma_confia`).
-2. **Arquivo Proibido (Cenas 13–19):** No Salão, atravesse a passagem secreta revelada pela Fantasma. Descubra o Livro de Natasha e receba a `memoria_pacto`. Examine os documentos confidenciais para descobrir a regra oculta de reescrita (`regra_reescrita_descoberta`).
-3. **Confissão de Rodion:** Retorne ao Balcão e confronte Rodion, liberando o acesso final à Câmara dos Registros.
+Na revisão de 11/11/2026, os oito passaram contra as fontes recompiladas. Os testes de atos percorrem o controlador e o executor; `MenuSmokeTest` exercita cliques e teclado da abertura sem abrir janela. Não há relatório de cobertura de 100%, nem validação automatizada da aparência de todas as falas.
 
-### Passo 5: Ato IV e os Três Finais (Regras de Decisão)
-1. **Cena 20 (Caminho sem Retorno):**
-   - Demonstre a opção de **Revisitar**: o jogador pode retornar ao Salão e navegar livremente para buscar qualquer pista não investigada (carta, fotografia, medalhão, cláusula).
-   - Ao clicar na porta da Câmara, escolha **Entrar**.
-2. **Confronto com o Escriba (Cenas 21–25):**
-   - Assista à aparição do Escriba (sem rosto) e às cutscenes dramáticas de confronto.
-   - Na decisão final (Cena 25), demonstre o diálogo modal com confirmação e cancelamento (R08).
-   - Demonstre a disponibilidade dos três desfechos:
-     - **Final I (A Última Página):** Sacrifício e libertação das almas.
-     - **Final II (Entre Páginas Fechadas):** Preservação do livro e continuação do ciclo.
-     - **Final III (A História que Ainda Não Foi Escrita):** Exige os 5 requisitos validados por `GameState.canRewritePact()`, reescrevendo o pacto e derrotando o Escriba.
-3. **Epílogos e Persistência:** A cena 26 conclui o capítulo com cutscene de encerramento e salva o status de conclusão no `historia.json`.
-
----
-
-## 5. Resumo das Suítes de Testes Automatizados
-
-O projeto conta com **8 suítes completas de testes automatizados**, totalizando mais de 100 cenários de teste que cobrem 100% dos caminhos narrativos e mecânicas:
-
-| Suíte de Teste | Arquivo de Origem | Responsabilidade Validada |
-| --- | --- | --- |
-| **StoryLoaderTest** | [`StoryLoaderTest.java`](file:///c:/Users/felipe.ramalho/Downloads/A_Biblioteca_das_Almas_Menu_Inicial_Java21%20(1)/A_Biblioteca_das_Almas_Menu/src/test/java/br/com/bibliotecadasalmas/StoryLoaderTest.java) | Validação estrita Gson: 28 cenas, 620 nós, integridade de referências, ciclos e casos inválidos. |
-| **GameStateTest** | [`GameStateTest.java`](file:///c:/Users/felipe.ramalho/Downloads/A_Biblioteca_das_Almas_Menu_Inicial_Java21%20(1)/A_Biblioteca_das_Almas_Menu/src/test/java/br/com/bibliotecadasalmas/GameStateTest.java) | Encapsulamento, cópias defensivas, sincronização de memórias/flags, desbloqueio de locais e regra dos 5 requisitos de reescrita. |
-| **MenuSmokeTest** | [`MenuSmokeTest.java`](file:///c:/Users/felipe.ramalho/Downloads/A_Biblioteca_das_Almas_Menu_Inicial_Java21%20(1)/A_Biblioteca_das_Almas_Menu/src/test/java/br/com/bibliotecadasalmas/MenuSmokeTest.java) | Ciclo de vida da janela Swing, modos de tela, menus, atalhos de teclado e persistência de preferências. |
-| **OpeningGameplayTest** | [`OpeningGameplayTest.java`](file:///c:/Users/felipe.ramalho/Downloads/A_Biblioteca_das_Almas_Menu_Inicial_Java21%20(1)/A_Biblioteca_das_Almas_Menu/src/test/java/br/com/bibliotecadasalmas/OpeningGameplayTest.java) | Prólogo (cenas 01–04), 6 combinações de escolhas, recuperação de carta adiada e desbloqueio de portas. |
-| **ActOneGameplayTest** | [`ActOneGameplayTest.java`](file:///c:/Users/felipe.ramalho/Downloads/A_Biblioteca_das_Almas_Menu_Inicial_Java21%20(1)/A_Biblioteca_das_Almas_Menu/src/test/java/br/com/bibliotecadasalmas/ActOneGameplayTest.java) | Ato I (cenas 05–07), 9 combinações de escolhas de Rodion, anonimato inicial e transição para o Balcão. |
-| **ActTwoGameplayTest** | [`ActTwoGameplayTest.java`](file:///c:/Users/felipe.ramalho/Downloads/A_Biblioteca_das_Almas_Menu_Inicial_Java21%20(1)/A_Biblioteca_das_Almas_Menu/src/test/java/br/com/bibliotecadasalmas/ActTwoGameplayTest.java) | Ato II (cenas 08–12), 12 rotas, confiança da Fantasma, medalhão, fotografia e não-duplicação de memórias. |
-| **ActThreeGameplayTest** | [`ActThreeGameplayTest.java`](file:///c:/Users/felipe.ramalho/Downloads/A_Biblioteca_das_Almas_Menu_Inicial_Java21%20(1)/A_Biblioteca_das_Almas_Menu/src/test/java/br/com/bibliotecadasalmas/ActThreeGameplayTest.java) | Ato III (cenas 13–19), 12 rotas, passagem secreta no Salão, Arquivo Proibido, cláusula oculta e confissão de Rodion. |
-| **ActFourGameplayTest** | [`ActFourGameplayTest.java`](file:///c:/Users/felipe.ramalho/Downloads/A_Biblioteca_das_Almas_Menu_Inicial_Java21%20(1)/A_Biblioteca_das_Almas_Menu/src/test/java/br/com/bibliotecadasalmas/ActFourGameplayTest.java) | Ato IV e Epílogos (cenas 20–26), os Três Finais canônicos (Queimar, Preservar, Reescrever), revisita aberta da cena 20, cancelamento modal e cutscenes de encerramento. |
-
-Todas as suítes foram compiladas e aprovadas com **100% de sucesso** contra o pacote JAR autônomo gerado.
-
----
-
-## 6. Conclusão Acadêmica
-
-A implementação do Capítulo I de *A Biblioteca das Almas* comprova que é plenamente viável construir um jogo narrativo gótico profundo, esteticamente rico e interativo utilizando Java padrão puro (Java 21 LTS + Swing / Graphics2D), sem a necessidade de motores de terceiros pesados. 
-
-A aplicação rigorosa dos quatro pilares da Programação Orientada a Objetos — **Encapsulamento**, **Abstração**, **Herança** e **Polimorfismo** — permitiu manter uma base de código limpa, desacoplada, extensível e altamente testável, onde o roteiro em JSON evolui de forma independente das regras de renderização e coordenação de sistemas.
+Procedimentos, evidências do pacote e limitações estão em [Testes do capítulo](testes-do-capitulo.md). Créditos individuais por recurso e ferramentas utilizadas ainda devem ser registrados pela dupla.
 
