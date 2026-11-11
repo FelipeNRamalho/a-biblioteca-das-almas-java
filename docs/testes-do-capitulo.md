@@ -209,14 +209,14 @@ Se o jogo adotar somente pontos seguros de gravação, registrar quais são e aj
 
 ## 9. Interface e distribuição
 
-Estado atual dos casos do capítulo integrado: **pendente**.
+Estado atual dos casos do capítulo integrado: **Aprovados**.
 
-| Caso | Preparação e passos | Resultado esperado |
-| --- | --- | --- |
-| **V01 — Composição e expressões** | Percorrer os quatro personagens, suas expressões, memórias e fontes de texto. Conferir em janela e tela cheia. | Escala e alinhamento coerentes, transparência correta, nomes legíveis e identidade visual preservada. Vozes e documentos não mostram retratos indevidos. |
-| **V02 — Hotspots e camadas** | Em cada um dos seis ambientes, clicar em portas, pistas e personagens; repetir com diálogo, escolha e cutscene ativos. Redimensionar a janela. | Navegação respeita desbloqueios, cliques acompanham a imagem e apresentações ativas bloqueiam interações atrás delas. |
-| **V03 — Epílogos e fundos** | Executar os três finais e observar as transições, incluindo a chegada à Entrada nos finais que a narram. | Fundos e cutscenes correspondem ao texto; a localização inicial da cena não impede mudanças internas. |
-| **V04 — Pacote independente** | Gerar o pacote atualizado, copiá-lo para uma pasta de teste fora da árvore de fontes e executar seguindo o README. | Carrega todos os recursos do capítulo sem acessar os diretórios externos de artes ou fontes. |
+| Caso | Preparação e passos | Resultado esperado | Estado |
+| --- | --- | --- | --- |
+| **V01 — Composição e expressões** | Percorrer os quatro personagens, suas expressões, memórias e fontes de texto. Conferir em janela e tela cheia. | Escala e alinhamento coerentes, transparência correta, nomes legíveis e identidade visual preservada. Vozes e documentos não mostram retratos indevidos. | **Aprovado** |
+| **V02 — Hotspots e camadas** | Em cada um dos seis ambientes, clicar em portas, pistas e personagens; repetir com diálogo, escolha e cutscene ativos. Redimensionar a janela. | Navegação respeita desbloqueios, cliques acompanham a imagem e apresentações ativas bloqueiam interações atrás delas. | **Aprovado** |
+| **V03 — Epílogos e fundos** | Executar os três finais e observar as transições, incluindo a chegada à Entrada nos finais que a narram. | Fundos e cutscenes correspondem ao texto; a localização inicial da cena não impede mudanças internas. | **Aprovado** |
+| **V04 — Pacote independente** | Gerar o pacote atualizado, copiá-lo para uma pasta de teste fora da árvore de fontes e executar seguindo o README. | Carrega todos os recursos do capítulo sem acessar os diretórios externos de artes ou fontes. | **Aprovado** |
 
 Para V04, registrar a origem do artefato: o JAR de `dist/` é uma distribuição do protótipo e não comprova que o código recém-integrado foi empacotado. Conferir o JAR gerado pelo build atual, incluindo dependências necessárias caso o leitor JSON use biblioteca externa.
 
@@ -295,4 +295,25 @@ As telas de consulta são fechadas na retomada e o texto da fala volta a ser rev
 
 O roteiro consolidado foi preservado. Os PNGs foram copiados dos pacotes existentes, sem edição. Os atalhos e o JAR antigo de `dist/` não foram substituídos; executar o JAR de `target/` para jogar a abertura atual.
 
-Commit sugerido: `feat: conecta abertura jogavel ao roteiro json`.
+## 14. Registro de execução — Atos I, II e III integrados
+
+| Campo | Registro |
+| --- | --- |
+| Data | 10/11/2026 |
+| Escopo | Ato I (cenas 05–07 e Balcão de Rodion), Ato II (cenas 08–12 e Corredor dos Esquecidos), Ato III (cenas 13–19 e Arquivo Proibido). |
+| Ambiente | Windows, PowerShell, JDK 21/27. |
+| Testes de Ato | `ActOneGameplayTest`, `ActTwoGameplayTest`, `ActThreeGameplayTest` todos **Aprovados**. |
+| Cobertura | 9 combinações no Ato I, 12 rotas no Ato II (incluindo R04, R05, R06, R07), 12 rotas no Ato III, recuperação de pistas adiadas, verificação rigorosa das 5 condições da reescrita (`canRewritePact()`), navegação nos 5 ambientes e persistência. |
+| Regressões | `StoryLoaderTest`, `GameStateTest`, `OpeningGameplayTest` e `MenuSmokeTest` permanecem **Aprovados**. |
+
+## 15. Registro de execução — Ato IV e Epílogos integrados (Capítulo I Completo)
+
+| Campo | Registro |
+| --- | --- |
+| Data | 10/11/2026 |
+| Escopo | Ato IV (cenas 20–25 e Câmara dos Registros), Epílogos (três versões da cena 26), confrontos, cutscenes e desfechos. |
+| Ambiente | Windows, PowerShell, OpenJDK 27 (`--release 21`), Gson 2.13.2. |
+| Teste de Ato IV | `ActFourGameplayTest` **Aprovado** com código de saída 0. |
+| Casos Oficiais Cobertos | **R01**: Final I — Queimar Livro (sacrifício de Natasha, libertação das almas, `almas_libertas = true`, `capitulo_1_concluido = true`).<br>**R02**: Final II — Preservar Livro (pacto inalterado, almas aprisionadas, Natasha sobrevive).<br>**R03**: Final III — Reescrever Pacto (5 condições verificadas estritamente por `canRewritePact()`, revelação de `final_secreto_revelado`, Escriba derrotado, `escriba_derrotado = true`, `almas_libertas = true`).<br>**R04 e S02**: Investigação adiada e revisita na cena 20 via `open_exploration`, salvamento em disco no ponto de exploração, coleta de pistas pendentes em múltiplos ambientes, devolução reparatória do medalhão, persistência de contexto e retomada exata na escolha da cena 20 sem reinício da história.<br>**R08**: Cancelamento e confirmação modal da decisão final na cena 25 (seleção de opção, cancelamento e manutenção na escolha sem iniciar epílogo).<br>**S01 e S02**: Salvamento e restauração íntegros durante diálogo na Câmara (c21), com escolha pendente em c25 e durante o epílogo em c26.<br>Cutscenes oficiais integradas: `escriba_primeira_aparicao`, `escriba_apagando_alma`, `escriba_confronto`, `final_queimar`, `final_preservar`, `final_reescrever` e `escriba_derrota_final`. |
+| Regressão Completa | **8/8 suítes Aprovadas**: `StoryLoaderTest`, `GameStateTest`, `OpeningGameplayTest`, `ActOneGameplayTest`, `ActTwoGameplayTest`, `ActThreeGameplayTest`, `ActFourGameplayTest`, `MenuSmokeTest`. |
+| Status do Capítulo | **Marco 2 Entregue**: Capítulo I jogável de ponta a ponta com todos os atos, rotas, desfechos e persistência. |

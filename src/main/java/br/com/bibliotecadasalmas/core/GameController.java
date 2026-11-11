@@ -1,11 +1,13 @@
 package br.com.bibliotecadasalmas.core;
 
+import br.com.bibliotecadasalmas.characters.CharacterRegistry;
 import br.com.bibliotecadasalmas.narrative.NarrativeNode;
 import br.com.bibliotecadasalmas.narrative.NarrativeSession;
 import br.com.bibliotecadasalmas.narrative.OpeningContent;
 import br.com.bibliotecadasalmas.narrative.Story;
 import br.com.bibliotecadasalmas.narrative.StoryLoader;
 import java.util.List;
+import java.util.Optional;
 
 /** Organiza transições de telas e progresso, sem depender do Graphics2D. */
 public final class GameController {
@@ -15,6 +17,7 @@ public final class GameController {
     private final GameState state;
     private final NarrativeSession session;
     private final OpeningContent opening;
+    private final CharacterRegistry characters = new CharacterRegistry();
     public enum Overlay { NONE, INVENTORY, MEMORIES }
     private Overlay overlay = Overlay.NONE;
     private String notice = "";
@@ -41,6 +44,21 @@ public final class GameController {
     public Story story() { return story; }
     public NarrativeSession session() { return session; }
     public OpeningContent opening() { return opening; }
+    public CharacterRegistry characters() { return characters; }
+
+    public Optional<String> portrait(NarrativeNode.Line line) {
+        String sceneId = session.active() ? session.scene().id() : state.position().sceneId();
+        return characters.portrait(line.speaker(), line.expression().orElse(null), state, sceneId)
+                .or(() -> opening.portrait(line));
+    }
+
+    public String speakerName(NarrativeNode.Line line) {
+        String sceneId = session.active() ? session.scene().id() : state.position().sceneId();
+        return characters.displayName(line.speaker(), state, sceneId)
+                .orElseGet(() -> opening.speakers().containsKey(line.speaker())
+                        ? opening.speakers().get(line.speaker()).name()
+                        : line.speaker());
+    }
     public Overlay overlay() { return overlay; }
     public String notice() { return notice; }
     public long revision() { return revision; }
@@ -135,6 +153,7 @@ public final class GameController {
         if (!exploring()) return List.of();
         return opening.locations().get(state.locationId()).hotspots().stream()
                 .filter(h -> h.hideWhenFlag() == null || !state.flag(h.hideWhenFlag()))
+                .filter(h -> h.requireFlag() == null || state.flag(h.requireFlag()))
                 .filter(h -> !h.kind().equals("investigation") || story.scene(h.target()).optional() || !session.sceneCompleted(h.target()))
                 .toList();
     }
@@ -189,10 +208,12 @@ public final class GameController {
         if (session.ended() && opening.sceneExits().get(session.scene().id()).equals("follow")) {
             NarrativeNode.End end = (NarrativeNode.End) session.node();
             String next = end.nextScene().orElseThrow();
-            requireOpening(next);
-            session.start(next);
+            if (!session.sceneCompleted(next)) {
+                requireOpening(next);
+                session.start(next);
+            }
         }
-        if (session.active()) {
+        if (session.active() && !(session.node() instanceof NarrativeNode.Choice)) {
             opening.pauses().stream().filter(p -> p.scene().equals(state.position().sceneId())
                     && p.node().equals(state.position().nodeId()) && !state.isInteractionCompleted(p.marker()))
                     .findFirst().ifPresent(p -> { state.completeInteraction(p.marker()); session.suspend(); });

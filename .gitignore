@@ -3,6 +3,8 @@
 /build/
 /out/
 *.class
+gson-*.jar
+dist/biblioteca-das-almas-menu-*.jar
 
 # Configurações locais de IDEs
 /.idea/

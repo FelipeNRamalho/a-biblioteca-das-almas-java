@@ -68,10 +68,22 @@ final class StoryView {
             }
         } else {
             shade(g, 628, 92);
-            if (controller.state().flag("livro_mutavel_visto")) {
-                text(g, controller.state().hasItem("carta_entrada")
-                        ? "Trecho concluído. Consulte a carta e a lembrança que encontrou."
-                        : "Trecho concluído. A carta ainda pode ser investigada na escadaria.", 545, 681, 16, TEXT);
+            if (controller.state().flag("capitulo_1_concluido")) {
+                text(g, "Capítulo I Concluído — O destino de Natasha foi selado (" + controller.state().value("final_conquistado") + ").", 545, 681, 16, GOLD);
+            } else if (controller.state().flag("confronto_iniciado")) {
+                text(g, "O confronto final na Câmara dos Registros começou.", 545, 681, 16, TEXT);
+            } else if (controller.state().flag("rodion_confessou")) {
+                text(g, "Rodion confessou. A passagem para a Câmara dos Registros está aberta no Arquivo Proibido.", 545, 681, 16, TEXT);
+            } else if (controller.state().flag("passagem_descoberta")) {
+                text(g, "O Arquivo Proibido foi revelado atrás da estante do salão.", 545, 681, 16, TEXT);
+            } else if (controller.state().flag("fantasma_revelou_passado")) {
+                text(g, "A Fantasma revelou que Natasha procurava seu próprio livro no salão.", 545, 681, 16, TEXT);
+            } else if (controller.state().isLocationUnlocked("corredor_esquecidos")) {
+                text(g, "O caminho para o Corredor dos Livros Esquecidos está aberto.", 545, 681, 16, TEXT);
+            } else if (controller.state().flag("rodion_encontrado")) {
+                text(g, "Rodion indicou o caminho para o Corredor. Investigue o balcão ou retorne ao salão.", 545, 681, 16, TEXT);
+            } else if (controller.state().flag("livro_mutavel_visto")) {
+                text(g, "Aproxime-se do balcão de atendimento para falar com o bibliotecário.", 545, 681, 16, TEXT);
             } else text(g, "Clique nos objetos e nas passagens para investigar.", 545, 681, 16, TEXT);
         }
         buildControls();
@@ -83,14 +95,21 @@ final class StoryView {
     }
 
     private void drawLine(Graphics2D g, NarrativeNode.Line line) {
-        var portrait = controller.opening().portrait(line);
+        var portrait = controller.portrait(line);
+        portrait.ifPresent(path -> contain(g, assets.get(path), 65, 110, 350, 390));
         panel(g, 42, 460, 1196, 240);
-        portrait.ifPresent(path -> contain(g, assets.get(path), 45, 352, 285, 340));
-        int left = portrait.isPresent() ? 345 : 180;
-        text(g, controller.opening().speakers().get(line.speaker()).name(), portrait.isPresent() ? 345 : 200, 505, 20, GOLD);
-        wrapped(g, line.text().substring(0, visible(line.text())), left, 548, 1080 - left, 30, 22, TEXT);
-        text(g, visible(line.text()) == line.text().length() ? "CLIQUE PARA CONTINUAR  ›" : "CLIQUE PARA REVELAR  ›",
-                790, 676, 13, GOLD);
+
+        String speaker = controller.speakerName(line);
+        int nameWidth = textWidth(g, speaker, 20);
+        int nameX = 340 - (nameWidth / 2);
+        text(g, speaker, nameX, 512, 20, GOLD);
+
+        String visibleText = line.text().substring(0, visible(line.text()));
+        wrapped(g, visibleText, 175, 566, 830, 28, 22, TEXT);
+
+        String prompt = visible(line.text()) == line.text().length() ? "CLIQUE PARA CONTINUAR  ›" : "CLIQUE PARA REVELAR  ›";
+        int promptWidth = textWidth(g, prompt, 13);
+        text(g, prompt, 1000 - promptWidth, 650, 13, GOLD);
     }
 
     private int visible(String text) {
@@ -227,6 +246,11 @@ final class StoryView {
 
     private static void text(Graphics2D g, String value, int x, int y, int size, Color color) {
         g.setFont(new Font("Serif", Font.PLAIN, size)); g.setColor(color); g.drawString(value, x, y);
+    }
+
+    private static int textWidth(Graphics2D g, String value, int size) {
+        g.setFont(new Font("Serif", Font.PLAIN, size));
+        return g.getFontMetrics().stringWidth(value);
     }
 
     private static void wrapped(Graphics2D g, String value, int x, int y, int width, int lineHeight, int size, Color color) {

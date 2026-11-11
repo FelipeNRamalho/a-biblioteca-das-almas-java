@@ -64,7 +64,11 @@ public record OpeningContent(Map<String, String> sceneExits, Map<String, Locatio
         }
     }
     public record Hotspot(String id, String label, String kind, String target, String gateScene,
-                          String hideWhenFlag, int x, int y, int width, int height) {
+                          String hideWhenFlag, String requireFlag, int x, int y, int width, int height) {
+        public Hotspot(String id, String label, String kind, String target, String gateScene,
+                       String hideWhenFlag, int x, int y, int width, int height) {
+            this(id, label, kind, target, gateScene, hideWhenFlag, null, x, y, width, height);
+        }
         public Hotspot {
             if (width <= 0 || height <= 0 || x < 0 || y < 0 || x + width > 1280 || y + height > 720) {
                 throw new IllegalArgumentException("Hotspot fora da área lógica: " + id);

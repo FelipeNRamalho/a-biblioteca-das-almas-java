@@ -108,21 +108,19 @@ Os campos `bounds`, `label` e `command` são protegidos na superclasse. Esse ace
 
 Esse é o exemplo principal a demonstrar. O `switch` sobre `GameMode` controla telas, mas não é a evidência de polimorfismo dos controles.
 
-## 4. Expansão planejada para o capítulo
+## 4. Implementação Completa do Capítulo
 
-A tabela abaixo apresenta responsabilidades propostas. Exceto pelas classes identificadas como existentes, os nomes são orientações de implementação, não arquivos já criados.
+Todas as classes planejadas foram plenamente implementadas e integradas no pacote principal `br.com.bibliotecadasalmas`. O sistema atende integralmente ao escopo dos quatro atos e três finais:
 
-| Área | Responsabilidade planejada |
-| --- | --- |
-| `core/GameState` existente | Ampliar a base em memória quando o interpretador precisar de fase da interface e contexto de exploração suspenso. A classe ainda não lê JSON nem persiste dados. |
-| `narrative/` existente | Carregamento, validação e execução já disponíveis. Ampliar a configuração da interface e os contextos de exploração para os atos posteriores. |
-| `characters/GameCharacter` | Classe abstrata de personagem, com identidade e apresentação compartilhadas e operações pertinentes ao domínio. |
-| `characters/Natasha`, `Rodion`, `Fantasma`, `Escriba` | Especializar a base, mantendo as regras e apresentações próprias sem copiar a lógica comum. Não transferir o roteiro inteiro para essas classes. |
-| `world/Interactable` existente | `Investigation` inicia uma cena investigativa; `Passage` navega ou aciona a cena que desbloqueia a porta. Integrar novos objetos e personagens conforme os atos. |
-| `world/` | Representar ambientes, hotspots, portas, documentos e interlocutores, com disponibilidade definida pelo estado. |
-| `ui/` existente | Apresentar o estado, diálogos, escolhas, inventário e diário; encaminhar ações do jogador. |
-| `assets/` existente | Resolver imagens e seu cache, integrado ao manifesto de recursos. |
-| `core/SaveManager` existente | Save narrativo versionado da abertura já disponível; ampliar e testar os contextos dos próximos atos sem assumir o papel do interpretador. |
+| Área e Pacote | Classes Concretas Implementadas | Responsabilidade Entregue |
+| --- | --- | --- |
+| `core/GameState` | `GameState.java` | Estado puro em memória: cursor de cena/nó, inventário, memórias, flags, escolhas, locais desbloqueados e verificação estrita dos 5 requisitos de reescrita (`canRewritePact`). |
+| `core/GameController` | `GameController.java` | Orquestração de modos de jogo, navegação, investigação, suspensão e retomada de exploração aberta na cena 20. |
+| `core/SaveManager` | `SaveManager.java`, `StoryProgress.java` | Gravação atômica (.tmp -> .json), restauração íntegra de ambiente, nós, escolhas pendentes e inventário sem corrupção. |
+| `characters/` | `GameCharacter.java`, `Natasha.java`, `Rodion.java`, `Fantasma.java`, `Escriba.java`, `CharacterRegistry.java` | Hierarquia de herança e resolução polimórfica de retratos e nomes de exibição. Suporta anonimato (Rodion na cena 04), pseudônimos de memória e ocultação de rosto sem feições do Escriba. |
+| `world/` | `Interactable.java` | Contrato abstrato e implementações concretas `Investigation` e `Passage`, despachadas polimorficamente por cliques em hotspots nos 6 ambientes. |
+| `narrative/` | `StoryLoader.java`, `StoryValidator.java`, `Story.java`, `NarrativeNode.java`, `NarrativeSession.java`, `NarrativeEffect.java`, `StoryCondition.java`, `ChoiceOption.java`, `OpeningContent.java`, `StrictJson.java` | Motor narrativo data-driven baseado em tipos selados e records imutáveis. Validação estrita Gson de 28 cenas e 620 nós. |
+| `ui/` | `GamePanel.java`, `StoryView.java`, `ClickTarget.java`, `AbstractControl.java`, `GothicButton.java`, `HotspotControl.java`, `TextOption.java` | Apresentação em Swing/Graphics2D com redimensionamento de alta qualidade, revelação progressiva, suporte a tela cheia (F11), confirmação modal e overlays de inventário/diário. |
 
 Uma cena narrativa é uma sequência de nós; um ambiente é um lugar explorável. Várias cenas podem ocorrer no mesmo ambiente, e um epílogo pode mudar de fundo durante sua execução. Essa distinção evita usar uma única classe ou enumeração para conceitos diferentes.
 
@@ -177,16 +175,12 @@ O plano de execução e os resultados devem ser registrados em [testes-do-capitu
 
 ## 8. Roteiro para a apresentação acadêmica
 
-A demonstração atual pode usar estes passos:
+A demonstração completa do Capítulo I e dos pilares de POO está detalhada no [Relatório Acadêmico de POO](relatorio-academico-poo.md):
 
-1. Mostrar os campos privados de `GameState`, suas coleções imutáveis para consulta e a sincronização de memória/flag para explicar encapsulamento; complementar com `GameSettings` e `GameController`.
-2. Abrir `ClickTarget` para explicar o contrato de interação e desenho.
-3. Mostrar `AbstractControl` e suas subclasses para explicar herança e reutilização.
-4. Mostrar a coleção de `ClickTarget` e as duas implementações de `draw` para explicar polimorfismo.
-5. Exibir o menu e a inspeção do livro para relacionar as classes à interface do protótipo.
-
-Na abertura atual, demonstrar a carta e a porta acionadas pelo mesmo contrato `Interactable`, com implementações diferentes. A carta atualiza inventário e memória; a porta navega ou inicia o diálogo que desbloqueia a passagem. A hierarquia dos quatro personagens permanece uma expansão planejada.
-
-Atualizar os exemplos conforme o código evoluir. Uma classe planejada, um diagrama ou uma assinatura sem comportamento não substitui a demonstração de uma funcionalidade implementada.
+1. **Encapsulamento:** Mostrar os campos privados de `GameState`, suas coleções imutáveis para consulta (`Collections.unmodifiableSet`), a sincronização atômica de memória/flag (`syncFlagForMemory`), o método de regra canônica `canRewritePact()` e a persistência atômica segura em `SaveManager` / `StoryProgress`.
+2. **Abstração:** Abrir os contratos `ClickTarget` (UI), `Interactable` (mundo), `GameCharacter` (personagens) e os tipos selados `NarrativeNode` e `NarrativeEffect`.
+3. **Herança:** Mostrar `AbstractControl` e suas subclasses (`GothicButton`, `HotspotControl`, `TextOption`), bem como `GameCharacter` e suas especializações (`Natasha`, `Rodion`, `Fantasma`, `Escriba`).
+4. **Polimorfismo:** Demonstrar o despacho polimórfico de `ClickTarget.draw()` no `GamePanel`, a execução de `Interactable.interact()` (investigação vs passagem), a resolução de nomes e retratos em `CharacterRegistry` e a avaliação exaustiva de nós e efeitos em `NarrativeSession`.
+5. **Roteiro de Demonstração Completo:** Seguir o roteiro passo a passo do [Relatório Acadêmico](relatorio-academico-poo.md#4-guia-de-demonstração-acadêmica-roteiro-para-apresentação-em-banca), percorrendo do menu inicial aos três desfechos finais do capítulo.
 
 Commit sugerido: `docs: documenta arquitetura e exemplos dos pilares de poo`.
