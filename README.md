@@ -24,6 +24,8 @@ O jogo não utiliza movimentação livre ou combate: a navegação acontece por 
 
 > **Estado do desenvolvimento:** as **cenas 01–04 já são jogáveis**, do despertar à investigação do livro no Salão, com diálogos JSON, escolhas, retratos, retorno à carta, inventário, Memória 1 e salvamento. O restante do capítulo e os finais ainda precisam ser integrados. Veja [Andamento do desenvolvimento](#andamento-do-desenvolvimento).
 
+**Documentação do trabalho prático:** veja a [documentação acadêmica](docs/documentacao-academica.md), organizada conforme as orientações do professor, com diagramas Mermaid, exemplos de POO, execução, validação e a situação dos requisitos obrigatórios. As pendências de tela cheia inicial, Esc, movimentação, colisões, áudio e hierarquia de referência estão registradas nesse documento.
+
 ## Capítulo I — O Nome que Não Deveria Existir
 
 O primeiro capítulo acompanha Natasha em uma investigação pela biblioteca. Cada ambiente revela uma parte da relação entre as memórias, os registros e a liberdade das almas.
